@@ -1,0 +1,137 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<xs:schema id="NewDataSet" targetNamespace="http://regis-web.systemsbiology.net/pepXML" xmlns:mstns="http://regis-web.systemsbiology.net/pepXML" xmlns="http://regis-web.systemsbiology.net/pepXML" xmlns:xs="http://www.w3.org/2001/XMLSchema" xmlns:msdata="urn:schemas-microsoft-com:xml-msdata" attributeFormDefault="qualified" elementFormDefault="qualified">
+  <xs:element name="msms_pipeline_analysis">
+    <xs:complexType>
+      <xs:sequence>
+        <xs:element name="msms_run_summary" minOccurs="0" maxOccurs="unbounded">
+          <xs:complexType>
+            <xs:sequence>
+              <xs:element name="sample_enzyme" minOccurs="0" maxOccurs="unbounded">
+                <xs:complexType>
+                  <xs:sequence>
+                    <xs:element name="specificity" minOccurs="0" maxOccurs="unbounded">
+                      <xs:complexType>
+                        <xs:attribute name="sense" form="unqualified" type="xs:string" />
+                        <xs:attribute name="cut" form="unqualified" type="xs:string" />
+                        <xs:attribute name="no_cut" form="unqualified" type="xs:string" />
+                      </xs:complexType>
+                    </xs:element>
+                  </xs:sequence>
+                  <xs:attribute name="name" form="unqualified" type="xs:string" />
+                </xs:complexType>
+              </xs:element>
+              <xs:element name="search_summary" minOccurs="0" maxOccurs="unbounded">
+                <xs:complexType>
+                  <xs:sequence>
+                    <xs:element name="search_database" minOccurs="0" maxOccurs="unbounded">
+                      <xs:complexType>
+                        <xs:attribute name="local_path" form="unqualified" type="xs:string" />
+                        <xs:attribute name="size_in_db_entries" form="unqualified" type="xs:string" />
+                        <xs:attribute name="type" form="unqualified" type="xs:string" />
+                      </xs:complexType>
+                    </xs:element>
+                    <xs:element name="enzymatic_search_constraint" minOccurs="0" maxOccurs="unbounded">
+                      <xs:complexType>
+                        <xs:attribute name="enzyme" form="unqualified" type="xs:string" />
+                        <xs:attribute name="max_num_internal_cleavages" form="unqualified" type="xs:string" />
+                        <xs:attribute name="min_number_termini" form="unqualified" type="xs:string" />
+                      </xs:complexType>
+                    </xs:element>
+                    <xs:element name="aminoacid_modification" minOccurs="0" maxOccurs="unbounded">
+                      <xs:complexType>
+                        <xs:attribute name="aminoacid" form="unqualified" type="xs:string" />
+                        <xs:attribute name="massdiff" form="unqualified" type="xs:string" />
+                        <xs:attribute name="mass" form="unqualified" type="xs:string" />
+                        <xs:attribute name="variable" form="unqualified" type="xs:string" />
+                        <xs:attribute name="description" form="unqualified" type="xs:string" />
+                      </xs:complexType>
+                    </xs:element>
+                    <xs:element name="parameter" minOccurs="0" maxOccurs="unbounded">
+                      <xs:complexType>
+                        <xs:attribute name="name" form="unqualified" type="xs:string" />
+                        <xs:attribute name="value" form="unqualified" type="xs:string" />
+                      </xs:complexType>
+                    </xs:element>
+                  </xs:sequence>
+                  <xs:attribute name="base_name" form="unqualified" type="xs:string" />
+                  <xs:attribute name="search_engine" form="unqualified" type="xs:string" />
+                  <xs:attribute name="precursor_mass_type" form="unqualified" type="xs:string" />
+                  <xs:attribute name="fragment_mass_type" form="unqualified" type="xs:string" />
+                  <xs:attribute name="search_id" form="unqualified" type="xs:string" />
+                </xs:complexType>
+              </xs:element>
+              <xs:element name="spectrum_query" minOccurs="0" maxOccurs="unbounded">
+                <xs:complexType>
+                  <xs:sequence>
+                    <xs:element name="search_result" minOccurs="0" maxOccurs="unbounded">
+                      <xs:complexType>
+                        <xs:sequence>
+                          <xs:element name="search_hit" minOccurs="0" maxOccurs="unbounded">
+                            <xs:complexType>
+                              <xs:sequence>
+                                <xs:element name="modification_info" minOccurs="0" maxOccurs="unbounded">
+                                  <xs:complexType>
+                                    <xs:sequence>
+                                      <xs:element name="mod_aminoacid_mass" minOccurs="0" maxOccurs="unbounded">
+                                        <xs:complexType>
+                                          <xs:attribute name="position" form="unqualified" type="xs:string" />
+                                          <xs:attribute name="mass" form="unqualified" type="xs:string" />
+                                        </xs:complexType>
+                                      </xs:element>
+                                    </xs:sequence>
+                                    <xs:attribute name="modified_peptide" form="unqualified" type="xs:string" />
+                                  </xs:complexType>
+                                </xs:element>
+                                <xs:element name="search_score" minOccurs="0" maxOccurs="unbounded">
+                                  <xs:complexType>
+                                    <xs:attribute name="name" form="unqualified" type="xs:string" />
+                                    <xs:attribute name="value" form="unqualified" type="xs:string" />
+                                  </xs:complexType>
+                                </xs:element>
+                              </xs:sequence>
+                              <xs:attribute name="hit_rank" form="unqualified" type="xs:string" />
+                              <xs:attribute name="peptide" form="unqualified" type="xs:string" />
+                              <xs:attribute name="peptide_prev_aa" form="unqualified" type="xs:string" />
+                              <xs:attribute name="peptide_next_aa" form="unqualified" type="xs:string" />
+                              <xs:attribute name="protein" form="unqualified" type="xs:string" />
+                              <xs:attribute name="num_tot_proteins" form="unqualified" type="xs:string" />
+                              <xs:attribute name="num_matched_ions" form="unqualified" type="xs:string" />
+                              <xs:attribute name="tot_num_ions" form="unqualified" type="xs:string" />
+                              <xs:attribute name="calc_neutral_pep_mass" form="unqualified" type="xs:string" />
+                              <xs:attribute name="massdiff" form="unqualified" type="xs:string" />
+                              <xs:attribute name="is_rejected" form="unqualified" type="xs:string" />
+                              <xs:attribute name="protein_descr" form="unqualified" type="xs:string" />
+                            </xs:complexType>
+                          </xs:element>
+                        </xs:sequence>
+                      </xs:complexType>
+                    </xs:element>
+                  </xs:sequence>
+                  <xs:attribute name="spectrum" form="unqualified" type="xs:string" />
+                  <xs:attribute name="start_scan" form="unqualified" type="xs:string" />
+                  <xs:attribute name="end_scan" form="unqualified" type="xs:string" />
+                  <xs:attribute name="retention_time_sec" form="unqualified" type="xs:string" />
+                  <xs:attribute name="precursor_neutral_mass" form="unqualified" type="xs:string" />
+                  <xs:attribute name="assumed_charge" form="unqualified" type="xs:string" />
+                  <xs:attribute name="index" form="unqualified" type="xs:string" />
+                </xs:complexType>
+              </xs:element>
+            </xs:sequence>
+            <xs:attribute name="base_name" form="unqualified" type="xs:string" />
+            <xs:attribute name="raw_data_type" form="unqualified" type="xs:string" />
+            <xs:attribute name="raw_data" form="unqualified" type="xs:string" />
+          </xs:complexType>
+        </xs:element>
+      </xs:sequence>
+      <xs:attribute name="date" form="unqualified" type="xs:string" />
+      <xs:attribute name="summary_xml" form="unqualified" type="xs:string" />
+    </xs:complexType>
+  </xs:element>
+  <xs:element name="NewDataSet" msdata:IsDataSet="true" msdata:UseCurrentLocale="true">
+    <xs:complexType>
+      <xs:choice minOccurs="0" maxOccurs="unbounded">
+        <xs:element ref="msms_pipeline_analysis" />
+      </xs:choice>
+    </xs:complexType>
+  </xs:element>
+</xs:schema>
