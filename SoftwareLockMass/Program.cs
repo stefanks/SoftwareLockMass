@@ -9,6 +9,7 @@ using CSMSL.IO;
 using CSMSL.Spectral;
 using System.IO;
 using System.Xml.Serialization;
+using System.Text.RegularExpressions;
 
 namespace SoftwareLockMass
 {
@@ -39,16 +40,17 @@ namespace SoftwareLockMass
             //Console.WriteLine(myMSDataFile[1].MassSpectrum.GetPeak(0));
             Console.WriteLine("Spectrum number 17, first peak:");
             Console.WriteLine(myMSDataFile[17].MassSpectrum.GetPeak(0));
+            Console.WriteLine(myMSDataFile[17].id);
 
             Console.WriteLine("Performing calibration");
             Console.WriteLine("Currently training points are ONLY the output from morpheus");
             Console.WriteLine("NOT using neighboring scans to train");
-            string pepFileLocation = @"E:\Stefan\data\morpheusRawOutput\120426_Jurkat_highLC_Frac1.pep.xml";
-            Calibrate(myMSDataFile, pepFileLocation);
+            string pepFileLocation = @"E:\Stefan\data\morpheusRawOutput\120426_Jurkat_highLC_Frac1.mzid";
+            List<CalibratedSpectrum> calibratedSpectra = Calibrate(myMSDataFile, pepFileLocation);
             
             Console.WriteLine("Creating _indexedmzMLConnection, and putting data in it");
 
-            indexedmzML _indexedmzMLConnection = GetMyIndexedMZml(myMSDataFile);
+            indexedmzML _indexedmzMLConnection = GetMyIndexedMZml(myMSDataFile, calibratedSpectra);
 
             Console.WriteLine("Writing calibrated mzML file");
             
@@ -73,38 +75,62 @@ namespace SoftwareLockMass
             Console.Read();
         }
 
-        private static void Calibrate(IMSDataFile<ISpectrum<IPeak>> myMSDataFile, string pepFileLocation)
+        private static List<CalibratedSpectrum> Calibrate(IMSDataFile<ISpectrum<IPeak>> myMSDataFile, string pepFileLocation)
         {
+            XmlSerializer _indexedSerializer = new XmlSerializer(typeof(mzIdentML.MzIdentMLType));
+            Stream stream = new FileStream(pepFileLocation, FileMode.Open);
             // Read the XML file into the variable
-            NewDataSet dd = new NewDataSet();
-            dd.ReadXml(pepFileLocation);
+            mzIdentML.MzIdentMLType dd = _indexedSerializer.Deserialize(stream) as mzIdentML.MzIdentMLType;
 
+            // Get the training data out of xml
             List<double[]> trainingData = new List<double[]>();
             List<double> labelData = new List<double>();
-            double qValue = -1;
             int matchIndex = 0;
+            bool passThreshold;
             do
             {
-                double [] trainingPoint = new double[2];
-                qValue = Convert.ToDouble(dd.spectrum_query[matchIndex].Getsearch_resultRows()[0].Getsearch_hitRows()[0].Getsearch_scoreRows()[1].value);
-                trainingPoint[0] = Convert.ToDouble(dd.spectrum_query[matchIndex].retention_time_sec);
-                trainingPoint[1] = Convert.ToDouble(dd.spectrum_query[matchIndex].precursor_neutral_mass)/ Convert.ToDouble(dd.spectrum_query[matchIndex].assumed_charge);
+                double[] trainingPoint = new double[2];
+
+                double experiemntalMassToCharge = dd.DataCollection.AnalysisData.SpectrumIdentificationList[0].SpectrumIdentificationResult[matchIndex].SpectrumIdentificationItem[0].experimentalMassToCharge;
+                double calculatedMassToCharge = dd.DataCollection.AnalysisData.SpectrumIdentificationList[0].SpectrumIdentificationResult[matchIndex].SpectrumIdentificationItem[0].calculatedMassToCharge;
+                int chargeState = dd.DataCollection.AnalysisData.SpectrumIdentificationList[0].SpectrumIdentificationResult[matchIndex].SpectrumIdentificationItem[0].chargeState;
+                string spectrumID = dd.DataCollection.AnalysisData.SpectrumIdentificationList[0].SpectrumIdentificationResult[matchIndex].spectrumID;
+                passThreshold = dd.DataCollection.AnalysisData.SpectrumIdentificationList[0].SpectrumIdentificationResult[matchIndex].SpectrumIdentificationItem[0].passThreshold;
+                int spectrumIndex = GetSpectrumIndexFromSpectrumID(spectrumID);
+                double retentionTime = myMSDataFile[spectrumIndex].RetentionTime;
+                trainingPoint[0] = calculatedMassToCharge;
+                trainingPoint[1] = retentionTime;
                 trainingData.Add(trainingPoint);
-                labelData.Add(Convert.ToDouble(dd.spectrum_query[matchIndex].Getsearch_resultRows()[0].Getsearch_hitRows()[0].massdiff));
+                labelData.Add((calculatedMassToCharge - experiemntalMassToCharge) * chargeState);
                 matchIndex += 1;
-            } while (qValue == 0);
+            } while (passThreshold == true);
 
+            // Create the calibration function
 
+            CalibrationFunction cf = new CalibrationFunction(trainingData, labelData);
 
+            List<CalibratedSpectrum> calibratedSpectra = new List<CalibratedSpectrum>();
+            for (int i = 0; i < myMSDataFile.LastSpectrumNumber; i++)
+            {
+                var s = myMSDataFile[i+1];
+                calibratedSpectra.Add(new CalibratedSpectrum());
+                var mzValues = s.MassSpectrum.GetMasses();
+                for (int j = 0; j < s.MassSpectrum.Count;j++)
+                {
+                    mzValues[j] += cf.calibrate(s.MassSpectrum.GetIntensities()[j], s.RetentionTime);
+                }
+                calibratedSpectra[i].AddMZValues(mzValues);
+            }
 
-
-            Console.WriteLine(dd.spectrum_query[0].spectrum);
-            NewDataSet.search_resultRow[] a = dd.spectrum_query[0].Getsearch_resultRows();
-            NewDataSet.search_hitRow[] b = a[0].Getsearch_hitRows();
-            Console.WriteLine(b[0].peptide);
+            return calibratedSpectra;
         }
 
-        private static indexedmzML GetMyIndexedMZml(IMSDataFile<ISpectrum<IPeak>> myMSDataFile)
+        private static int GetSpectrumIndexFromSpectrumID(string spectrumID)
+        {
+            return Convert.ToInt32(Regex.Match(spectrumID, @"\d+$").Value);
+        }
+
+        private static indexedmzML GetMyIndexedMZml(IMSDataFile<ISpectrum<IPeak>> myMSDataFile, List<CalibratedSpectrum> calibratedSpectra)
         {
             indexedmzML _indexedmzMLConnection = new indexedmzML();
             _indexedmzMLConnection.mzML = new mzMLType();
@@ -166,8 +192,8 @@ namespace SoftwareLockMass
             // ToDo: Finish the chromatogram writing!
             _indexedmzMLConnection.mzML.run.chromatogramList = new ChromatogramListType();
             _indexedmzMLConnection.mzML.run.chromatogramList.count = "1";
-            _indexedmzMLConnection.mzML.run.chromatogramList.chromatogram = new ChromatogramType[1];
-            _indexedmzMLConnection.mzML.run.chromatogramList.chromatogram[0] = new ChromatogramType();
+            _indexedmzMLConnection.mzML.run.chromatogramList.chromatogram = new CSMSL.IO.MzML.ChromatogramType[1];
+            _indexedmzMLConnection.mzML.run.chromatogramList.chromatogram[0] = new CSMSL.IO.MzML.ChromatogramType();
 
             _indexedmzMLConnection.mzML.run.spectrumList = new SpectrumListType();
             _indexedmzMLConnection.mzML.run.spectrumList.count = myMSDataFile.LastSpectrumNumber.ToString();
@@ -229,7 +255,7 @@ namespace SoftwareLockMass
 
                 // M/Z Data
                 _indexedmzMLConnection.mzML.run.spectrumList.spectrum[i].binaryDataArrayList.binaryDataArray[0] = new BinaryDataArrayType();
-                _indexedmzMLConnection.mzML.run.spectrumList.spectrum[i].binaryDataArrayList.binaryDataArray[0].binary = Mzml.ConvertDoublestoBase64(myMSDataFile[i + 1].MassSpectrum.GetMasses(), true, false);
+                _indexedmzMLConnection.mzML.run.spectrumList.spectrum[i].binaryDataArrayList.binaryDataArray[0].binary = Mzml.ConvertDoublestoBase64(calibratedSpectra[i].mzValues, true, false);
                 _indexedmzMLConnection.mzML.run.spectrumList.spectrum[i].binaryDataArrayList.binaryDataArray[0].cvParam = new CVParamType[3];
                 _indexedmzMLConnection.mzML.run.spectrumList.spectrum[i].binaryDataArrayList.binaryDataArray[0].cvParam[0] = new CVParamType();
                 _indexedmzMLConnection.mzML.run.spectrumList.spectrum[i].binaryDataArrayList.binaryDataArray[0].cvParam[0].accession = "MS:1000574";

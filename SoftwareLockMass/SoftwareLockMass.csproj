@@ -43,27 +43,14 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="pep.Designer.cs">
-      <AutoGen>True</AutoGen>
-      <DesignTime>True</DesignTime>
-      <DependentUpon>pep.xsd</DependentUpon>
-    </Compile>
+    <Compile Include="CalibratedSpectrum.cs" />
+    <Compile Include="CalibrationFunction.cs" />
+    <Compile Include="mzIdentML1_1_1.cs" />
     <Compile Include="Program.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
   <ItemGroup>
     <None Include="App.config" />
-    <None Include="pep.xsc">
-      <DependentUpon>pep.xsd</DependentUpon>
-    </None>
-    <None Include="pep.xsd">
-      <Generator>MSDataSetGenerator</Generator>
-      <LastGenOutput>pep.Designer.cs</LastGenOutput>
-      <SubType>Designer</SubType>
-    </None>
-    <None Include="pep.xss">
-      <DependentUpon>pep.xsd</DependentUpon>
-    </None>
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\..\CSMSL\CSMSL\CSMSL.csproj">
