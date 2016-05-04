@@ -11,6 +11,9 @@ using System.IO;
 using System.Xml.Serialization;
 using System.Text.RegularExpressions;
 using System.Diagnostics;
+using CSMSL;
+using CSMSL.Proteomics;
+using CSMSL.Chemistry;
 
 namespace SoftwareLockMass
 {
@@ -22,7 +25,7 @@ namespace SoftwareLockMass
 
             Console.WriteLine("Reading uncalibrated raw/mzML file");
 
-            IMSDataFile<ISpectrum<IPeak>> myMSDataFile = new Mzml(@"E:\Stefan\data\120426_Jurkat_highLC_Frac1.mzML");
+            IMSDataFile<ISpectrum<IPeak>> myMSDataFile = new Mzml(@"E:\Stefan\data\jurkat\120426_Jurkat_highLC_Frac1.mzML");
             //IMSDataFile<ISpectrum<IPeak>> myMSDataFile = new ThermoRawFile(@"E:\Stefan\data\120426_Jurkat_highLC_Frac1.raw");
             //IMSDataFile<ISpectrum<IPeak>> myMSDataFile = new ThermoRawFile(@"E:\Stefan\data\ToyData\Shew_246a_LCQa_15Oct04_Andro_0904-2_4-20.RAW");
             //IMSDataFile<ISpectrum<IPeak>> myMSDataFile = new Mzml(@"E:\Stefan\data\ToyData\tiny.pwiz.1.1.mzML");
@@ -59,7 +62,7 @@ namespace SoftwareLockMass
 
             Console.WriteLine("Writing calibrated mzML file");
             
-            string outputFilePath = @"E:\Stefan\data\calibratedOutput.mzML";
+            string outputFilePath = @"E:\Stefan\data\CalibratedOutput\calibratedOutput.mzML";
 
             Mzml.Write(outputFilePath, _indexedmzMLConnection);
 
@@ -93,11 +96,12 @@ namespace SoftwareLockMass
             List<double> labelData = new List<double>();
             int matchIndex = 0;
             bool passThreshold;
+
+            // Loop over all results from the mzIdentML file
             do
             {
                 // 3 because doing an intercept term here
                 double[] trainingPoint = new double[3];
-
                 double experimentalMassToCharge = dd.DataCollection.AnalysisData.SpectrumIdentificationList[0].SpectrumIdentificationResult[matchIndex].SpectrumIdentificationItem[0].experimentalMassToCharge;
                 double calculatedMassToCharge = dd.DataCollection.AnalysisData.SpectrumIdentificationList[0].SpectrumIdentificationResult[matchIndex].SpectrumIdentificationItem[0].calculatedMassToCharge;
                 int chargeState = dd.DataCollection.AnalysisData.SpectrumIdentificationList[0].SpectrumIdentificationResult[matchIndex].SpectrumIdentificationItem[0].chargeState;
@@ -108,11 +112,15 @@ namespace SoftwareLockMass
                 trainingPoint[0] = 1;
                 trainingPoint[1] = experimentalMassToCharge;
                 trainingPoint[2] = retentionTime;
-                //Debug.WriteLine(experimentalMassToCharge + " " + retentionTime);
                 trainingData.Add(trainingPoint);
-                //Debug.WriteLine(experimentalMassToCharge- calculatedMassToCharge);
-                labelData.Add(experimentalMassToCharge- calculatedMassToCharge);
+                labelData.Add(experimentalMassToCharge - calculatedMassToCharge);
+
                 matchIndex += 1;
+
+                Peptide peptide1 = new Peptide(dd.SequenceCollection.Peptide[matchIndex].PeptideSequence);
+                IsotopicDistribution dist = new IsotopicDistribution();
+                var distributionSpectrum = dist.CalculateDistribuition(peptide1.GetChemicalFormula(),5);
+
             } while (passThreshold == true);
 
             // Create the calibration function
@@ -126,9 +134,7 @@ namespace SoftwareLockMass
                 calibratedSpectra.Add(new CalibratedSpectrum());
                 var mzValues = s.MassSpectrum.GetMasses();
                 for (int j = 0; j < s.MassSpectrum.Count;j++)
-                {
                     mzValues[j] -= cf.calibrate(mzValues[j], s.RetentionTime);
-                }
                 calibratedSpectra[i].AddMZValues(mzValues);
             }
 

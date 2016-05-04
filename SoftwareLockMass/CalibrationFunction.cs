@@ -37,14 +37,7 @@ namespace SoftwareLockMass
 
         internal double calibrate(double mz, double retentionTime)
         {
-            //return 0.01;
-
             return a + b * mz + c * retentionTime;
-
-            // Quadratic model?
-            //return -1.023e-03 - 7.605e-08 * retentionTime - 8.595e-07 * mz + 4.056e-08 * (retentionTime * retentionTime) - 3.030e-09 * (mz *mz) + 2.911e-08 * (retentionTime * mz);
-
-
         }
     }
 }
