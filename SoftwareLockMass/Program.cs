@@ -19,14 +19,29 @@ namespace SoftwareLockMass
 {
     class Program
     {
+        // THIS PARAMETER IS FRAGILE!!!
+        // TUNED TO CORRESPOND TO SPECTROMETER OUTPUT
+        // BETTER SPECTROMETERS WOULD HAVE BETTER (LOWER) RESOLUIONS
+        // Parameter for isotopolouge distribution searching
+        private const double fineResolution = 0.08;
+
+        // My parameters!
+        private const int numIsotopologuesToConsider = 5;
+        private const double toleranceInMZforIsotopologueSearch = 0.01;
+        private const int numIsotopologuesNeededToBeConsideredIdentified = 2;
+
+
+        // Whether to do calibration, or to just write the file in my mzML way
+        private const bool calibrate = false;
+
         static void Main(string[] args)
         {
             Console.WriteLine("Welcome to my software lock mass implementation");
 
             Console.WriteLine("Reading uncalibrated raw/mzML file");
 
-            IMSDataFile<ISpectrum<IPeak>> myMSDataFile = new Mzml(@"E:\Stefan\data\jurkat\120426_Jurkat_highLC_Frac1.mzML");
-            //IMSDataFile<ISpectrum<IPeak>> myMSDataFile = new ThermoRawFile(@"E:\Stefan\data\120426_Jurkat_highLC_Frac1.raw");
+            //IMSDataFile<ISpectrum<IPeak>> myMSDataFile = new Mzml(@"E:\Stefan\data\jurkat\my.mzML");
+            IMSDataFile<ISpectrum<IPeak>> myMSDataFile = new ThermoRawFile(@"E:\Stefan\data\jurkat\120426_Jurkat_highLC_Frac1.raw");
             //IMSDataFile<ISpectrum<IPeak>> myMSDataFile = new ThermoRawFile(@"E:\Stefan\data\ToyData\Shew_246a_LCQa_15Oct04_Andro_0904-2_4-20.RAW");
             //IMSDataFile<ISpectrum<IPeak>> myMSDataFile = new Mzml(@"E:\Stefan\data\ToyData\tiny.pwiz.1.1.mzML");
 
@@ -42,26 +57,41 @@ namespace SoftwareLockMass
             //        Console.WriteLine((i + 1));
             //    }
             //}
-            
-            Console.WriteLine("Spectrum number 11278, peak num 5523:");
-              Console.WriteLine(myMSDataFile[11278].MassSpectrum.GetPeak(5523));
-            Console.WriteLine("Spectrum number 11279:");
-            Console.WriteLine(myMSDataFile[11279].id);
-            Console.WriteLine(myMSDataFile[11279].SelectedIonMZ);
 
-            Console.WriteLine("Performing calibration");
-            Console.WriteLine("Currently training points are ONLY the output from morpheus");
-            Console.WriteLine("NOT using neighboring scans to train"); 
-            string pepFileLocation = @"E:\Stefan\data\morpheusmzMLoutput1\120426_Jurkat_highLC_Frac1.mzid";
-            //string pepFileLocation = @"E:\Stefan\data\morpheusRawOutput\120426_Jurkat_highLC_Frac1.mzid";
-            List<CalibratedSpectrum> calibratedSpectra = Calibrate(myMSDataFile, pepFileLocation, numToCreate);
-            
+            Console.WriteLine("Spectrum number 2810, peak num 2394:");
+            Console.WriteLine(myMSDataFile[2810].MassSpectrum.GetPeak(2393));
+            Console.WriteLine("Spectrum number 2813:");
+            Console.WriteLine(myMSDataFile[2813].id);
+            Console.WriteLine(myMSDataFile[2813].SelectedIonMZ);
+
+            List<CalibratedSpectrum> calibratedSpectra;
+
+            if (calibrate)
+            {
+                Console.WriteLine("Performing calibration");
+                //string pepFileLocation = @"E:\Stefan\data\morpheusmzMLoutput1\120426_Jurkat_highLC_Frac1.mzid";
+                //string pepFileLocation = @"E:\Stefan\data\morpheusmzMLoutput1\my.mzid";
+                string pepFileLocation = @"E:\Stefan\data\morpheusRawOutput\120426_Jurkat_highLC_Frac1.mzid";
+                calibratedSpectra = Calibrate(myMSDataFile, pepFileLocation, numToCreate);
+            }
+            else
+            {
+                Console.WriteLine("Not calibrating, just copying mass arrays");
+                calibratedSpectra = new List<CalibratedSpectrum>();
+                for (int i = 0; i < numToCreate; i++)
+                {
+                    calibratedSpectra.Add(new CalibratedSpectrum());
+                    calibratedSpectra[i].AddMZValues(myMSDataFile[i + 1].MassSpectrum.GetMasses());
+                }
+            }
+
+
             Console.WriteLine("Creating _indexedmzMLConnection, and putting data in it");
 
             indexedmzML _indexedmzMLConnection = GetMyIndexedMZml(myMSDataFile, calibratedSpectra, numToCreate);
 
             Console.WriteLine("Writing calibrated mzML file");
-            
+
             string outputFilePath = @"E:\Stefan\data\CalibratedOutput\calibratedOutput.mzML";
 
             Mzml.Write(outputFilePath, _indexedmzMLConnection);
@@ -73,12 +103,13 @@ namespace SoftwareLockMass
             mzmlFile2.Open();
 
             Console.WriteLine("Number of spectra:{0}", mzmlFile2.LastSpectrumNumber);
-            
-            Console.WriteLine("Spectrum number 11278, peak num 5523:");
-            Console.WriteLine(mzmlFile2[11278].MassSpectrum.GetPeak(5523));
-            Console.WriteLine("Spectrum number 11279:");
-            Console.WriteLine(mzmlFile2[11279].id);
-            Console.WriteLine(mzmlFile2[11279].SelectedIonMZ);
+
+
+            Console.WriteLine("Spectrum number 2810, peak num 2394:");
+            Console.WriteLine(mzmlFile2[2810].MassSpectrum.GetPeak(2393));
+            Console.WriteLine("Spectrum number 2813:");
+            Console.WriteLine(mzmlFile2[2813].id);
+            Console.WriteLine(mzmlFile2[2813].SelectedIonMZ);
 
             Console.WriteLine("Finished running my software lock mass implementation");
             Console.Read();
@@ -97,6 +128,7 @@ namespace SoftwareLockMass
             int matchIndex = 0;
             bool passThreshold;
 
+
             // Loop over all results from the mzIdentML file
             do
             {
@@ -108,19 +140,75 @@ namespace SoftwareLockMass
                 string spectrumID = dd.DataCollection.AnalysisData.SpectrumIdentificationList[0].SpectrumIdentificationResult[matchIndex].spectrumID;
                 passThreshold = dd.DataCollection.AnalysisData.SpectrumIdentificationList[0].SpectrumIdentificationResult[matchIndex].SpectrumIdentificationItem[0].passThreshold;
                 int spectrumIndex = GetSpectrumIndexFromSpectrumID(spectrumID);
-                double retentionTime = myMSDataFile[spectrumIndex].RetentionTime;
+                double precursorRetentionTime = myMSDataFile[GetSpectrumIndexFromSpectrumID(myMSDataFile[spectrumIndex].PrecursorID)].RetentionTime;
                 trainingPoint[0] = 1;
                 trainingPoint[1] = experimentalMassToCharge;
-                trainingPoint[2] = retentionTime;
+                trainingPoint[2] = precursorRetentionTime;
                 trainingData.Add(trainingPoint);
                 labelData.Add(experimentalMassToCharge - calculatedMassToCharge);
 
+
+                Peptide peptide1 = new Peptide(dd.SequenceCollection.Peptide[matchIndex + 1].PeptideSequence);
+                IsotopicDistribution dist = new IsotopicDistribution(fineResolution);
+                var fullSpectrum = dist.CalculateDistribuition(peptide1.GetChemicalFormula());
+                var distributionSpectrum = fullSpectrum.FilterByNumberOfMostIntense(Math.Min(numIsotopologuesToConsider, fullSpectrum.Count));
+
+                var fullMS1spectrum = myMSDataFile[GetSpectrumIndexFromSpectrumID(myMSDataFile[spectrumIndex].PrecursorID)];
+
+                var rangeOfSpectrum = fullMS1spectrum.MzRange;
+                // Now search in the spectrum for peaks corresponding to the distribution, for the different charges
+
+
+                for (int chargeToLookAt = 1; ; chargeToLookAt++)
+                {
+                    Spectrum<MZPeak> chargedDistribution = distributionSpectrum.CorrectMasses(s => (s + chargeToLookAt * Constants.Proton) / chargeToLookAt);
+
+                    // Skip charge if it's too high
+                    if (chargedDistribution.LastMZ > rangeOfSpectrum.Maximum)
+                        continue;
+                    // Stop if going too low
+                    if (chargedDistribution.GetBasePeak().MZ < rangeOfSpectrum.Minimum)
+                        break;
+
+                    int numIdentifiedIsotopologues = 0;
+
+
+                    List<double[]> consideredIsotopologueTrainingPoints = new List<double[]>();
+                    List<double> consideredIsotopologueLabels = new List<double>();
+                    // Look for individual isotopologues
+                    for (int isotopologueIndex = 0; isotopologueIndex < numIsotopologuesToConsider; isotopologueIndex++)
+                    {
+                        var closestPeak = fullMS1spectrum.MassSpectrum.GetClosestPeak(chargedDistribution[isotopologueIndex].MZ);
+                        if (Math.Abs(chargedDistribution[isotopologueIndex].MZ - closestPeak.X) < toleranceInMZforIsotopologueSearch)
+                        {
+                            // Identified one!!! Woohoo.
+
+                            numIdentifiedIsotopologues++;
+
+                            double experimentalMassToChargeOfIsotopologue = closestPeak.X;
+                            double retentionTimeOfIsotopologue = precursorRetentionTime;
+                            double calculatedMassToChargeOfIsotopologue = chargedDistribution[isotopologueIndex].MZ;
+
+                            double[] trainingPointFromIsotopologue = new double[3];
+                            trainingPointFromIsotopologue[0] = 1;
+                            trainingPointFromIsotopologue[1] = experimentalMassToChargeOfIsotopologue;
+                            trainingPointFromIsotopologue[2] = retentionTimeOfIsotopologue;
+                            consideredIsotopologueTrainingPoints.Add(trainingPointFromIsotopologue);
+                            consideredIsotopologueLabels.Add(experimentalMassToChargeOfIsotopologue - calculatedMassToChargeOfIsotopologue);
+
+                        }
+                    }
+
+                    if (numIdentifiedIsotopologues < numIsotopologuesNeededToBeConsideredIdentified)
+                        break;
+                    else
+                    {
+                        trainingData.AddRange(consideredIsotopologueTrainingPoints);
+                        labelData.AddRange(consideredIsotopologueLabels);
+                    }
+                }
+
                 matchIndex += 1;
-
-                Peptide peptide1 = new Peptide(dd.SequenceCollection.Peptide[matchIndex].PeptideSequence);
-                IsotopicDistribution dist = new IsotopicDistribution();
-                var distributionSpectrum = dist.CalculateDistribuition(peptide1.GetChemicalFormula(),5);
-
             } while (passThreshold == true);
 
             // Create the calibration function
@@ -130,10 +218,10 @@ namespace SoftwareLockMass
             List<CalibratedSpectrum> calibratedSpectra = new List<CalibratedSpectrum>();
             for (int i = 0; i < numToCreate; i++)
             {
-                var s = myMSDataFile[i+1];
+                var s = myMSDataFile[i + 1];
                 calibratedSpectra.Add(new CalibratedSpectrum());
                 var mzValues = s.MassSpectrum.GetMasses();
-                for (int j = 0; j < s.MassSpectrum.Count;j++)
+                for (int j = 0; j < s.MassSpectrum.Count; j++)
                     mzValues[j] -= cf.calibrate(mzValues[j], s.RetentionTime);
                 calibratedSpectra[i].AddMZValues(mzValues);
             }
@@ -152,13 +240,13 @@ namespace SoftwareLockMass
             _indexedmzMLConnection.mzML = new mzMLType();
             _indexedmzMLConnection.mzML.version = "1";
 
-                _indexedmzMLConnection.mzML.cvList = new CVListType();
-                _indexedmzMLConnection.mzML.cvList.count = "1";
-                _indexedmzMLConnection.mzML.cvList.cv = new CVType[1];
-                _indexedmzMLConnection.mzML.cvList.cv[0] = new CVType();
-                _indexedmzMLConnection.mzML.cvList.cv[0].URI = @"https://raw.githubusercontent.com/HUPO-PSI/psi-ms-CV/master/psi-ms.obo";
-                _indexedmzMLConnection.mzML.cvList.cv[0].fullName = "Proteomics Standards Initiative Mass Spectrometry Ontology";
-                _indexedmzMLConnection.mzML.cvList.cv[0].id = "MS";
+            _indexedmzMLConnection.mzML.cvList = new CVListType();
+            _indexedmzMLConnection.mzML.cvList.count = "1";
+            _indexedmzMLConnection.mzML.cvList.cv = new CVType[1];
+            _indexedmzMLConnection.mzML.cvList.cv[0] = new CVType();
+            _indexedmzMLConnection.mzML.cvList.cv[0].URI = @"https://raw.githubusercontent.com/HUPO-PSI/psi-ms-CV/master/psi-ms.obo";
+            _indexedmzMLConnection.mzML.cvList.cv[0].fullName = "Proteomics Standards Initiative Mass Spectrometry Ontology";
+            _indexedmzMLConnection.mzML.cvList.cv[0].id = "MS";
 
             _indexedmzMLConnection.mzML.fileDescription = new FileDescriptionType();
             _indexedmzMLConnection.mzML.fileDescription.fileContent = new ParamGroupType();
@@ -224,7 +312,7 @@ namespace SoftwareLockMass
                 _indexedmzMLConnection.mzML.run.spectrumList.spectrum[i].index = i.ToString();
                 _indexedmzMLConnection.mzML.run.spectrumList.spectrum[i].id = myMSDataFile[i + 1].id;
 
-                _indexedmzMLConnection.mzML.run.spectrumList.spectrum[i].cvParam = new CVParamType[5];
+                _indexedmzMLConnection.mzML.run.spectrumList.spectrum[i].cvParam = new CVParamType[7];
 
                 _indexedmzMLConnection.mzML.run.spectrumList.spectrum[i].cvParam[0] = new CVParamType();
 
@@ -249,7 +337,7 @@ namespace SoftwareLockMass
                     _indexedmzMLConnection.mzML.run.spectrumList.spectrum[i].precursorList.precursor[0].selectedIonList.selectedIon[0].cvParam = new CVParamType[3];
                     _indexedmzMLConnection.mzML.run.spectrumList.spectrum[i].precursorList.precursor[0].selectedIonList.selectedIon[0].cvParam[0] = new CVParamType();
                     _indexedmzMLConnection.mzML.run.spectrumList.spectrum[i].precursorList.precursor[0].selectedIonList.selectedIon[0].cvParam[0].name = "selected ion m/z";
-                    _indexedmzMLConnection.mzML.run.spectrumList.spectrum[i].precursorList.precursor[0].selectedIonList.selectedIon[0].cvParam[0].value = myMSDataFile[i + 1].SelectedIonMZ.ToString();
+                    _indexedmzMLConnection.mzML.run.spectrumList.spectrum[i].precursorList.precursor[0].selectedIonList.selectedIon[0].cvParam[0].value =
                     _indexedmzMLConnection.mzML.run.spectrumList.spectrum[i].precursorList.precursor[0].selectedIonList.selectedIon[0].cvParam[0].accession = "MS:1000744";
                     _indexedmzMLConnection.mzML.run.spectrumList.spectrum[i].precursorList.precursor[0].selectedIonList.selectedIon[0].cvParam[1] = new CVParamType();
                     _indexedmzMLConnection.mzML.run.spectrumList.spectrum[i].precursorList.precursor[0].selectedIonList.selectedIon[0].cvParam[1].name = "charge state";
@@ -297,6 +385,20 @@ namespace SoftwareLockMass
                 _indexedmzMLConnection.mzML.run.spectrumList.spectrum[i].cvParam[4].value = myMSDataFile[i + 1].id;
 
 
+                // Lowest observed mz
+                _indexedmzMLConnection.mzML.run.spectrumList.spectrum[i].cvParam[5] = new CVParamType();
+                _indexedmzMLConnection.mzML.run.spectrumList.spectrum[i].cvParam[5].name = "lowest observed m/z";
+                _indexedmzMLConnection.mzML.run.spectrumList.spectrum[i].cvParam[5].accession = "MS:1000528";
+                _indexedmzMLConnection.mzML.run.spectrumList.spectrum[i].cvParam[5].value = myMSDataFile[i + 1].MassSpectrum.FirstMZ.ToString();
+
+
+                // Highest observed mz
+                _indexedmzMLConnection.mzML.run.spectrumList.spectrum[i].cvParam[6] = new CVParamType();
+                _indexedmzMLConnection.mzML.run.spectrumList.spectrum[i].cvParam[6].name = "highest observed m/z";
+                _indexedmzMLConnection.mzML.run.spectrumList.spectrum[i].cvParam[6].accession = "MS:1000527";
+                _indexedmzMLConnection.mzML.run.spectrumList.spectrum[i].cvParam[6].value = myMSDataFile[i + 1].MassSpectrum.LastMZ.ToString();
+
+
 
                 // Retention time
                 _indexedmzMLConnection.mzML.run.spectrumList.spectrum[i].scanList = new ScanListType();
@@ -329,7 +431,7 @@ namespace SoftwareLockMass
                 _indexedmzMLConnection.mzML.run.spectrumList.spectrum[i].binaryDataArrayList.binaryDataArray[0].cvParam[1] = new CVParamType();
                 _indexedmzMLConnection.mzML.run.spectrumList.spectrum[i].binaryDataArrayList.binaryDataArray[0].cvParam[1].accession = "MS:1000523";
                 _indexedmzMLConnection.mzML.run.spectrumList.spectrum[i].binaryDataArrayList.binaryDataArray[0].cvParam[1].name = "64-bit float";
-               //_indexedmzMLConnection.mzML.run.spectrumList.spectrum[i].binaryDataArrayList.binaryDataArray[0].cvParam[0] = new CVParamType();
+                //_indexedmzMLConnection.mzML.run.spectrumList.spectrum[i].binaryDataArrayList.binaryDataArray[0].cvParam[0] = new CVParamType();
                 //_indexedmzMLConnection.mzML.run.spectrumList.spectrum[i].binaryDataArrayList.binaryDataArray[0].cvParam[0].accession = "MS:1000574";
                 //_indexedmzMLConnection.mzML.run.spectrumList.spectrum[i].binaryDataArrayList.binaryDataArray[0].cvParam[0].name = "zlib compression";
 

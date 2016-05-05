@@ -26,7 +26,7 @@ namespace SoftwareLockMass
 
             var X = M.DenseOfRowArrays(trainingData);
             var y = V.DenseOfEnumerable(labelData);
-            
+
             var coeffs = X.Solve(y);
 
             a = coeffs[0];
