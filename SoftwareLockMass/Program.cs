@@ -26,13 +26,17 @@ namespace SoftwareLockMass
         private const double fineResolution = 0.08;
 
         // My parameters!
-        private const int numIsotopologuesToConsider = 5;
+        private const int numIsotopologuesToConsider = 10;
         private const double toleranceInMZforIsotopologueSearch = 0.01;
         private const int numIsotopologuesNeededToBeConsideredIdentified = 2;
+        private const int numChargesNeededToBeConsideredIdentified = 2;
+        // NEED TO TRY 1e3!!
+        private const double intensityCutoff = 1e3; // 1e5 is too sparse. 1e4 is nice. NEED TO TRY 1e3!! 0 is a noisy mess
+        private const double thresholdPassParameter = 0.01; // Or double.MaxValue or 0.01?
 
 
         // Whether to do calibration, or to just write the file in my mzML way
-        private const bool calibrate = false;
+        private const bool calibrate = true;
 
         static void Main(string[] args)
         {
@@ -40,10 +44,8 @@ namespace SoftwareLockMass
 
             Console.WriteLine("Reading uncalibrated raw/mzML file");
 
-            //IMSDataFile<ISpectrum<IPeak>> myMSDataFile = new Mzml(@"E:\Stefan\data\jurkat\my.mzML");
-            IMSDataFile<ISpectrum<IPeak>> myMSDataFile = new ThermoRawFile(@"E:\Stefan\data\jurkat\120426_Jurkat_highLC_Frac1.raw");
-            //IMSDataFile<ISpectrum<IPeak>> myMSDataFile = new ThermoRawFile(@"E:\Stefan\data\ToyData\Shew_246a_LCQa_15Oct04_Andro_0904-2_4-20.RAW");
-            //IMSDataFile<ISpectrum<IPeak>> myMSDataFile = new Mzml(@"E:\Stefan\data\ToyData\tiny.pwiz.1.1.mzML");
+            //IMSDataFile<ISpectrum<IPeak>> myMSDataFile = new ThermoRawFile(@"E:\Stefan\data\jurkat\120426_Jurkat_highLC_Frac1.raw");
+            IMSDataFile<ISpectrum<IPeak>> myMSDataFile = new Mzml(@"E:\Stefan\data\jurkat\MyUncalibrated.mzML");
 
             myMSDataFile.Open();
 
@@ -62,16 +64,14 @@ namespace SoftwareLockMass
             Console.WriteLine(myMSDataFile[2810].MassSpectrum.GetPeak(2393));
             Console.WriteLine("Spectrum number 2813:");
             Console.WriteLine(myMSDataFile[2813].id);
-            Console.WriteLine(myMSDataFile[2813].SelectedIonMZ);
+            Console.WriteLine(myMSDataFile[2813].SelectedIonMonoisotopicMZ);
 
             List<CalibratedSpectrum> calibratedSpectra;
 
             if (calibrate)
             {
                 Console.WriteLine("Performing calibration");
-                //string pepFileLocation = @"E:\Stefan\data\morpheusmzMLoutput1\120426_Jurkat_highLC_Frac1.mzid";
-                //string pepFileLocation = @"E:\Stefan\data\morpheusmzMLoutput1\my.mzid";
-                string pepFileLocation = @"E:\Stefan\data\morpheusRawOutput\120426_Jurkat_highLC_Frac1.mzid";
+                string pepFileLocation = @"E:\Stefan\data\morpheusmzMLoutput1\MyUncalibrated.mzid";
                 calibratedSpectra = Calibrate(myMSDataFile, pepFileLocation, numToCreate);
             }
             else
@@ -109,7 +109,7 @@ namespace SoftwareLockMass
             Console.WriteLine(mzmlFile2[2810].MassSpectrum.GetPeak(2393));
             Console.WriteLine("Spectrum number 2813:");
             Console.WriteLine(mzmlFile2[2813].id);
-            Console.WriteLine(mzmlFile2[2813].SelectedIonMZ);
+            Console.WriteLine(mzmlFile2[2813].SelectedIonMonoisotopicMZ);
 
             Console.WriteLine("Finished running my software lock mass implementation");
             Console.Read();
@@ -125,30 +125,52 @@ namespace SoftwareLockMass
             // Get the training data out of xml
             List<double[]> trainingData = new List<double[]>();
             List<double> labelData = new List<double>();
-            int matchIndex = 0;
-            bool passThreshold;
+            bool passThreshold=true;
 
+
+            XmlSerializer unimodSerializer = new XmlSerializer(typeof(unimod));
+            Stream stream2 = new FileStream(@"E:\Stefan\data\Unimod\unimod_tables.xml", FileMode.Open);
+            // Read the XML file into the variable
+            unimod unimodDeserialized = unimodSerializer.Deserialize(stream2) as unimod;
 
             // Loop over all results from the mzIdentML file
-            do
-            {
-                // 3 because doing an intercept term here
-                double[] trainingPoint = new double[3];
+            for (int matchIndex = 0; matchIndex < dd.DataCollection.AnalysisData.SpectrumIdentificationList[0].SpectrumIdentificationResult.Length && passThreshold == true; matchIndex++) { 
+                if (dd.SequenceCollection.PeptideEvidence[matchIndex].isDecoy)
+                {
+                    continue;
+                }
+
                 double experimentalMassToCharge = dd.DataCollection.AnalysisData.SpectrumIdentificationList[0].SpectrumIdentificationResult[matchIndex].SpectrumIdentificationItem[0].experimentalMassToCharge;
                 double calculatedMassToCharge = dd.DataCollection.AnalysisData.SpectrumIdentificationList[0].SpectrumIdentificationResult[matchIndex].SpectrumIdentificationItem[0].calculatedMassToCharge;
                 int chargeState = dd.DataCollection.AnalysisData.SpectrumIdentificationList[0].SpectrumIdentificationResult[matchIndex].SpectrumIdentificationItem[0].chargeState;
                 string spectrumID = dd.DataCollection.AnalysisData.SpectrumIdentificationList[0].SpectrumIdentificationResult[matchIndex].spectrumID;
-                passThreshold = dd.DataCollection.AnalysisData.SpectrumIdentificationList[0].SpectrumIdentificationResult[matchIndex].SpectrumIdentificationItem[0].passThreshold;
+
+
+                //passThreshold = dd.DataCollection.AnalysisData.SpectrumIdentificationList[0].SpectrumIdentificationResult[matchIndex].SpectrumIdentificationItem[0].passThreshold;
+
+                passThreshold = (Convert.ToDouble(dd.DataCollection.AnalysisData.SpectrumIdentificationList[0].SpectrumIdentificationResult[matchIndex].SpectrumIdentificationItem[0].cvParam[0].value) < thresholdPassParameter);
+
                 int spectrumIndex = GetSpectrumIndexFromSpectrumID(spectrumID);
                 double precursorRetentionTime = myMSDataFile[GetSpectrumIndexFromSpectrumID(myMSDataFile[spectrumIndex].PrecursorID)].RetentionTime;
-                trainingPoint[0] = 1;
-                trainingPoint[1] = experimentalMassToCharge;
-                trainingPoint[2] = precursorRetentionTime;
-                trainingData.Add(trainingPoint);
-                labelData.Add(experimentalMassToCharge - calculatedMassToCharge);
+                var errorInMZ = experimentalMassToCharge - calculatedMassToCharge;
 
 
-                Peptide peptide1 = new Peptide(dd.SequenceCollection.Peptide[matchIndex + 1].PeptideSequence);
+                Peptide peptide1 = new Peptide(dd.SequenceCollection.Peptide[matchIndex].PeptideSequence);
+                if (dd.SequenceCollection.Peptide[matchIndex].Modification != null)
+                {
+                    for (int i = 0; i < dd.SequenceCollection.Peptide[matchIndex].Modification.Length; i++)
+                    {
+                        var residueNumber = dd.SequenceCollection.Peptide[matchIndex].Modification[i].location;
+                        string unimodAcession = dd.SequenceCollection.Peptide[matchIndex].Modification[i].cvParam[0].accession;
+                        var indexToLookFor = GetLastNumberFromString(unimodAcession) - 1;
+                        while (unimodDeserialized.modifications[indexToLookFor].record_id != GetLastNumberFromString(unimodAcession))
+                            indexToLookFor--;
+                        string theFormula = unimodDeserialized.modifications[indexToLookFor].composition;
+                        ChemicalFormulaModification modification = new ChemicalFormulaModification(ConvertToCSMSLFormula(theFormula));
+                        peptide1.AddModification(modification, residueNumber);
+                    }
+
+                }
                 IsotopicDistribution dist = new IsotopicDistribution(fineResolution);
                 var fullSpectrum = dist.CalculateDistribuition(peptide1.GetChemicalFormula());
                 var distributionSpectrum = fullSpectrum.FilterByNumberOfMostIntense(Math.Min(numIsotopologuesToConsider, fullSpectrum.Count));
@@ -156,9 +178,15 @@ namespace SoftwareLockMass
                 var fullMS1spectrum = myMSDataFile[GetSpectrumIndexFromSpectrumID(myMSDataFile[spectrumIndex].PrecursorID)];
 
                 var rangeOfSpectrum = fullMS1spectrum.MzRange;
+
+                var spectrumOfHighIntensities = fullMS1spectrum.MassSpectrum.FilterByIntensity(intensityCutoff, double.MaxValue);
+
                 // Now search in the spectrum for peaks corresponding to the distribution, for the different charges
 
 
+                List<double[]> consideredChargeTrainingPoints = new List<double[]>();
+                List<double> consideredChargeLabels = new List<double>();
+                int numIdentifiedCharges = 0;
                 for (int chargeToLookAt = 1; ; chargeToLookAt++)
                 {
                     Spectrum<MZPeak> chargedDistribution = distributionSpectrum.CorrectMasses(s => (s + chargeToLookAt * Constants.Proton) / chargeToLookAt);
@@ -178,8 +206,12 @@ namespace SoftwareLockMass
                     // Look for individual isotopologues
                     for (int isotopologueIndex = 0; isotopologueIndex < numIsotopologuesToConsider; isotopologueIndex++)
                     {
-                        var closestPeak = fullMS1spectrum.MassSpectrum.GetClosestPeak(chargedDistribution[isotopologueIndex].MZ);
-                        if (Math.Abs(chargedDistribution[isotopologueIndex].MZ - closestPeak.X) < toleranceInMZforIsotopologueSearch)
+                        var closestPeak = spectrumOfHighIntensities.GetClosestPeak(chargedDistribution[isotopologueIndex].MZ);
+
+                        // intensityCutoff
+
+
+                        if (Math.Abs(chargedDistribution[isotopologueIndex].MZ - closestPeak.X) < Math.Max(toleranceInMZforIsotopologueSearch, Math.Abs(errorInMZ)))
                         {
                             // Identified one!!! Woohoo.
 
@@ -203,17 +235,30 @@ namespace SoftwareLockMass
                         break;
                     else
                     {
-                        trainingData.AddRange(consideredIsotopologueTrainingPoints);
-                        labelData.AddRange(consideredIsotopologueLabels);
+                        consideredChargeTrainingPoints.AddRange(consideredIsotopologueTrainingPoints);
+                        consideredChargeLabels.AddRange(consideredIsotopologueLabels);
+                        numIdentifiedCharges++;
                     }
                 }
-
-                matchIndex += 1;
-            } while (passThreshold == true);
+                if (numIdentifiedCharges < numChargesNeededToBeConsideredIdentified) {
+                    continue;
+                }
+                else
+                {
+                    trainingData.AddRange(consideredChargeTrainingPoints);
+                    labelData.AddRange(consideredChargeLabels);
+                }
+                
+            }
 
             // Create the calibration function
 
-            CalibrationFunction cf = new CalibrationFunction(trainingData, labelData);
+            WriteTrainingDataToFiles(trainingData, labelData);
+
+
+            //CalibrationFunction cf = new CalibrationFunction(trainingData, labelData);
+            //var cf = new CalibrationFunctionHack(trainingData, labelData);
+            var cf = new CalibrationFunctionHackMean(trainingData, labelData);
 
             List<CalibratedSpectrum> calibratedSpectra = new List<CalibratedSpectrum>();
             for (int i = 0; i < numToCreate; i++)
@@ -229,9 +274,49 @@ namespace SoftwareLockMass
             return calibratedSpectra;
         }
 
+        private static string ConvertToCSMSLFormula(string theFormula)
+        {
+            theFormula = Regex.Replace(theFormula, @"[\s()]", "");
+            return theFormula;
+        }
+
+        private static void WriteTrainingDataToFiles(List<double[]> trainingData, List<double> labelData)
+        {
+            using (System.IO.StreamWriter file =
+                new System.IO.StreamWriter(@"E:\Stefan\data\CalibratedOutput\trainingData1.dat"))
+            {
+                foreach (double[] d in trainingData)
+                {
+                    file.WriteLine(d[1]);
+                }
+            }
+
+            using (System.IO.StreamWriter file =
+                new System.IO.StreamWriter(@"E:\Stefan\data\CalibratedOutput\trainingData2.dat"))
+            {
+                foreach (double[] d in trainingData)
+                {
+                    file.WriteLine(d[2]);
+                }
+            }
+
+            using (System.IO.StreamWriter file =
+                new System.IO.StreamWriter(@"E:\Stefan\data\CalibratedOutput\labelData.dat"))
+            {
+                foreach (double d in labelData)
+                {
+                    file.WriteLine(d);
+                }
+            }
+        }
+
         private static int GetSpectrumIndexFromSpectrumID(string spectrumID)
         {
             return Convert.ToInt32(Regex.Match(spectrumID, @"\d+$").Value);
+        }
+        private static int GetLastNumberFromString(string s)
+        {
+            return Convert.ToInt32(Regex.Match(s, @"\d+$").Value);
         }
 
         private static indexedmzML GetMyIndexedMZml(IMSDataFile<ISpectrum<IPeak>> myMSDataFile, List<CalibratedSpectrum> calibratedSpectra, int numToCreate)
@@ -337,7 +422,7 @@ namespace SoftwareLockMass
                     _indexedmzMLConnection.mzML.run.spectrumList.spectrum[i].precursorList.precursor[0].selectedIonList.selectedIon[0].cvParam = new CVParamType[3];
                     _indexedmzMLConnection.mzML.run.spectrumList.spectrum[i].precursorList.precursor[0].selectedIonList.selectedIon[0].cvParam[0] = new CVParamType();
                     _indexedmzMLConnection.mzML.run.spectrumList.spectrum[i].precursorList.precursor[0].selectedIonList.selectedIon[0].cvParam[0].name = "selected ion m/z";
-                    _indexedmzMLConnection.mzML.run.spectrumList.spectrum[i].precursorList.precursor[0].selectedIonList.selectedIon[0].cvParam[0].value =
+                    _indexedmzMLConnection.mzML.run.spectrumList.spectrum[i].precursorList.precursor[0].selectedIonList.selectedIon[0].cvParam[0].value = myMSDataFile[i + 1].SelectedIonMonoisotopicMZ.ToString();
                     _indexedmzMLConnection.mzML.run.spectrumList.spectrum[i].precursorList.precursor[0].selectedIonList.selectedIon[0].cvParam[0].accession = "MS:1000744";
                     _indexedmzMLConnection.mzML.run.spectrumList.spectrum[i].precursorList.precursor[0].selectedIonList.selectedIon[0].cvParam[1] = new CVParamType();
                     _indexedmzMLConnection.mzML.run.spectrumList.spectrum[i].precursorList.precursor[0].selectedIonList.selectedIon[0].cvParam[1].name = "charge state";
@@ -345,7 +430,7 @@ namespace SoftwareLockMass
                     _indexedmzMLConnection.mzML.run.spectrumList.spectrum[i].precursorList.precursor[0].selectedIonList.selectedIon[0].cvParam[1].accession = "MS:1000041";
                     _indexedmzMLConnection.mzML.run.spectrumList.spectrum[i].precursorList.precursor[0].selectedIonList.selectedIon[0].cvParam[2] = new CVParamType();
                     _indexedmzMLConnection.mzML.run.spectrumList.spectrum[i].precursorList.precursor[0].selectedIonList.selectedIon[0].cvParam[2].name = "peak intensity";
-                    _indexedmzMLConnection.mzML.run.spectrumList.spectrum[i].precursorList.precursor[0].selectedIonList.selectedIon[0].cvParam[2].value = myMSDataFile[i + 1].SelectedIonIntensity.ToString();
+                    _indexedmzMLConnection.mzML.run.spectrumList.spectrum[i].precursorList.precursor[0].selectedIonList.selectedIon[0].cvParam[2].value = myMSDataFile[i + 1].SelectedIonIsolationIntensity.ToString();
                     _indexedmzMLConnection.mzML.run.spectrumList.spectrum[i].precursorList.precursor[0].selectedIonList.selectedIon[0].cvParam[2].accession = "MS:1000042";
 
 
