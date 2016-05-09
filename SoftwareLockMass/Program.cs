@@ -60,7 +60,8 @@ namespace SoftwareLockMass
             //CalibrationFunction cf = new IdentityCalibrationFunction();
             //CalibrationFunction cf = new ConstantCalibrationFunction();
             //CalibrationFunction cf = new LinearCalibrationFunction();
-            CalibrationFunction cf = new QuadraticCalibrationFunction();
+            //CalibrationFunction cf = new QuadraticCalibrationFunction();
+            CalibrationFunction cf = new CubicCalibrationFunction();
             cf.Train(trainingPoints);
 
             Console.WriteLine("The Mean Squared Error for the model is " + cf.getMSE(trainingPoints));

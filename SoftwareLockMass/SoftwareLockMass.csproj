@@ -54,6 +54,7 @@
     <Compile Include="CalibrationFunctions\CalibrationFunctionHackMean.cs" />
     <Compile Include="CalibrationFunctions\CalibrationFunctionHack.cs" />
     <Compile Include="CalibrationFunctions\IdentityCalibrationFunction.cs" />
+    <Compile Include="CalibrationFunctions\CubicCalibrationFunction.cs" />
     <Compile Include="CalibrationFunctions\QuadraticCalibrationFunction.cs" />
     <Compile Include="CalibrationFunctions\LinearCalibrationFunction.cs" />
     <Compile Include="CalibrationFunctions\DataPoint.cs" />
