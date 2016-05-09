@@ -257,8 +257,9 @@ namespace SoftwareLockMass
 
 
             //CalibrationFunction cf = new CalibrationFunction(trainingData, labelData);
-            //var cf = new CalibrationFunctionHack(trainingData, labelData);
-            var cf = new CalibrationFunctionHackMean(trainingData, labelData);
+            // var cf = new CalibrationFunctionHack(trainingData, labelData);
+            // var cf = new CalibrationFunctionHackMean(trainingData, labelData);
+            var cf = new CalibrationFunctionClustering(trainingData, labelData);
 
             List<CalibratedSpectrum> calibratedSpectra = new List<CalibratedSpectrum>();
             for (int i = 0; i < numToCreate; i++)

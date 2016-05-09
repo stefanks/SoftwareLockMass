@@ -49,6 +49,7 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="CalibratedSpectrum.cs" />
+    <Compile Include="CalibrationFunctionClustering.cs" />
     <Compile Include="CalibrationFunctionHackMean.cs" />
     <Compile Include="CalibrationFunctionHack.cs" />
     <Compile Include="CalibrationFunction.cs" />
