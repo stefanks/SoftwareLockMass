@@ -19,15 +19,23 @@ namespace SoftwareLockMass
 {
     class Program
     {
+        // Important for every setting
+        //private const double thresholdPassParameter = 0.1; // Or double.MaxValue or 0.01?
+        //private const double thresholdPassParameter = 0; // Or double.MaxValue or 0.01?
+        private const double thresholdPassParameter = double.MaxValue; // Or double.MaxValue or 0.01?
+
+
         // My parameters!
-        private const bool ONLY_MZID_DATAPOINTS = true;
+        private const bool MZID_MASS_DATA = true;
+        
+
+
         private const int numIsotopologuesToConsider = 10;
         private const double toleranceInMZforIsotopologueSearch = 0.01;
         private const int numIsotopologuesNeededToBeConsideredIdentified = 2;
         private const int numChargesNeededToBeConsideredIdentified = 2;
         // NEED TO TRY 1e3!!
         private const double intensityCutoff = 1e4; // 1e5 is too sparse. 1e4 is nice. NEED TO TRY 1e3!! 0 is a noisy mess
-        private const double thresholdPassParameter = 0.1; // Or double.MaxValue or 0.01?
 
         private const string origDataFile = @"E:\Stefan\data\jurkat\MyUncalibrated.mzML";
         private const string mzidFile = @"E:\Stefan\data\morpheusmzMLoutput1\MyUncalibrated.mzid";
@@ -61,7 +69,8 @@ namespace SoftwareLockMass
             //CalibrationFunction cf = new ConstantCalibrationFunction();
             //CalibrationFunction cf = new LinearCalibrationFunction();
             //CalibrationFunction cf = new QuadraticCalibrationFunction();
-            CalibrationFunction cf = new CubicCalibrationFunction();
+            // CalibrationFunction cf = new CubicCalibrationFunction();
+            CalibrationFunction cf = new QuarticCalibrationFunction();
             cf.Train(trainingPoints);
 
             Console.WriteLine("The Mean Squared Error for the model is " + cf.getMSE(trainingPoints));
@@ -142,40 +151,41 @@ namespace SoftwareLockMass
                 double experimentalMassToCharge = dd.DataCollection.AnalysisData.SpectrumIdentificationList[0].SpectrumIdentificationResult[matchIndex].SpectrumIdentificationItem[0].experimentalMassToCharge;
                 string ms2spectrumID = dd.DataCollection.AnalysisData.SpectrumIdentificationList[0].SpectrumIdentificationResult[matchIndex].spectrumID;
                 int ms2spectrumIndex = GetLastNumberFromString(ms2spectrumID);
-                if (ONLY_MZID_DATAPOINTS)
+                if (MZID_MASS_DATA)
                 {
-                    // DON'T REALLY NEED THESE!
                     double calculatedMassToCharge = dd.DataCollection.AnalysisData.SpectrumIdentificationList[0].SpectrumIdentificationResult[matchIndex].SpectrumIdentificationItem[0].calculatedMassToCharge;
                     double errorInMZ = experimentalMassToCharge - calculatedMassToCharge;
                     double precursorRetentionTime = myMSDataFile[GetLastNumberFromString(myMSDataFile[ms2spectrumIndex].PrecursorID)].RetentionTime;
                     trainingPointsToReturn.Add(new TrainingPoint(new DataPoint(experimentalMassToCharge, precursorRetentionTime), errorInMZ));
                     continue;
                 }
-                ////int chargeState = dd.DataCollection.AnalysisData.SpectrumIdentificationList[0].SpectrumIdentificationResult[matchIndex].SpectrumIdentificationItem[0].chargeState;
-
-
-                //// Get the peptide with modifications
-                //Peptide peptide1 = new Peptide(dd.SequenceCollection.Peptide[matchIndex].PeptideSequence);
-                //if (dd.SequenceCollection.Peptide[matchIndex].Modification != null)
+                //else
                 //{
-                //    for (int i = 0; i < dd.SequenceCollection.Peptide[matchIndex].Modification.Length; i++)
+                //    Peptide peptide1 = new Peptide(dd.SequenceCollection.Peptide[matchIndex].PeptideSequence);
+                //    if (dd.SequenceCollection.Peptide[matchIndex].Modification != null)
                 //    {
-                //        var residueNumber = dd.SequenceCollection.Peptide[matchIndex].Modification[i].location;
-                //        string unimodAcession = dd.SequenceCollection.Peptide[matchIndex].Modification[i].cvParam[0].accession;
-                //        var indexToLookFor = GetLastNumberFromString(unimodAcession) - 1;
-                //        while (unimodDeserialized.modifications[indexToLookFor].record_id != GetLastNumberFromString(unimodAcession))
-                //            indexToLookFor--;
-                //        string theFormula = unimodDeserialized.modifications[indexToLookFor].composition;
-                //        ChemicalFormulaModification modification = new ChemicalFormulaModification(ConvertToCSMSLFormula(theFormula));
-                //        peptide1.AddModification(modification, residueNumber);
+                //        for (int i = 0; i < dd.SequenceCollection.Peptide[matchIndex].Modification.Length; i++)
+                //        {
+                //            var residueNumber = dd.SequenceCollection.Peptide[matchIndex].Modification[i].location;
+                //            string unimodAcession = dd.SequenceCollection.Peptide[matchIndex].Modification[i].cvParam[0].accession;
+                //            var indexToLookFor = GetLastNumberFromString(unimodAcession) - 1;
+                //            while (unimodDeserialized.modifications[indexToLookFor].record_id != GetLastNumberFromString(unimodAcession))
+                //                indexToLookFor--;
+                //            string theFormula = unimodDeserialized.modifications[indexToLookFor].composition;
+                //            ChemicalFormulaModification modification = new ChemicalFormulaModification(ConvertToCSMSLFormula(theFormula));
+                //            peptide1.AddModification(modification, residueNumber);
+                //        }
+
                 //    }
 
-                //}
+                //    // Calculate isotopic distribution
+                //    IsotopicDistribution dist = new IsotopicDistribution(fineResolution);
+                //    var fullSpectrum = dist.CalculateDistribuition(peptide1.GetChemicalFormula());
+                //    var distributionSpectrum = fullSpectrum.FilterByNumberOfMostIntense(Math.Min(numIsotopologuesToConsider, fullSpectrum.Count));
 
-                //// Calculate isotopic distribution
-                //IsotopicDistribution dist = new IsotopicDistribution(fineResolution);
-                //var fullSpectrum = dist.CalculateDistribuition(peptide1.GetChemicalFormula());
-                //var distributionSpectrum = fullSpectrum.FilterByNumberOfMostIntense(Math.Min(numIsotopologuesToConsider, fullSpectrum.Count));
+                //}
+                ////int chargeState = dd.DataCollection.AnalysisData.SpectrumIdentificationList[0].SpectrumIdentificationResult[matchIndex].SpectrumIdentificationItem[0].chargeState;
+
 
 
 

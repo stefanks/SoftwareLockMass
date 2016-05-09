@@ -53,6 +53,7 @@
     <Compile Include="CalibrationFunctions\CalibrationFunctionClustering.cs" />
     <Compile Include="CalibrationFunctions\CalibrationFunctionHackMean.cs" />
     <Compile Include="CalibrationFunctions\CalibrationFunctionHack.cs" />
+    <Compile Include="CalibrationFunctions\QuarticCalibrationFunction.cs" />
     <Compile Include="CalibrationFunctions\IdentityCalibrationFunction.cs" />
     <Compile Include="CalibrationFunctions\CubicCalibrationFunction.cs" />
     <Compile Include="CalibrationFunctions\QuadraticCalibrationFunction.cs" />
