@@ -5,7 +5,7 @@ using System.Linq;
 
 namespace SoftwareLockMass
 {
-    internal class CalibrationFunctionClustering
+    internal class CalibrationFunctionClustering : CalibrationFunction
     {
         private int numClusters;
         private double[] CentroidMZfinal;
@@ -19,7 +19,7 @@ namespace SoftwareLockMass
             Random randNum = new Random();
             double totalError = double.MaxValue;
 
-            for (int numTries = 0; numTries < 10000; numTries++)
+            for (int numTries = 0; numTries < 100000; numTries++)
             {
                 bool changeHappend = true;
                 var Cluster = Enumerable.Repeat(0, numTp).ToArray();
@@ -78,7 +78,7 @@ namespace SoftwareLockMass
                 if (totalError > mseInCluster.Sum())
                 {
                     totalError = mseInCluster.Sum();
-                    //Console.WriteLine("totalMSE" + totalError);
+                    Console.WriteLine("totalMSE" + totalError);
                     //for (int j = 0; j < numClusters; j++)
                     //{
                     //    Console.WriteLine(CentroidMZ[j] + " " + CentroidTime[j] + " " + errorAtCluster[j]);
@@ -108,6 +108,16 @@ namespace SoftwareLockMass
                 }
             }
             return errorAtClusterfinal[theCluster];
+        }
+
+        public override void Train(List<TrainingPoint> trainingList)
+        {
+            throw new NotImplementedException();
+        }
+
+        public override double Predict(DataPoint t)
+        {
+            throw new NotImplementedException();
         }
     }
 }

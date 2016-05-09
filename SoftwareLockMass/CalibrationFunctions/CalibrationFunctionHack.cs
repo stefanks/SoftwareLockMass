@@ -4,7 +4,7 @@ using System.Collections.Generic;
 
 namespace SoftwareLockMass
 {
-    internal class CalibrationFunctionHack
+    internal class CalibrationFunctionHack : CalibrationFunction
     {
         private double a;
         private double b;
@@ -60,6 +60,16 @@ namespace SoftwareLockMass
             e = coeffs[1];
             f = coeffs[2];
 
+        }
+
+        public override double Predict(DataPoint t)
+        {
+            throw new NotImplementedException();
+        }
+
+        public override void Train(List<TrainingPoint> trainingList)
+        {
+            throw new NotImplementedException();
         }
 
         internal double calibrate(double mz, double retentionTime)

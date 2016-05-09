@@ -4,7 +4,7 @@ using System.Collections.Generic;
 
 namespace SoftwareLockMass
 {
-    internal class CalibrationFunctionHackMean
+    internal class CalibrationFunctionHackMean : CalibrationFunction
     {
         double totalErrorA;
         double totalErrorB;
@@ -75,6 +75,16 @@ namespace SoftwareLockMass
             }
             else
                 throw new Exception();
+        }
+
+        public override void Train(List<TrainingPoint> trainingList)
+        {
+            throw new NotImplementedException();
+        }
+
+        public override double Predict(DataPoint t)
+        {
+            throw new NotImplementedException();
         }
     }
 }
