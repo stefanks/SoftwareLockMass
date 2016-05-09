@@ -32,7 +32,7 @@ namespace SoftwareLockMass
         private const int numChargesNeededToBeConsideredIdentified = 2;
         // NEED TO TRY 1e3!!
         private const double intensityCutoff = 1e4; // 1e5 is too sparse. 1e4 is nice. NEED TO TRY 1e3!! 0 is a noisy mess
-        private const double thresholdPassParameter = 0.01; // Or double.MaxValue or 0.01?
+        private const double thresholdPassParameter = 0.1; // Or double.MaxValue or 0.01?
 
 
         // Whether to do calibration, or to just write the file in my mzML way
