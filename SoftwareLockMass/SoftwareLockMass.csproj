@@ -54,9 +54,11 @@
     <Compile Include="CalibrationFunctions\CalibrationFunctionHackMean.cs" />
     <Compile Include="CalibrationFunctions\CalibrationFunctionHack.cs" />
     <Compile Include="CalibrationFunctions\IdentityCalibrationFunction.cs" />
+    <Compile Include="CalibrationFunctions\QuadraticCalibrationFunction.cs" />
     <Compile Include="CalibrationFunctions\LinearCalibrationFunction.cs" />
     <Compile Include="CalibrationFunctions\DataPoint.cs" />
     <Compile Include="CalibrationFunctions\TrainingPoint.cs" />
+    <Compile Include="CalibrationFunctions\ConstantCalibrationFunction.cs" />
     <Compile Include="XML\mzIdentML1_1_1.cs" />
     <Compile Include="Program.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />

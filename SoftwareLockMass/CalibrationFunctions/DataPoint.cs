@@ -16,5 +16,10 @@ namespace SoftwareLockMass
         {
             return  new double[3] { 1, mz , rt};
         }
+
+        internal double[] ToDoubleArrayWithInterceptAndSquares()
+        {
+            return new double[6] { 1, mz, rt, Math.Pow(mz, 2), Math.Pow(rt, 2), mz * rt };
+        }
     }
 }

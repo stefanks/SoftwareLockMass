@@ -58,7 +58,9 @@ namespace SoftwareLockMass
 
             Console.WriteLine("Train the calibration model");
             //CalibrationFunction cf = new IdentityCalibrationFunction();
-            CalibrationFunction cf = new LinearCalibrationFunction();
+            //CalibrationFunction cf = new ConstantCalibrationFunction();
+            //CalibrationFunction cf = new LinearCalibrationFunction();
+            CalibrationFunction cf = new QuadraticCalibrationFunction();
             cf.Train(trainingPoints);
 
             Console.WriteLine("The Mean Squared Error for the model is " + cf.getMSE(trainingPoints));
@@ -139,9 +141,9 @@ namespace SoftwareLockMass
                 double experimentalMassToCharge = dd.DataCollection.AnalysisData.SpectrumIdentificationList[0].SpectrumIdentificationResult[matchIndex].SpectrumIdentificationItem[0].experimentalMassToCharge;
                 string ms2spectrumID = dd.DataCollection.AnalysisData.SpectrumIdentificationList[0].SpectrumIdentificationResult[matchIndex].spectrumID;
                 int ms2spectrumIndex = GetLastNumberFromString(ms2spectrumID);
-                // DON'T REALLY NEED THESE!
                 if (ONLY_MZID_DATAPOINTS)
                 {
+                    // DON'T REALLY NEED THESE!
                     double calculatedMassToCharge = dd.DataCollection.AnalysisData.SpectrumIdentificationList[0].SpectrumIdentificationResult[matchIndex].SpectrumIdentificationItem[0].calculatedMassToCharge;
                     double errorInMZ = experimentalMassToCharge - calculatedMassToCharge;
                     double precursorRetentionTime = myMSDataFile[GetLastNumberFromString(myMSDataFile[ms2spectrumIndex].PrecursorID)].RetentionTime;
