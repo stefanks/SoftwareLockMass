@@ -20,19 +20,24 @@ namespace SoftwareLockMass
     class Program
     {
         // Important for every setting. Realized only 0 and 0.01 give meaningful results when looking at performance
+        // 0 IS BEST!!!
         private const double thresholdPassParameter = 0;
         //private const double thresholdPassParameter = 0.01;
-
-
+        
+        // Haven't really played with this parameter
+        private const double toleranceInMZforSearch = 0.01;
+        // 1e5 is too sparse. 1e4 is nice. Try 1e3. Try 0.
+        private const double intensityCutoff = 1e4;
+        
         // My parameters!
         private const bool MZID_MASS_DATA = true;
+
         
+
         private const int numIsotopologuesToConsider = 10;
-        private const double toleranceInMZforIsotopologueSearch = 0.01;
-        private const int numIsotopologuesNeededToBeConsideredIdentified = 2;
-        private const int numChargesNeededToBeConsideredIdentified = 2;
-        // NEED TO TRY 1e3!!
-        private const double intensityCutoff = 1e4; // 1e5 is too sparse. 1e4 is nice. NEED TO TRY 1e3!! 0 is a noisy mess
+        //  private const int numIsotopologuesNeededToBeConsideredIdentified = 2;
+        //  private const int numChargesNeededToBeConsideredIdentified = 2;
+        // NEED TO TRY 1e3!! // 1e5 is too sparse. 1e4 is nice. NEED TO TRY 1e3!! 0 is a noisy mess
 
         private const string origDataFile = @"E:\Stefan\data\jurkat\MyUncalibrated.mzML";
         private const string mzidFile = @"E:\Stefan\data\morpheusmzMLoutput1\MyUncalibrated.mzid";
@@ -65,8 +70,8 @@ namespace SoftwareLockMass
             //CalibrationFunction cf = new IdentityCalibrationFunction();
             //CalibrationFunction cf = new ConstantCalibrationFunction();
             //CalibrationFunction cf = new LinearCalibrationFunction();
-            CalibrationFunction cf = new QuadraticCalibrationFunction();
-            //CalibrationFunction cf = new CubicCalibrationFunction();
+            //CalibrationFunction cf = new QuadraticCalibrationFunction();
+            CalibrationFunction cf = new CubicCalibrationFunction();
             //CalibrationFunction cf = new QuarticCalibrationFunction();
             cf.Train(trainingPoints);
 
@@ -145,22 +150,15 @@ namespace SoftwareLockMass
                 if (Convert.ToDouble(dd.DataCollection.AnalysisData.SpectrumIdentificationList[0].SpectrumIdentificationResult[matchIndex].SpectrumIdentificationItem[0].cvParam[0].value) > thresholdPassParameter)
                     break;
 
-                double experimentalMassToCharge = dd.DataCollection.AnalysisData.SpectrumIdentificationList[0].SpectrumIdentificationResult[matchIndex].SpectrumIdentificationItem[0].experimentalMassToCharge;
                 string ms2spectrumID = dd.DataCollection.AnalysisData.SpectrumIdentificationList[0].SpectrumIdentificationResult[matchIndex].spectrumID;
                 int ms2spectrumIndex = GetLastNumberFromString(ms2spectrumID);
+                Spectrum<MZPeak> distributionSpectrum;
                 if (MZID_MASS_DATA)
                 {
+                    //double experimentalMassToCharge = dd.DataCollection.AnalysisData.SpectrumIdentificationList[0].SpectrumIdentificationResult[matchIndex].SpectrumIdentificationItem[0].experimentalMassToCharge;
                     double calculatedMassToCharge = dd.DataCollection.AnalysisData.SpectrumIdentificationList[0].SpectrumIdentificationResult[matchIndex].SpectrumIdentificationItem[0].calculatedMassToCharge;
-                    // int chargeState = dd.DataCollection.AnalysisData.SpectrumIdentificationList[0].SpectrumIdentificationResult[matchIndex].SpectrumIdentificationItem[0].chargeState;
-                    //Spectrum<MZPeak> distributionSpectrum = new MZSpectrum(new double[1] { calculatedMassToCharge * chargeState - chargeState * Constants.Proton }, new double[1] { 1 });
-                    
-                    double errorInMZ = experimentalMassToCharge - calculatedMassToCharge;
-                    double precursorRetentionTime = myMSDataFile[GetLastNumberFromString(myMSDataFile[ms2spectrumIndex].PrecursorID)].RetentionTime;
-                    
-                    trainingPointsToReturn.Add(new TrainingPoint(new DataPoint(experimentalMassToCharge, precursorRetentionTime), errorInMZ));
-                    continue;
-
-
+                    int chargeState = dd.DataCollection.AnalysisData.SpectrumIdentificationList[0].SpectrumIdentificationResult[matchIndex].SpectrumIdentificationItem[0].chargeState;
+                     distributionSpectrum = new MZSpectrum(new double[1] { calculatedMassToCharge * chargeState - chargeState * Constants.Proton }, new double[1] { 1 });
                 }
                 else
                 {
@@ -179,26 +177,43 @@ namespace SoftwareLockMass
                             ChemicalFormulaModification modification = new ChemicalFormulaModification(ConvertToCSMSLFormula(theFormula));
                             peptide1.AddModification(modification, residueNumber);
                         }
-
                     }
-
                     // Calculate isotopic distribution
                     IsotopicDistribution dist = new IsotopicDistribution(fineResolution);
                     var fullSpectrum = dist.CalculateDistribuition(peptide1.GetChemicalFormula());
-                    Spectrum<MZPeak> distributionSpectrum = fullSpectrum.FilterByNumberOfMostIntense(Math.Min(numIsotopologuesToConsider, fullSpectrum.Count));
+                    distributionSpectrum = fullSpectrum.FilterByNumberOfMostIntense(Math.Min(numIsotopologuesToConsider, fullSpectrum.Count));
                 }
 
 
+                var fullMS1spectrum = myMSDataFile[GetLastNumberFromString(myMSDataFile[ms2spectrumIndex].PrecursorID)];
+                double ms1RetentionTime = fullMS1spectrum.RetentionTime;
+                var rangeOfSpectrum = fullMS1spectrum.MzRange;
+                var ms1FilteredByHighIntensities = fullMS1spectrum.MassSpectrum.FilterByIntensity(intensityCutoff, double.MaxValue);
+                for (int chargeToLookAt = 1; ; chargeToLookAt++)
+                {
+                    Spectrum<MZPeak> chargedDistribution = distributionSpectrum.CorrectMasses(s => (s + chargeToLookAt * Constants.Proton) / chargeToLookAt);
+
+                    if (chargedDistribution.LastMZ > rangeOfSpectrum.Maximum)
+                        continue;
+                    if (chargedDistribution.GetBasePeak().MZ < rangeOfSpectrum.Minimum)
+                        break;
+
+                    // RIGHT NOW ONLY LOOKING AT FIRST ONE, NEED TO CONSIDER ALL ISOTOPOLOGUES!!!
+                    var closestPeak = ms1FilteredByHighIntensities.GetClosestPeak(chargedDistribution[0].MZ);
+                    
+                    if (Math.Abs(chargedDistribution[0].MZ - closestPeak.X) < toleranceInMZforSearch)
+                    {
+                        trainingPointsToReturn.Add(new TrainingPoint(new DataPoint(closestPeak.X, ms1RetentionTime), closestPeak.X - chargedDistribution[0].MZ));
+                    }
+                }
 
 
-                //var fullMS1spectrum = myMSDataFile[GetLastNumberFromString(myMSDataFile[spectrumIndex].PrecursorID)];
+                //double errorInMZ = experimentalMassToCharge - calculatedMassToCharge;
 
-                //var rangeOfSpectrum = fullMS1spectrum.MzRange;
+                //trainingPointsToReturn.Add(new TrainingPoint(new DataPoint(experimentalMassToCharge, precursorRetentionTime), errorInMZ));
+                //continue;
 
-                //var spectrumOfHighIntensities = fullMS1spectrum.MassSpectrum.FilterByIntensity(intensityCutoff, double.MaxValue);
-
-                //// Now search in the spectrum for peaks corresponding to the distribution, for the different charges
-
+                
 
                 //List<double[]> consideredChargeTrainingPoints = new List<double[]>();
                 //List<double> consideredChargeLabels = new List<double>();
