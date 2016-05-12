@@ -48,8 +48,8 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="CalibratedSpectrum.cs" />
     <Compile Include="CalibrationFunctions\CalibrationFunction.cs" />
+    <Compile Include="CalibrationFunctions\MedianCalibrationFunction.cs" />
     <Compile Include="CalibrationFunctions\CalibrationFunctionClustering.cs" />
     <Compile Include="CalibrationFunctions\CalibrationFunctionHackMean.cs" />
     <Compile Include="CalibrationFunctions\CalibrationFunctionHack.cs" />
