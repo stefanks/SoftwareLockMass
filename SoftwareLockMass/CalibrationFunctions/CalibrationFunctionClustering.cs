@@ -12,112 +12,118 @@ namespace SoftwareLockMass
         private double[] CentroidTimefinal;
         private double[] errorAtClusterfinal;
 
-        public CalibrationFunctionClustering(List<double[]> trainingData, List<double> labelData, int numClusters = 3)
+        private double dist(double v1, double v2, int j, double[] CentroidMZdist, double[] CentroidTimedist)
+        {
+            return Math.Pow(v1 - CentroidMZdist[j],2) + Math.Pow(v2 - CentroidTimedist[j],2);
+        }
+
+        public CalibrationFunctionClustering(int numClusters)
         {
             this.numClusters = numClusters;
-            int numTp = labelData.Count;
+        }
+
+        public override void Train(List<TrainingPoint> trainingList)
+        {
+            int numTp = trainingList.Count;
             Random randNum = new Random();
             double totalError = double.MaxValue;
 
-            for (int numTries = 0; numTries < 100000; numTries++)
+            for (int numTries = 0; numTries < 3000; numTries++)
             {
                 bool changeHappend = true;
                 var Cluster = Enumerable.Repeat(0, numTp).ToArray();
-                double[] errorAtCluster = Enumerable.Repeat(0.0, numClusters).ToArray();
-                double[] CentroidMZ = new double[numClusters] ;
+                double[] errorAtCluster = new double[numClusters];
+                double[] CentroidMZ = new double[numClusters];
                 double[] CentroidTime = new double[numClusters];
-                int[] PointsInCluster = Enumerable.Repeat(0, numClusters).ToArray();
+                int[] PointsInCluster;
                 double[] mseInCluster = Enumerable.Repeat(0.0, numClusters).ToArray();
+
+                // Guess initial centroids
                 for (int i = 0; i < numClusters; i++)
                 {
                     var kk = randNum.Next(numTp);
                     //Console.WriteLine(kk);
-                    CentroidMZ[i] = trainingData[kk][1];
-                    CentroidTime[i] = trainingData[kk][2];
+                    CentroidMZ[i] = trainingList[kk].dp.mz;
+                    CentroidTime[i] = trainingList[kk].dp.rt;
+                    errorAtCluster[i] = trainingList[kk].l;
                 }
+
+
                 while (changeHappend)
                 {
                     changeHappend = false;
 
+                    // Assign every point to cluster
                     for (int i = 0; i < numTp; i++)
                     {
                         double bestDistance = double.MaxValue;
                         var oldClusterI = Cluster[i];
                         for (int j = 0; j < numClusters; j++)
                         {
-                            if (dist(trainingData[i][1], trainingData[i][2], j, CentroidMZ, CentroidTime) < bestDistance)
+                            if (dist(trainingList[i].dp.mz, trainingList[i].dp.rt, j, CentroidMZ, CentroidTime)  < bestDistance)
                             {
-                                bestDistance = dist(trainingData[i][1], trainingData[i][2], j, CentroidMZ, CentroidTime);
+                                bestDistance = dist(trainingList[i].dp.mz, trainingList[i].dp.rt, j, CentroidMZ, CentroidTime);
                                 Cluster[i] = j;
                             }
                         }
                         if (Cluster[i] != oldClusterI)
                             changeHappend = true;
                     }
-                 }
 
-                // Settled in on class for each point by now
-                for (int i = 0; i < numTp; i++)
-                {
-                    CentroidMZ[Cluster[i]] += trainingData[i][1];
-                    CentroidTime[Cluster[i]] += trainingData[i][2];
-                    errorAtCluster[Cluster[i]] += labelData[i];
-                    PointsInCluster[Cluster[i]] += 1;
-                }
-                for (int j = 0; j < numClusters; j++)
-                {
-                    CentroidMZ[j] = CentroidMZ[j] / PointsInCluster[j];
-                    CentroidTime[j] = CentroidTime[j] / PointsInCluster[j];
-                    errorAtCluster[j] = errorAtCluster[j] / PointsInCluster[j];
-                }
-                for (int i = 0; i < numTp; i++)
-                {
-                    mseInCluster[Cluster[i]] += (labelData[i] - errorAtCluster[Cluster[i]]) * (labelData[i] - errorAtCluster[Cluster[i]]);
+                    // Recalculate cluster centroids
+                    CentroidMZ = Enumerable.Repeat(0.0, numClusters).ToArray();
+                    CentroidTime = Enumerable.Repeat(0.0, numClusters).ToArray();
+                    errorAtCluster = Enumerable.Repeat(0.0, numClusters).ToArray();
+                    PointsInCluster = Enumerable.Repeat(0, numClusters).ToArray();
+                    for (int i = 0; i < numTp; i++)
+                    {
+                        CentroidMZ[Cluster[i]] += trainingList[i].dp.mz;
+                        CentroidTime[Cluster[i]] += trainingList[i].dp.rt;
+                        errorAtCluster[Cluster[i]] += trainingList[i].l;
+                        PointsInCluster[Cluster[i]] += 1;
+                    }
+                    for (int j = 0; j < numClusters; j++)
+                    {
+                        CentroidMZ[j] = CentroidMZ[j] / PointsInCluster[j];
+                        CentroidTime[j] = CentroidTime[j] / PointsInCluster[j];
+                        errorAtCluster[j] = errorAtCluster[j] / PointsInCluster[j];
+                    }
                 }
                 
+                for (int i = 0; i < numTp; i++)
+                {
+                    mseInCluster[Cluster[i]] += Math.Pow(trainingList[i].l - errorAtCluster[Cluster[i]],2);
+                }
                 if (totalError > mseInCluster.Sum())
                 {
+                    CentroidMZfinal = (double[])CentroidMZ.Clone();
+                    CentroidTimefinal = (double[])CentroidTime.Clone();
+                    errorAtClusterfinal = (double[])errorAtCluster.Clone();
+
                     totalError = mseInCluster.Sum();
-                    Console.WriteLine("totalMSE" + totalError);
-                    //for (int j = 0; j < numClusters; j++)
-                    //{
-                    //    Console.WriteLine(CentroidMZ[j] + " " + CentroidTime[j] + " " + errorAtCluster[j]);
-                    //}
-                    CentroidMZfinal = (double[]) CentroidMZ.Clone();
-                    CentroidTimefinal=(double[])CentroidTime.Clone();
-                    errorAtClusterfinal=(double[])errorAtCluster.Clone();
+                    Console.WriteLine("New total MSE: " + totalError);
+                    Console.WriteLine("New total MSE other calucation: " + getMSE(trainingList));
+                    for (int j = 0; j < numClusters; j++)
+                    {
+                        Console.WriteLine(" " + CentroidMZ[j] + " " + CentroidTime[j] + " " + errorAtCluster[j]);
+                    }
                 }
             }
         }
 
-        private double dist(double v1, double v2, int j, double[] CentroidMZdist, double[] CentroidTimedist)
-        {
-            return (v1 - CentroidMZdist[j]) * (v1 - CentroidMZdist[j]) + (v2 - CentroidTimedist[j]) * (v2 - CentroidTimedist[j]);
-        }
-
-        internal double calibrate(double mz, double retentionTime)
+        public override double Predict(DataPoint t)
         {
             int theCluster = -1;
             double bestDistance = double.MaxValue;
             for (int j = 0; j < numClusters; j++)
             {
-                if (dist(mz, retentionTime, j, CentroidMZfinal, CentroidTimefinal) < bestDistance)
+                if (dist(t.mz, t.rt, j, CentroidMZfinal, CentroidTimefinal) < bestDistance)
                 {
-                    bestDistance = dist(mz, retentionTime, j, CentroidMZfinal, CentroidTimefinal);
+                    bestDistance = dist(t.mz, t.rt, j, CentroidMZfinal, CentroidTimefinal);
                     theCluster = j;
                 }
             }
             return errorAtClusterfinal[theCluster];
-        }
-
-        public override void Train(List<TrainingPoint> trainingList)
-        {
-            throw new NotImplementedException();
-        }
-
-        public override double Predict(DataPoint t)
-        {
-            throw new NotImplementedException();
         }
     }
 }
