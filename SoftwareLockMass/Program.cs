@@ -29,7 +29,7 @@ namespace SoftwareLockMass
         private const double toleranceInMZforSearch = 0.01;
 
         // 1e5 is too sparse. 1e4 is nice, but misses one I like So using 5e3. 1e3 is too noisy. Try 0!
-        private const double intensityCutoff = 1e3;
+        private const double intensityCutoff = 1e4;
 
         // My parameters!
         private const bool MZID_MASS_DATA = false;
@@ -48,7 +48,7 @@ namespace SoftwareLockMass
         private const string origDataFile = @"E:\Stefan\data\jurkat\120426_Jurkat_highLC_Frac1.raw";
         //private const string mzidFile = @"E:\Stefan\data\morpheusmzMLoutput1\MyUncalibrated.mzid";
         private const string mzidFile = @"E:\Stefan\data\4FileExperiments\4FileExperiment10ppmForCalibration\120426_Jurkat_highLC_Frac1.mzid";
-        private const string outputFilePath = @"E:\Stefan\data\CalibratedOutput\calibratedOutput1f.mzML";
+        private const string outputFilePath = @"E:\Stefan\data\CalibratedOutput\calibratedOutput1g.mzML";
 
         static void Main(string[] args)
         {
@@ -93,9 +93,9 @@ namespace SoftwareLockMass
             Console.WriteLine("Writing calibrated mzML file");
             Mzml.Write(outputFilePath, _indexedmzMLConnection);
 
-            Console.WriteLine("Reading calibrated mzML file for verification");
-            Mzml mzmlFile2 = new Mzml(outputFilePath);
-            mzmlFile2.Open();
+            //Console.WriteLine("Reading calibrated mzML file for verification");
+            //Mzml mzmlFile2 = new Mzml(outputFilePath);
+            //mzmlFile2.Open();
 
             //Console.WriteLine("Spectrum number 2810, peak num 2213: " + mzmlFile2[2810].MassSpectrum.GetPeak(2212).MZ);
             //Console.WriteLine("Spectrum number 2810, peak num 2394: " + mzmlFile2[2810].MassSpectrum.GetPeak(2393).MZ);
