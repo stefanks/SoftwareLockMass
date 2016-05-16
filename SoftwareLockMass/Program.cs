@@ -22,14 +22,14 @@ namespace SoftwareLockMass
     {
         // Important for every setting. Realized only 0 and 0.01 give meaningful results when looking at performance
         // 0 IS BEST!!!
-        //private const double thresholdPassParameter = 0;
-        private const double thresholdPassParameter = 0.01;
+        private const double thresholdPassParameter = 0;
+        //private const double thresholdPassParameter = 0.01;
 
         // Haven't really played with this parameter
         private const double toleranceInMZforSearch = 0.01;
 
         // 1e5 is too sparse. 1e4 is nice, but misses one I like So using 5e3. 1e3 is too noisy. Try 0!
-        private const double intensityCutoff = 1e3;
+        private const double intensityCutoff = 1e4;
 
         // My parameters!
         private const bool MZID_MASS_DATA = false;
@@ -47,8 +47,8 @@ namespace SoftwareLockMass
         //private const string origDataFile = @"E:\Stefan\data\jurkat\MyUncalibrated.mzML";
         private const string origDataFile = @"E:\Stefan\data\jurkat\120426_Jurkat_highLC_Frac1.raw";
         //private const string mzidFile = @"E:\Stefan\data\morpheusmzMLoutput1\MyUncalibrated.mzid";
-        private const string mzidFile = @"E:\Stefan\data\4FileExperiment10ppmForCalibration\120426_Jurkat_highLC_Frac1.mzid";
-        private const string outputFilePath = @"E:\Stefan\data\CalibratedOutput\calibratedOutput1d.mzML";
+        private const string mzidFile = @"E:\Stefan\data\4FileExperiments\4FileExperiment10ppmForCalibration\120426_Jurkat_highLC_Frac1.mzid";
+        private const string outputFilePath = @"E:\Stefan\data\CalibratedOutput\calibratedOutput1e.mzML";
 
         static void Main(string[] args)
         {
@@ -242,6 +242,12 @@ namespace SoftwareLockMass
                 double ms1RetentionTime = fullMS1spectrum.RetentionTime;
                 var rangeOfSpectrum = fullMS1spectrum.MzRange;
                 var ms1FilteredByHighIntensities = fullMS1spectrum.MassSpectrum.FilterByIntensity(intensityCutoff, double.MaxValue);
+                if (ms1FilteredByHighIntensities.Count ==0)
+                {
+                    theIndex += direction;
+                    continue;
+                }
+
                 for (int chargeToLookAt = 1; ; chargeToLookAt++)
                 {
                     Spectrum<MZPeak> chargedDistribution = distributionSpectrum.CorrectMasses(s => (s + chargeToLookAt * Constants.Proton) / chargeToLookAt);
