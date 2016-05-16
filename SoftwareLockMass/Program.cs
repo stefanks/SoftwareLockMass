@@ -22,8 +22,8 @@ namespace SoftwareLockMass
     {
         // Important for every setting. Realized only 0 and 0.01 give meaningful results when looking at performance
         // 0 IS BEST!!!
-        private const double thresholdPassParameter = 0;
-        //private const double thresholdPassParameter = 0.01;
+        //private const double thresholdPassParameter = 0;
+        private const double thresholdPassParameter = 0.01;
 
         // Haven't really played with this parameter
         private const double toleranceInMZforSearch = 0.01;
@@ -48,7 +48,7 @@ namespace SoftwareLockMass
         private const string origDataFile = @"E:\Stefan\data\jurkat\120426_Jurkat_highLC_Frac1.raw";
         //private const string mzidFile = @"E:\Stefan\data\morpheusmzMLoutput1\MyUncalibrated.mzid";
         private const string mzidFile = @"E:\Stefan\data\4FileExperiment10ppmForCalibration\120426_Jurkat_highLC_Frac1.mzid";
-        private const string outputFilePath = @"E:\Stefan\data\CalibratedOutput\calibratedOutput1c.mzML";
+        private const string outputFilePath = @"E:\Stefan\data\CalibratedOutput\calibratedOutput1d.mzML";
 
         static void Main(string[] args)
         {
