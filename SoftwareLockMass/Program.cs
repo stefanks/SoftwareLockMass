@@ -29,7 +29,7 @@ namespace SoftwareLockMass
         private const double toleranceInMZforSearch = 0.01;
 
         // 1e5 is too sparse. 1e4 is nice, but misses one I like So using 5e3. 1e3 is too noisy. Try 0!
-        private const double intensityCutoff = 1e4;
+        private const double intensityCutoff = 1e3;
 
         // My parameters!
         private const bool MZID_MASS_DATA = false;
@@ -41,14 +41,14 @@ namespace SoftwareLockMass
         // Parameter for isotopolouge distribution searching
         private const double fineResolution = 0.1;
         private const int numIsotopologuesToConsider = 10;
-        private const int numIsotopologuesNeededToBeConsideredIdentified = 2;
+        private const int numIsotopologuesNeededToBeConsideredIdentified = 3;
         #endregion
 
         //private const string origDataFile = @"E:\Stefan\data\jurkat\MyUncalibrated.mzML";
         private const string origDataFile = @"E:\Stefan\data\jurkat\120426_Jurkat_highLC_Frac1.raw";
         //private const string mzidFile = @"E:\Stefan\data\morpheusmzMLoutput1\MyUncalibrated.mzid";
         private const string mzidFile = @"E:\Stefan\data\4FileExperiments\4FileExperiment10ppmForCalibration\120426_Jurkat_highLC_Frac1.mzid";
-        private const string outputFilePath = @"E:\Stefan\data\CalibratedOutput\calibratedOutput1e.mzML";
+        private const string outputFilePath = @"E:\Stefan\data\CalibratedOutput\calibratedOutput1f.mzML";
 
         static void Main(string[] args)
         {
@@ -163,8 +163,9 @@ namespace SoftwareLockMass
                 string ms2spectrumID = dd.DataCollection.AnalysisData.SpectrumIdentificationList[0].SpectrumIdentificationResult[matchIndex].spectrumID;
 
                 int ms2spectrumIndex = GetLastNumberFromString(ms2spectrumID);
-                if (ms2spectrumIndex == 2813 || ms2spectrumIndex == 11279 || ms2spectrumIndex == 11357 || ms2spectrumIndex == 4903 || ms2spectrumIndex == 3181)
-                {
+                //if (ms2spectrumIndex == 2813 || ms2spectrumIndex == 11279 || ms2spectrumIndex == 11357 || ms2spectrumIndex == 4903 || ms2spectrumIndex == 3181)
+                    if (ms2spectrumIndex == 13047 || ms2spectrumIndex == 13060 || ms2spectrumIndex == 14992)
+                    {
                     Console.WriteLine(" ms2spectrumIndex: " + ms2spectrumIndex);
                     Console.WriteLine(" calculatedMassToCharge: " + dd.DataCollection.AnalysisData.SpectrumIdentificationList[0].SpectrumIdentificationResult[matchIndex].SpectrumIdentificationItem[0].calculatedMassToCharge);
                     Console.WriteLine(" experimentalMassToCharge: " + dd.DataCollection.AnalysisData.SpectrumIdentificationList[0].SpectrumIdentificationResult[matchIndex].SpectrumIdentificationItem[0].experimentalMassToCharge);
@@ -180,8 +181,9 @@ namespace SoftwareLockMass
                 else
                 {
                     // GET MASS DATA FROM PEPTIDE!  
-                    if (ms2spectrumIndex == 2813 || ms2spectrumIndex == 11279 || ms2spectrumIndex == 11357 || ms2spectrumIndex == 4903 || ms2spectrumIndex == 3181)
-                    {
+                    //if (ms2spectrumIndex == 2813 || ms2spectrumIndex == 11279 || ms2spectrumIndex == 11357 || ms2spectrumIndex == 4903 || ms2spectrumIndex == 3181)
+                        if (ms2spectrumIndex == 13047 || ms2spectrumIndex == 13060 || ms2spectrumIndex == 14992)
+                        {
                         Console.WriteLine(" " + dd.SequenceCollection.Peptide[matchIndex].PeptideSequence);
                     }
                     Peptide peptide1 = new Peptide(dd.SequenceCollection.Peptide[matchIndex].PeptideSequence);
@@ -205,8 +207,8 @@ namespace SoftwareLockMass
                     distributionSpectrum = fullSpectrum.FilterByNumberOfMostIntense(Math.Min(numIsotopologuesToConsider, fullSpectrum.Count));
                 }
 
-                SearchMS1Spectra(myMSDataFile, distributionSpectrum, trainingPointsToReturn, ms2spectrumIndex, 1);
                 SearchMS1Spectra(myMSDataFile, distributionSpectrum, trainingPointsToReturn, ms2spectrumIndex, -1);
+                SearchMS1Spectra(myMSDataFile, distributionSpectrum, trainingPointsToReturn, ms2spectrumIndex, 1);
 
 
 
@@ -233,7 +235,7 @@ namespace SoftwareLockMass
                     continue;
                 }
                 added = false;
-                if (ms2spectrumIndex == 2813 || ms2spectrumIndex == 11279 || ms2spectrumIndex == 11357 || ms2spectrumIndex == 4903 || ms2spectrumIndex == 3181)
+                if (ms2spectrumIndex == 13047 || ms2spectrumIndex == 13060 || ms2spectrumIndex == 14992)
                 {
                     Console.WriteLine(" Looking in MS1 spectrum " + theIndex);
                 }
@@ -263,8 +265,9 @@ namespace SoftwareLockMass
                         var closestPeak = ms1FilteredByHighIntensities.GetClosestPeak(chargedDistribution[isotopologueIndex].MZ);
                         if (Math.Abs(chargedDistribution[isotopologueIndex].MZ - closestPeak.X) < toleranceInMZforSearch)
                         {
-                            if (ms2spectrumIndex == 2813 || ms2spectrumIndex == 11279 || ms2spectrumIndex == 11357 || ms2spectrumIndex == 4903 || ms2spectrumIndex == 3181)
-                            {
+                            //if (ms2spectrumIndex == 2813 || ms2spectrumIndex == 11279 || ms2spectrumIndex == 11357 || ms2spectrumIndex == 4903 || ms2spectrumIndex == 3181)
+                                if (ms2spectrumIndex == 13047 || ms2spectrumIndex == 13060 || ms2spectrumIndex == 14992)
+                                {
                                 Console.WriteLine("   Looking for " + chargedDistribution[isotopologueIndex].MZ);
                                 Console.WriteLine("   Found       " + closestPeak.X);
                                 Console.WriteLine("   Error is    " + (closestPeak.X - chargedDistribution[isotopologueIndex].MZ));
@@ -279,7 +282,8 @@ namespace SoftwareLockMass
                         added = true;
                         // Hack! Last isotopologue seems to be troublesome, often has error
                         trainingPointsToAverage.RemoveAt(trainingPointsToAverage.Count - 1);
-                        if (ms2spectrumIndex == 2813 || ms2spectrumIndex == 11279 || ms2spectrumIndex == 11357 || ms2spectrumIndex == 4903 || ms2spectrumIndex == 3181)
+                        //    if (ms2spectrumIndex == 2813 || ms2spectrumIndex == 11279 || ms2spectrumIndex == 11357 || ms2spectrumIndex == 4903 || ms2spectrumIndex == 3181)
+                        if (ms2spectrumIndex == 13047 || ms2spectrumIndex == 13060 || ms2spectrumIndex == 14992)
                         {
                             Console.WriteLine("  Adding aggregate of " + trainingPointsToAverage.Count + " points");
                             var a = new TrainingPoint(new DataPoint(trainingPointsToAverage.Select(b => b.dp.mz).Average(), trainingPointsToAverage.Select(b => b.dp.rt).Average()), trainingPointsToAverage.Select(b => b.l).Median());
