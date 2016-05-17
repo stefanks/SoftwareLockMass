@@ -11,10 +11,12 @@ namespace ChemicalLockMassStats
 {
     class Program
     {
-        const string origDataFile = @"E:\Stefan\data\RawFilesWithLockMass\10-13-15_mid-blank_H2O.raw";
+        //const string origDataFile = @"E:\Stefan\data\RawFilesWithLockMass\10-13-15_mid-blank_H2O.raw";
         //const string origDataFile = @"E:\Stefan\data\RawFilesWithLockMass\10-13-15_pre-blank_H2O.raw";
-        const double mz1 = 572.20648;
-        const double mz2 = 589.23303;
+        //const string origDataFile = @"E:\Stefan\data\RawFilesWithLockMass\10-13-15_B_fract4_SID_no-lock.raw";
+        const string origDataFile = @"E:\Stefan\data\RawFilesWithLockMass\10-15-15_B_fract5_rep1.raw";
+        const double mz1 = 572.20593;
+        const double mz2 = 589.23248;
         const double mzWidth = 0.01;
 
         static void Main(string[] args)
@@ -62,7 +64,7 @@ namespace ChemicalLockMassStats
             }
 
             using (System.IO.StreamWriter file =
-              new System.IO.StreamWriter(@"E:\Stefan\data\RawFilesWithLockMass\mzsBlank.dat"))
+              new System.IO.StreamWriter(@"E:\Stefan\data\RawFilesWithLockMass\mzsfract5_rep1.dat"))
             {
                 foreach (double d in theMZs)
                 {
@@ -71,7 +73,7 @@ namespace ChemicalLockMassStats
             }
 
             using (System.IO.StreamWriter file =
-              new System.IO.StreamWriter(@"E:\Stefan\data\RawFilesWithLockMass\mzs2Blank.dat"))
+              new System.IO.StreamWriter(@"E:\Stefan\data\RawFilesWithLockMass\mzs2fract5_rep1.dat"))
             {
                 foreach (double d in theMZ2s)
                 {
