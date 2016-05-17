@@ -25,7 +25,7 @@ namespace SoftwareLockMass
         private const double thresholdPassParameter = 0;
         //private const double thresholdPassParameter = 0.01;
 
-        // Haven't really played with this parameter
+        // DO NOT GO UNDER 0.01!!!!! Maybe even increase.
         private const double toleranceInMZforSearch = 0.01;
 
         // 1e5 is too sparse. 1e4 is nice, but misses one I like So using 5e3. 1e3 is too noisy. Try 0!
@@ -40,7 +40,11 @@ namespace SoftwareLockMass
         // BETTER SPECTROMETERS WOULD HAVE BETTER (LOWER) RESOLUIONS
         // Parameter for isotopolouge distribution searching
         private const double fineResolution = 0.1;
+
+        // Good number
         private const int numIsotopologuesToConsider = 10;
+
+        // Higher means more discriminating at selecting training points. 
         private const int numIsotopologuesNeededToBeConsideredIdentified = 3;
         #endregion
 
@@ -48,7 +52,7 @@ namespace SoftwareLockMass
         private const string origDataFile = @"E:\Stefan\data\jurkat\120426_Jurkat_highLC_Frac1.raw";
         //private const string mzidFile = @"E:\Stefan\data\morpheusmzMLoutput1\MyUncalibrated.mzid";
         private const string mzidFile = @"E:\Stefan\data\4FileExperiments\4FileExperiment10ppmForCalibration\120426_Jurkat_highLC_Frac1.mzid";
-        private const string outputFilePath = @"E:\Stefan\data\CalibratedOutput\calibratedOutput1g.mzML";
+        private const string outputFilePath = @"E:\Stefan\data\CalibratedOutput\calibratedOutput1h.mzML";
 
         static void Main(string[] args)
         {
@@ -76,15 +80,18 @@ namespace SoftwareLockMass
             //CalibrationFunction cf = new LinearCalibrationFunction();
             //CalibrationFunction cf = new QuadraticCalibrationFunction();
             //CalibrationFunction cf = new CubicCalibrationFunction();
-            CalibrationFunction cf = new QuarticCalibrationFunction();
+            //CalibrationFunction cf = new QuarticCalibrationFunction();
             //CalibrationFunction cf = new CalibrationFunctionClustering(20);
             //CalibrationFunction cf = new MedianCalibrationFunction();
+            CalibrationFunction cf = new KDTreeCalibrationFunction();
             cf.Train(trainingPoints);
 
+            Console.WriteLine("Computing Mean Squared Error ");
             Console.WriteLine("The Mean Squared Error for the model is " + cf.getMSE(trainingPoints));
 
-            Console.WriteLine("Performing calibration");
+            Console.WriteLine("Calibrating Spectra");
             List<ISpectrum> calibratedSpectra = CalibrateSpectra(myMSDataFile, cf);
+            Console.WriteLine("Calibrating Precursor MZs");
             List<double> calibratedPrecursorMZs = CalibratePrecursorMZs(myMSDataFile, cf);
 
             Console.WriteLine("Creating _indexedmzMLConnection, and putting data in it");
@@ -152,9 +159,13 @@ namespace SoftwareLockMass
             Stream stream2 = new FileStream(@"E:\Stefan\data\Unimod\unimod_tables.xml", FileMode.Open);
             unimod unimodDeserialized = unimodSerializer.Deserialize(stream2) as unimod;
 
+            HashSet<Tuple<double, double>> peaksAddedHashSet = new HashSet<Tuple<double, double>>();
+
             // Loop over all results from the mzIdentML file
             for (int matchIndex = 0; matchIndex < dd.DataCollection.AnalysisData.SpectrumIdentificationList[0].SpectrumIdentificationResult.Length; matchIndex++)
             {
+                if (matchIndex % (dd.DataCollection.AnalysisData.SpectrumIdentificationList[0].SpectrumIdentificationResult.Length / 100) == 0)
+                    Console.Write("" + (matchIndex / (dd.DataCollection.AnalysisData.SpectrumIdentificationList[0].SpectrumIdentificationResult.Length / 100)) + "% ");
                 if (dd.SequenceCollection.PeptideEvidence[matchIndex].isDecoy)
                     continue;
                 if (Convert.ToDouble(dd.DataCollection.AnalysisData.SpectrumIdentificationList[0].SpectrumIdentificationResult[matchIndex].SpectrumIdentificationItem[0].cvParam[1].value) > thresholdPassParameter)
@@ -164,13 +175,13 @@ namespace SoftwareLockMass
 
                 int ms2spectrumIndex = GetLastNumberFromString(ms2spectrumID);
                 //if (ms2spectrumIndex == 2813 || ms2spectrumIndex == 11279 || ms2spectrumIndex == 11357 || ms2spectrumIndex == 4903 || ms2spectrumIndex == 3181)
-                    if (ms2spectrumIndex == 13047 || ms2spectrumIndex == 13060 || ms2spectrumIndex == 14992)
-                    {
-                    Console.WriteLine(" ms2spectrumIndex: " + ms2spectrumIndex);
-                    Console.WriteLine(" calculatedMassToCharge: " + dd.DataCollection.AnalysisData.SpectrumIdentificationList[0].SpectrumIdentificationResult[matchIndex].SpectrumIdentificationItem[0].calculatedMassToCharge);
-                    Console.WriteLine(" experimentalMassToCharge: " + dd.DataCollection.AnalysisData.SpectrumIdentificationList[0].SpectrumIdentificationResult[matchIndex].SpectrumIdentificationItem[0].experimentalMassToCharge);
-                    Console.WriteLine(" Error according to single morpheus point: " + ((dd.DataCollection.AnalysisData.SpectrumIdentificationList[0].SpectrumIdentificationResult[matchIndex].SpectrumIdentificationItem[0].experimentalMassToCharge) - (dd.DataCollection.AnalysisData.SpectrumIdentificationList[0].SpectrumIdentificationResult[matchIndex].SpectrumIdentificationItem[0].calculatedMassToCharge)));
-                }
+                //if (ms2spectrumIndex == 13047 || ms2spectrumIndex == 13060 || ms2spectrumIndex == 14992)
+                //{
+                //    Console.WriteLine(" ms2spectrumIndex: " + ms2spectrumIndex);
+                //    Console.WriteLine(" calculatedMassToCharge: " + dd.DataCollection.AnalysisData.SpectrumIdentificationList[0].SpectrumIdentificationResult[matchIndex].SpectrumIdentificationItem[0].calculatedMassToCharge);
+                //    Console.WriteLine(" experimentalMassToCharge: " + dd.DataCollection.AnalysisData.SpectrumIdentificationList[0].SpectrumIdentificationResult[matchIndex].SpectrumIdentificationItem[0].experimentalMassToCharge);
+                //    Console.WriteLine(" Error according to single morpheus point: " + ((dd.DataCollection.AnalysisData.SpectrumIdentificationList[0].SpectrumIdentificationResult[matchIndex].SpectrumIdentificationItem[0].experimentalMassToCharge) - (dd.DataCollection.AnalysisData.SpectrumIdentificationList[0].SpectrumIdentificationResult[matchIndex].SpectrumIdentificationItem[0].calculatedMassToCharge)));
+                //}
                 Spectrum<MZPeak> distributionSpectrum;
                 if (MZID_MASS_DATA)
                 {
@@ -182,10 +193,10 @@ namespace SoftwareLockMass
                 {
                     // GET MASS DATA FROM PEPTIDE!  
                     //if (ms2spectrumIndex == 2813 || ms2spectrumIndex == 11279 || ms2spectrumIndex == 11357 || ms2spectrumIndex == 4903 || ms2spectrumIndex == 3181)
-                        if (ms2spectrumIndex == 13047 || ms2spectrumIndex == 13060 || ms2spectrumIndex == 14992)
-                        {
-                        Console.WriteLine(" " + dd.SequenceCollection.Peptide[matchIndex].PeptideSequence);
-                    }
+                    //if (ms2spectrumIndex == 13047 || ms2spectrumIndex == 13060 || ms2spectrumIndex == 14992)
+                    //{
+                    //    Console.WriteLine(" " + dd.SequenceCollection.Peptide[matchIndex].PeptideSequence);
+                    //}
                     Peptide peptide1 = new Peptide(dd.SequenceCollection.Peptide[matchIndex].PeptideSequence);
                     if (dd.SequenceCollection.Peptide[matchIndex].Modification != null)
                     {
@@ -207,16 +218,17 @@ namespace SoftwareLockMass
                     distributionSpectrum = fullSpectrum.FilterByNumberOfMostIntense(Math.Min(numIsotopologuesToConsider, fullSpectrum.Count));
                 }
 
-                SearchMS1Spectra(myMSDataFile, distributionSpectrum, trainingPointsToReturn, ms2spectrumIndex, -1);
-                SearchMS1Spectra(myMSDataFile, distributionSpectrum, trainingPointsToReturn, ms2spectrumIndex, 1);
+                SearchMS1Spectra(myMSDataFile, distributionSpectrum, trainingPointsToReturn, ms2spectrumIndex, -1, peaksAddedHashSet);
+                SearchMS1Spectra(myMSDataFile, distributionSpectrum, trainingPointsToReturn, ms2spectrumIndex, 1, peaksAddedHashSet);
 
 
 
             }
+            Console.WriteLine();
             return trainingPointsToReturn;
         }
 
-        private static void SearchMS1Spectra(IMSDataFile<ISpectrum<IPeak>> myMSDataFile, Spectrum<MZPeak> distributionSpectrum, List<TrainingPoint> trainingPointsToReturn, int ms2spectrumIndex, int direction)
+        private static void SearchMS1Spectra(IMSDataFile<ISpectrum<IPeak>> myMSDataFile, Spectrum<MZPeak> distributionSpectrum, List<TrainingPoint> trainingPointsToReturn, int ms2spectrumIndex, int direction, HashSet<Tuple<double,double>> peaksAddedHashSet)
         {
             var theIndex = -1;
             if (direction == 1)
@@ -235,16 +247,17 @@ namespace SoftwareLockMass
                     continue;
                 }
                 added = false;
-                if (ms2spectrumIndex == 13047 || ms2spectrumIndex == 13060 || ms2spectrumIndex == 14992)
-                {
-                    Console.WriteLine(" Looking in MS1 spectrum " + theIndex);
-                }
+                //if (ms2spectrumIndex == 13047 || ms2spectrumIndex == 13060 || ms2spectrumIndex == 14992)
+                //if (theIndex == 5984)
+                //{
+                //    Console.WriteLine(" Looking in MS1 spectrum " + theIndex);
+                //}
 
                 var fullMS1spectrum = myMSDataFile[theIndex];
                 double ms1RetentionTime = fullMS1spectrum.RetentionTime;
                 var rangeOfSpectrum = fullMS1spectrum.MzRange;
                 var ms1FilteredByHighIntensities = fullMS1spectrum.MassSpectrum.FilterByIntensity(intensityCutoff, double.MaxValue);
-                if (ms1FilteredByHighIntensities.Count ==0)
+                if (ms1FilteredByHighIntensities.Count == 0)
                 {
                     theIndex += direction;
                     continue;
@@ -263,15 +276,17 @@ namespace SoftwareLockMass
                     for (int isotopologueIndex = 0; isotopologueIndex < Math.Min(numIsotopologuesToConsider, chargedDistribution.Count); isotopologueIndex++)
                     {
                         var closestPeak = ms1FilteredByHighIntensities.GetClosestPeak(chargedDistribution[isotopologueIndex].MZ);
-                        if (Math.Abs(chargedDistribution[isotopologueIndex].MZ - closestPeak.X) < toleranceInMZforSearch)
+                        var theTuple = Tuple.Create<double, double>(closestPeak.X, ms1RetentionTime);
+                        if (Math.Abs(chargedDistribution[isotopologueIndex].MZ - closestPeak.X) < toleranceInMZforSearch && !peaksAddedHashSet.Contains(theTuple))
                         {
+                            peaksAddedHashSet.Add(theTuple);
                             //if (ms2spectrumIndex == 2813 || ms2spectrumIndex == 11279 || ms2spectrumIndex == 11357 || ms2spectrumIndex == 4903 || ms2spectrumIndex == 3181)
-                                if (ms2spectrumIndex == 13047 || ms2spectrumIndex == 13060 || ms2spectrumIndex == 14992)
-                                {
-                                Console.WriteLine("   Looking for " + chargedDistribution[isotopologueIndex].MZ);
-                                Console.WriteLine("   Found       " + closestPeak.X);
-                                Console.WriteLine("   Error is    " + (closestPeak.X - chargedDistribution[isotopologueIndex].MZ));
-                            }
+                            //if (theIndex == 5984)
+                            //{
+                            //    Console.WriteLine("   Looking for " + chargedDistribution[isotopologueIndex].MZ);
+                            //    Console.WriteLine("   Found       " + closestPeak.X);
+                            //    Console.WriteLine("   Error is    " + (closestPeak.X - chargedDistribution[isotopologueIndex].MZ));
+                            //}
                             trainingPointsToAverage.Add(new TrainingPoint(new DataPoint(closestPeak.X, ms1RetentionTime), closestPeak.X - chargedDistribution[isotopologueIndex].MZ));
                         }
                         else
@@ -282,16 +297,21 @@ namespace SoftwareLockMass
                         added = true;
                         // Hack! Last isotopologue seems to be troublesome, often has error
                         trainingPointsToAverage.RemoveAt(trainingPointsToAverage.Count - 1);
+                        var a = new TrainingPoint(new DataPoint(trainingPointsToAverage.Select(b => b.dp.mz).Average(), trainingPointsToAverage.Select(b => b.dp.rt).Average()), trainingPointsToAverage.Select(b => b.l).Median());
+
                         //    if (ms2spectrumIndex == 2813 || ms2spectrumIndex == 11279 || ms2spectrumIndex == 11357 || ms2spectrumIndex == 4903 || ms2spectrumIndex == 3181)
-                        if (ms2spectrumIndex == 13047 || ms2spectrumIndex == 13060 || ms2spectrumIndex == 14992)
+                        //if (ms2spectrumIndex == 13047 || ms2spectrumIndex == 13060 || ms2spectrumIndex == 14992)
+                        if (theIndex == 5984 && a.dp.mz > 587 && a.dp.mz < 588)
                         {
+                            Console.WriteLine();
                             Console.WriteLine("  Adding aggregate of " + trainingPointsToAverage.Count + " points");
-                            var a = new TrainingPoint(new DataPoint(trainingPointsToAverage.Select(b => b.dp.mz).Average(), trainingPointsToAverage.Select(b => b.dp.rt).Average()), trainingPointsToAverage.Select(b => b.l).Median());
                             Console.WriteLine("  a.dp.mz " + a.dp.mz);
                             Console.WriteLine("  a.dp.rt " + a.dp.rt);
                             Console.WriteLine("  a.l     " + a.l);
+                            Console.WriteLine("chargedDistribution: " + string.Join(", ", chargedDistribution));
+                            Console.WriteLine("ms2spectrumIndex: " + ms2spectrumIndex);
                         }
-                        trainingPointsToReturn.Add(new TrainingPoint(new DataPoint(trainingPointsToAverage.Select(b => b.dp.mz).Average(), trainingPointsToAverage.Select(b => b.dp.rt).Average()), trainingPointsToAverage.Select(b => b.l).Median()));
+                        trainingPointsToReturn.Add(a);
                     }
                 }
                 theIndex += direction;
@@ -302,7 +322,12 @@ namespace SoftwareLockMass
         {
             List<ISpectrum> calibratedSpectra = new List<ISpectrum>();
             for (int i = 0; i < myMSDataFile.LastSpectrumNumber; i++)
+            {
+                if (i % (myMSDataFile.LastSpectrumNumber / 100) == 0)
+                    Console.Write("" + (i / (myMSDataFile.LastSpectrumNumber / 100)) + "% ");
                 calibratedSpectra.Add(myMSDataFile[i + 1].MassSpectrum.CorrectMasses(s => s - cf.Predict(new DataPoint(s, myMSDataFile[i + 1].RetentionTime))));
+            }
+            Console.WriteLine();
             return calibratedSpectra;
         }
 
@@ -312,6 +337,8 @@ namespace SoftwareLockMass
             double precursorTime = -1;
             for (int i = 0; i < myMSDataFile.LastSpectrumNumber; i++)
             {
+                if (i % (myMSDataFile.LastSpectrumNumber / 100) == 0)
+                    Console.Write("" + (i / (myMSDataFile.LastSpectrumNumber / 100)) + "% ");
                 double newMZ = -1;
                 if (myMSDataFile[i + 1].MsnOrder == 1)
                 {
@@ -323,6 +350,7 @@ namespace SoftwareLockMass
                 }
                 calibratedPrecursorMZs.Add(newMZ);
             }
+            Console.WriteLine();
             return calibratedPrecursorMZs;
         }
 
@@ -410,6 +438,8 @@ namespace SoftwareLockMass
             // Loop over all spectra
             for (int i = 0; i < myMSDataFile.LastSpectrumNumber; i++)
             {
+                if (i % (myMSDataFile.LastSpectrumNumber / 100) == 0)
+                    Console.Write("" + (i / (myMSDataFile.LastSpectrumNumber / 100)) + "% ");
                 _indexedmzMLConnection.mzML.run.spectrumList.spectrum[i] = new SpectrumType();
                 _indexedmzMLConnection.mzML.run.spectrumList.spectrum[i].defaultArrayLength = myMSDataFile[i + 1].MassSpectrum.Count;
                 _indexedmzMLConnection.mzML.run.spectrumList.spectrum[i].index = i.ToString();
@@ -552,7 +582,7 @@ namespace SoftwareLockMass
                 //_indexedmzMLConnection.mzML.run.spectrumList.spectrum[i].binaryDataArrayList.binaryDataArray[1].cvParam[0].accession = "MS:1000574";
                 //_indexedmzMLConnection.mzML.run.spectrumList.spectrum[i].binaryDataArrayList.binaryDataArray[1].cvParam[0].name = "zlib compression";
             }
-
+            Console.WriteLine();
 
             return _indexedmzMLConnection;
         }

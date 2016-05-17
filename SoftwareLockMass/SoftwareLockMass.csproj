@@ -49,6 +49,8 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="CalibrationFunctions\CalibrationFunction.cs" />
+    <Compile Include="CalibrationFunctions\KDTree.cs" />
+    <Compile Include="CalibrationFunctions\KDTreeCalibrationFunction.cs" />
     <Compile Include="CalibrationFunctions\MedianCalibrationFunction.cs" />
     <Compile Include="CalibrationFunctions\CalibrationFunctionClustering.cs" />
     <Compile Include="CalibrationFunctions\CalibrationFunctionHackMean.cs" />
