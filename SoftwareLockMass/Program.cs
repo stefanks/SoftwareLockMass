@@ -22,14 +22,14 @@ namespace SoftwareLockMass
     {
         // Important for every setting. Realized only 0 and 0.01 give meaningful results when looking at performance
         // 0 IS BEST!!!
-        private const double thresholdPassParameter = 0;
-        //private const double thresholdPassParameter = 0.01;
+        //private const double thresholdPassParameter = 0;
+        private const double thresholdPassParameter = 0.01;
 
         // DO NOT GO UNDER 0.01!!!!! Maybe even increase.
         private const double toleranceInMZforSearch = 0.01;
 
-        // 1e5 is too sparse. 1e4 is nice, but misses one I like So using 5e3. 1e3 is too noisy. Try 0!
-        private const double intensityCutoff = 1e4;
+        // 1e5 is too sparse. 1e4 is nice, but misses one I like So using 5e3. 1e3 is nice. Try 0!
+        private const double intensityCutoff = 1e3;
 
         // My parameters!
         private const bool MZID_MASS_DATA = false;
@@ -52,7 +52,7 @@ namespace SoftwareLockMass
         private const string origDataFile = @"E:\Stefan\data\jurkat\120426_Jurkat_highLC_Frac1.raw";
         //private const string mzidFile = @"E:\Stefan\data\morpheusmzMLoutput1\MyUncalibrated.mzid";
         private const string mzidFile = @"E:\Stefan\data\4FileExperiments\4FileExperiment10ppmForCalibration\120426_Jurkat_highLC_Frac1.mzid";
-        private const string outputFilePath = @"E:\Stefan\data\CalibratedOutput\calibratedOutput1h.mzML";
+        private const string outputFilePath = @"E:\Stefan\data\CalibratedOutput\calibratedOutput1_01.mzML";
 
         static void Main(string[] args)
         {
@@ -80,10 +80,10 @@ namespace SoftwareLockMass
             //CalibrationFunction cf = new LinearCalibrationFunction();
             //CalibrationFunction cf = new QuadraticCalibrationFunction();
             //CalibrationFunction cf = new CubicCalibrationFunction();
-            //CalibrationFunction cf = new QuarticCalibrationFunction();
+            CalibrationFunction cf = new QuarticCalibrationFunction();
             //CalibrationFunction cf = new CalibrationFunctionClustering(20);
             //CalibrationFunction cf = new MedianCalibrationFunction();
-            CalibrationFunction cf = new KDTreeCalibrationFunction();
+            //CalibrationFunction cf = new KDTreeCalibrationFunction();
             cf.Train(trainingPoints);
 
             Console.WriteLine("Computing Mean Squared Error ");
