@@ -52,7 +52,7 @@ namespace SoftwareLockMass
         private const string origDataFile = @"E:\Stefan\data\jurkat\120426_Jurkat_highLC_Frac1.raw";
         //private const string mzidFile = @"E:\Stefan\data\morpheusmzMLoutput1\MyUncalibrated.mzid";
         private const string mzidFile = @"E:\Stefan\data\4FileExperiments\4FileExperiment10ppmForCalibration\120426_Jurkat_highLC_Frac1.mzid";
-        private const string outputFilePath = @"E:\Stefan\data\CalibratedOutput\calibratedOutput1_03.mzML";
+        private const string outputFilePath = @"E:\Stefan\data\CalibratedOutput\calibratedOutput1.mzML";
 
         static void Main(string[] args)
         {
@@ -154,16 +154,22 @@ namespace SoftwareLockMass
             // Get the training data out of xml
             List<TrainingPoint> trainingPointsToReturn = new List<TrainingPoint>();
 
-            // Read the database of modifications 
+            // Read a database of modifications 
             XmlSerializer unimodSerializer = new XmlSerializer(typeof(unimod));
             Stream stream2 = new FileStream(@"E:\Stefan\data\Unimod\unimod_tables.xml", FileMode.Open);
             unimod unimodDeserialized = unimodSerializer.Deserialize(stream2) as unimod;
+
+            // Read a database of modifications 
+            XmlSerializer psimodSerializer = new XmlSerializer(typeof(obo));
+            Stream stream3 = new FileStream(@"E:\Stefan\data\PSI-MOD\PSI-MOD.obo.xml", FileMode.Open);
+            obo psimodDeserialized = psimodSerializer.Deserialize(stream3) as obo;
 
             HashSet<Tuple<double, double>> peaksAddedHashSet = new HashSet<Tuple<double, double>>();
 
             // Loop over all results from the mzIdentML file
             for (int matchIndex = 0; matchIndex < dd.DataCollection.AnalysisData.SpectrumIdentificationList[0].SpectrumIdentificationResult.Length; matchIndex++)
             {
+                Console.WriteLine(matchIndex);
                 if (matchIndex % (dd.DataCollection.AnalysisData.SpectrumIdentificationList[0].SpectrumIdentificationResult.Length / 100) == 0)
                     Console.Write("" + (matchIndex / (dd.DataCollection.AnalysisData.SpectrumIdentificationList[0].SpectrumIdentificationResult.Length / 100)) + "% ");
                 if (dd.SequenceCollection.PeptideEvidence[matchIndex].isDecoy)
@@ -202,14 +208,42 @@ namespace SoftwareLockMass
                     {
                         for (int i = 0; i < dd.SequenceCollection.Peptide[matchIndex].Modification.Length; i++)
                         {
-                            var residueNumber = dd.SequenceCollection.Peptide[matchIndex].Modification[i].location;
-                            string unimodAcession = dd.SequenceCollection.Peptide[matchIndex].Modification[i].cvParam[0].accession;
-                            var indexToLookFor = GetLastNumberFromString(unimodAcession) - 1;
-                            while (unimodDeserialized.modifications[indexToLookFor].record_id != GetLastNumberFromString(unimodAcession))
-                                indexToLookFor--;
-                            string theFormula = unimodDeserialized.modifications[indexToLookFor].composition;
+                            int location = dd.SequenceCollection.Peptide[matchIndex].Modification[i].location;
+                            string theFormula= null;
+                            if (dd.SequenceCollection.Peptide[matchIndex].Modification[i].cvParam[0].cvRef == "UNIMOD")
+                            {
+                                Console.WriteLine("UNIMOD modification");
+                                string unimodAcession = dd.SequenceCollection.Peptide[matchIndex].Modification[i].cvParam[0].accession;
+                                var indexToLookFor = GetLastNumberFromString(unimodAcession) - 1;
+                                while (unimodDeserialized.modifications[indexToLookFor].record_id != GetLastNumberFromString(unimodAcession))
+                                    indexToLookFor--;
+                                theFormula = unimodDeserialized.modifications[indexToLookFor].composition;
+                            }
+                            else if (dd.SequenceCollection.Peptide[matchIndex].Modification[i].cvParam[0].cvRef == "PSI-MOD")
+                            {
+                                Console.WriteLine("PSI-MOD modification");
+                                string psimodAcession = dd.SequenceCollection.Peptide[matchIndex].Modification[i].cvParam[0].accession;
+                                oboTerm ksadklfj = (oboTerm)psimodDeserialized.Items[GetLastNumberFromString(psimodAcession) + 2];
+                                if (GetLastNumberFromString(psimodAcession) != GetLastNumberFromString(ksadklfj.id))
+                                    throw new Exception("Error in reading psi-mod file");
+                                else
+                                {
+                                    foreach (var a in ksadklfj.xref_analog)
+                                    {
+                                        if (a.dbname == "DiffFormula")
+                                        {
+                                            theFormula = a.name;
+                                            break;
+                                        }
+                                    }
+                                }
+                            }
+                            else
+                                throw new Exception("Not familiar with modification dictionary " + dd.SequenceCollection.Peptide[matchIndex].Modification[i].cvParam[0].cvRef);
+                            Console.WriteLine(theFormula);
                             ChemicalFormulaModification modification = new ChemicalFormulaModification(ConvertToCSMSLFormula(theFormula));
-                            peptide1.AddModification(modification, residueNumber);
+                            Console.WriteLine(modification.MonoisotopicMass);
+                            peptide1.AddModification(modification, location);
                         }
                     }
                     // Calculate isotopic distribution
