@@ -4,15 +4,32 @@
   <PropertyGroup>
     <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
     <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
-    <ProjectGuid>{475C3B7B-4367-4BC8-8192-2A850C72812B}</ProjectGuid>
-    <OutputType>Library</OutputType>
+    <ProjectGuid>{8887AC74-29D3-4AB6-81C7-1097F1AFA1B8}</ProjectGuid>
+    <OutputType>Exe</OutputType>
     <AppDesignerFolder>Properties</AppDesignerFolder>
     <RootNamespace>SoftwareLockMass</RootNamespace>
-    <AssemblyName>SoftwareLockMass</AssemblyName>
+    <AssemblyName>SoftwareLockMassCommandLine</AssemblyName>
     <TargetFrameworkVersion>v4.5.2</TargetFrameworkVersion>
     <FileAlignment>512</FileAlignment>
+    <AutoGenerateBindingRedirects>true</AutoGenerateBindingRedirects>
+    <PublishUrl>publish\</PublishUrl>
+    <Install>true</Install>
+    <InstallFrom>Disk</InstallFrom>
+    <UpdateEnabled>false</UpdateEnabled>
+    <UpdateMode>Foreground</UpdateMode>
+    <UpdateInterval>7</UpdateInterval>
+    <UpdateIntervalUnits>Days</UpdateIntervalUnits>
+    <UpdatePeriodically>false</UpdatePeriodically>
+    <UpdateRequired>false</UpdateRequired>
+    <MapFileExtensions>true</MapFileExtensions>
+    <ApplicationRevision>0</ApplicationRevision>
+    <ApplicationVersion>1.0.0.%2a</ApplicationVersion>
+    <IsWebBootstrapper>false</IsWebBootstrapper>
+    <UseApplicationTrust>false</UseApplicationTrust>
+    <BootstrapperEnabled>true</BootstrapperEnabled>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
+    <PlatformTarget>x64</PlatformTarget>
     <DebugSymbols>true</DebugSymbols>
     <DebugType>full</DebugType>
     <Optimize>false</Optimize>
@@ -20,9 +37,9 @@
     <DefineConstants>DEBUG;TRACE</DefineConstants>
     <ErrorReport>prompt</ErrorReport>
     <WarningLevel>4</WarningLevel>
-    <PlatformTarget>x64</PlatformTarget>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
+    <PlatformTarget>AnyCPU</PlatformTarget>
     <DebugType>pdbonly</DebugType>
     <Optimize>true</Optimize>
     <OutputPath>bin\Release\</OutputPath>
@@ -31,10 +48,6 @@
     <WarningLevel>4</WarningLevel>
   </PropertyGroup>
   <ItemGroup>
-    <Reference Include="MathNet.Numerics, Version=3.11.1.0, Culture=neutral, processorArchitecture=MSIL">
-      <HintPath>..\packages\MathNet.Numerics.3.11.1\lib\net40\MathNet.Numerics.dll</HintPath>
-      <Private>True</Private>
-    </Reference>
     <Reference Include="System" />
     <Reference Include="System.Core" />
     <Reference Include="System.Numerics" />
@@ -46,27 +59,11 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="CalibrationFunctions\CalibrationFunction.cs" />
-    <Compile Include="CalibrationFunctions\CalibrationFunctionClustering.cs" />
-    <Compile Include="CalibrationFunctions\CalibrationFunctionHack.cs" />
-    <Compile Include="CalibrationFunctions\CalibrationFunctionHackMean.cs" />
-    <Compile Include="CalibrationFunctions\ConstantCalibrationFunction.cs" />
-    <Compile Include="CalibrationFunctions\CubicCalibrationFunction.cs" />
-    <Compile Include="CalibrationFunctions\DataPoint.cs" />
-    <Compile Include="CalibrationFunctions\IdentityCalibrationFunction.cs" />
-    <Compile Include="CalibrationFunctions\KDTree.cs" />
-    <Compile Include="CalibrationFunctions\KDTreeCalibrationFunction.cs" />
-    <Compile Include="CalibrationFunctions\LinearCalibrationFunction.cs" />
-    <Compile Include="CalibrationFunctions\MedianCalibrationFunction.cs" />
-    <Compile Include="CalibrationFunctions\QuadraticCalibrationFunction.cs" />
-    <Compile Include="CalibrationFunctions\QuarticCalibrationFunction.cs" />
-    <Compile Include="CalibrationFunctions\TrainingPoint.cs" />
-    <Compile Include="SoftwareLockMassParams.cs" />
-    <Compile Include="SoftwareLockMassRunner.cs" />
+    <Compile Include="Program.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
-    <Compile Include="XML\mzIdentML1_1_1.cs" />
-    <Compile Include="XML\PSI-MOD_obo.cs" />
-    <Compile Include="XML\unimod_tables_1.cs" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="App.config" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\..\CSMSL\CSMSL\CSMSL.csproj">
@@ -81,9 +78,22 @@
       <Project>{24DC85FF-E97B-4140-9614-77DD8FDDD32F}</Project>
       <Name>Thermo</Name>
     </ProjectReference>
+    <ProjectReference Include="..\SoftwareLockMass\SoftwareLockMass.csproj">
+      <Project>{475C3B7B-4367-4BC8-8192-2A850C72812B}</Project>
+      <Name>SoftwareLockMass</Name>
+    </ProjectReference>
   </ItemGroup>
   <ItemGroup>
-    <None Include="packages.config" />
+    <BootstrapperPackage Include=".NETFramework,Version=v4.5.2">
+      <Visible>False</Visible>
+      <ProductName>Microsoft .NET Framework 4.5.2 %28x86 and x64%29</ProductName>
+      <Install>true</Install>
+    </BootstrapperPackage>
+    <BootstrapperPackage Include="Microsoft.Net.Framework.3.5.SP1">
+      <Visible>False</Visible>
+      <ProductName>.NET Framework 3.5 SP1</ProductName>
+      <Install>false</Install>
+    </BootstrapperPackage>
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 

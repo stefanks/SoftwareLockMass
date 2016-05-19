@@ -1,24 +1,23 @@
-﻿using CSMSL.IO.MzML;
+﻿using CSMSL;
+using CSMSL.Chemistry;
+using CSMSL.IO;
+using CSMSL.IO.MzML;
+using CSMSL.IO.Thermo;
+using CSMSL.Proteomics;
+using CSMSL.Spectral;
 using System;
 using System.Collections.Generic;
+using System.IO;
 using System.Linq;
 using System.Text;
-using System.Threading.Tasks;
-using CSMSL.IO.Thermo;
-using CSMSL.IO;
-using CSMSL.Spectral;
-using System.IO;
-using System.Xml.Serialization;
 using System.Text.RegularExpressions;
-using System.Diagnostics;
-using CSMSL;
-using CSMSL.Proteomics;
-using CSMSL.Chemistry;
+using System.Threading.Tasks;
+using System.Xml.Serialization;
 using MathNet.Numerics.Statistics;
 
 namespace SoftwareLockMass
 {
-    class Program
+    public class SoftwareLockMassRunner
     {
         // Important for every setting. Realized only 0 and 0.01 give meaningful results when looking at performance
         // 0 IS BEST!!!
@@ -48,19 +47,21 @@ namespace SoftwareLockMass
         private const int numIsotopologuesNeededToBeConsideredIdentified = 3;
         #endregion
 
-        //private const string origDataFile = @"E:\Stefan\data\jurkat\MyUncalibrated.mzML";
-        private const string origDataFile = @"E:\Stefan\data\jurkat\120426_Jurkat_highLC_Frac1.raw";
-        //private const string mzidFile = @"E:\Stefan\data\morpheusmzMLoutput1\MyUncalibrated.mzid";
-        private const string mzidFile = @"E:\Stefan\data\4FileExperiments\4FileExperiment10ppmForCalibration\120426_Jurkat_highLC_Frac1.mzid";
-        private const string outputFilePath = @"E:\Stefan\data\CalibratedOutput\calibratedOutput1.mzML";
 
-        static void Main(string[] args)
+        private SoftwareLockMassParams p;
+
+        public SoftwareLockMassRunner(SoftwareLockMassParams p)
+        {
+            this.p = p;
+        }
+
+        public void Run()
         {
             Console.WriteLine("Welcome to my software lock mass implementation");
             Console.WriteLine("Reading uncalibrated raw/mzML file");
 
             //IMSDataFile<ISpectrum<IPeak>> myMSDataFile = new Mzml(origDataFile);
-            IMSDataFile<ISpectrum<IPeak>> myMSDataFile = new ThermoRawFile(origDataFile);
+            IMSDataFile<ISpectrum<IPeak>> myMSDataFile = new ThermoRawFile(p.fileToCalibrate);
             myMSDataFile.Open();
 
             //Console.WriteLine("Spectrum number 2810, peak num 2213: " + myMSDataFile[2810].MassSpectrum.GetPeak(2212).X);
@@ -69,7 +70,7 @@ namespace SoftwareLockMass
             //Console.WriteLine("Spectrum number 11279, SelectedIonMonoisotopicMZ: " + myMSDataFile[11279].SelectedIonMonoisotopicMZ);
 
             Console.WriteLine("Getting Training Points");
-            List<TrainingPoint> trainingPoints = GetTrainingPoints(myMSDataFile, mzidFile);
+            List<TrainingPoint> trainingPoints = GetTrainingPoints(myMSDataFile, p.mzidFile);
 
             Console.WriteLine("Writing training points to file");
             WriteTrainingDataToFiles(trainingPoints);
@@ -98,7 +99,7 @@ namespace SoftwareLockMass
             indexedmzML _indexedmzMLConnection = CreateMyIndexedMZmlwithCalibratedSpectra(myMSDataFile, calibratedSpectra, calibratedPrecursorMZs);
 
             Console.WriteLine("Writing calibrated mzML file");
-            Mzml.Write(outputFilePath, _indexedmzMLConnection);
+            Mzml.Write(p.outputFile, _indexedmzMLConnection);
 
             //Console.WriteLine("Reading calibrated mzML file for verification");
             //Mzml mzmlFile2 = new Mzml(outputFilePath);
@@ -112,7 +113,6 @@ namespace SoftwareLockMass
             Console.WriteLine("Finished running my software lock mass implementation");
             Console.Read();
         }
-
 
         private static void WriteTrainingDataToFiles(List<TrainingPoint> trainingPoints)
         {
@@ -169,7 +169,7 @@ namespace SoftwareLockMass
             // Loop over all results from the mzIdentML file
             for (int matchIndex = 0; matchIndex < dd.DataCollection.AnalysisData.SpectrumIdentificationList[0].SpectrumIdentificationResult.Length; matchIndex++)
             {
-                Console.WriteLine(matchIndex);
+                //Console.WriteLine(matchIndex);
                 if (matchIndex % (dd.DataCollection.AnalysisData.SpectrumIdentificationList[0].SpectrumIdentificationResult.Length / 100) == 0)
                     Console.Write("" + (matchIndex / (dd.DataCollection.AnalysisData.SpectrumIdentificationList[0].SpectrumIdentificationResult.Length / 100)) + "% ");
                 if (dd.SequenceCollection.PeptideEvidence[matchIndex].isDecoy)
@@ -209,10 +209,10 @@ namespace SoftwareLockMass
                         for (int i = 0; i < dd.SequenceCollection.Peptide[matchIndex].Modification.Length; i++)
                         {
                             int location = dd.SequenceCollection.Peptide[matchIndex].Modification[i].location;
-                            string theFormula= null;
+                            string theFormula = null;
                             if (dd.SequenceCollection.Peptide[matchIndex].Modification[i].cvParam[0].cvRef == "UNIMOD")
                             {
-                                Console.WriteLine("UNIMOD modification");
+                                //Console.WriteLine("UNIMOD modification");
                                 string unimodAcession = dd.SequenceCollection.Peptide[matchIndex].Modification[i].cvParam[0].accession;
                                 var indexToLookFor = GetLastNumberFromString(unimodAcession) - 1;
                                 while (unimodDeserialized.modifications[indexToLookFor].record_id != GetLastNumberFromString(unimodAcession))
@@ -233,6 +233,7 @@ namespace SoftwareLockMass
                                         if (a.dbname == "DiffFormula")
                                         {
                                             theFormula = a.name;
+                                            Console.WriteLine(theFormula);
                                             break;
                                         }
                                     }
@@ -240,9 +241,9 @@ namespace SoftwareLockMass
                             }
                             else
                                 throw new Exception("Not familiar with modification dictionary " + dd.SequenceCollection.Peptide[matchIndex].Modification[i].cvParam[0].cvRef);
-                            Console.WriteLine(theFormula);
+                            //Console.WriteLine(theFormula);
                             ChemicalFormulaModification modification = new ChemicalFormulaModification(ConvertToCSMSLFormula(theFormula));
-                            Console.WriteLine(modification.MonoisotopicMass);
+                            //Console.WriteLine(modification.MonoisotopicMass);
                             peptide1.AddModification(modification, location);
                         }
                     }
@@ -262,7 +263,7 @@ namespace SoftwareLockMass
             return trainingPointsToReturn;
         }
 
-        private static void SearchMS1Spectra(IMSDataFile<ISpectrum<IPeak>> myMSDataFile, Spectrum<MZPeak> distributionSpectrum, List<TrainingPoint> trainingPointsToReturn, int ms2spectrumIndex, int direction, HashSet<Tuple<double,double>> peaksAddedHashSet)
+        private static void SearchMS1Spectra(IMSDataFile<ISpectrum<IPeak>> myMSDataFile, Spectrum<MZPeak> distributionSpectrum, List<TrainingPoint> trainingPointsToReturn, int ms2spectrumIndex, int direction, HashSet<Tuple<double, double>> peaksAddedHashSet)
         {
             var theIndex = -1;
             if (direction == 1)
@@ -335,16 +336,16 @@ namespace SoftwareLockMass
 
                         //    if (ms2spectrumIndex == 2813 || ms2spectrumIndex == 11279 || ms2spectrumIndex == 11357 || ms2spectrumIndex == 4903 || ms2spectrumIndex == 3181)
                         //if (ms2spectrumIndex == 13047 || ms2spectrumIndex == 13060 || ms2spectrumIndex == 14992)
-                        if (theIndex == 5984 && a.dp.mz > 587 && a.dp.mz < 588)
-                        {
-                            Console.WriteLine();
-                            Console.WriteLine("  Adding aggregate of " + trainingPointsToAverage.Count + " points");
-                            Console.WriteLine("  a.dp.mz " + a.dp.mz);
-                            Console.WriteLine("  a.dp.rt " + a.dp.rt);
-                            Console.WriteLine("  a.l     " + a.l);
-                            Console.WriteLine("chargedDistribution: " + string.Join(", ", chargedDistribution));
-                            Console.WriteLine("ms2spectrumIndex: " + ms2spectrumIndex);
-                        }
+                        //if (theIndex == 5984 && a.dp.mz > 587 && a.dp.mz < 588)
+                        //{
+                        //    Console.WriteLine();
+                        //    Console.WriteLine("  Adding aggregate of " + trainingPointsToAverage.Count + " points");
+                        //    Console.WriteLine("  a.dp.mz " + a.dp.mz);
+                        //    Console.WriteLine("  a.dp.rt " + a.dp.rt);
+                        //    Console.WriteLine("  a.l     " + a.l);
+                        //    Console.WriteLine("chargedDistribution: " + string.Join(", ", chargedDistribution));
+                        //    Console.WriteLine("ms2spectrumIndex: " + ms2spectrumIndex);
+                        //}
                         trainingPointsToReturn.Add(a);
                     }
                 }
