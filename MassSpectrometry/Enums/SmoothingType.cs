@@ -1,6 +1,6 @@
 ﻿// Copyright 2012, 2013, 2014 Derek J. Bailey
 // 
-// This file (ToleranceUnit.cs) is part of CSMSL.
+// This file (SmoothingType.cs) is part of CSMSL.
 // 
 // CSMSL is free software: you can redistribute it and/or modify it
 // under the terms of the GNU Lesser General Public License as published
@@ -15,29 +15,29 @@
 // You should have received a copy of the GNU Lesser General Public
 // License along with CSMSL. If not, see <http://www.gnu.org/licenses/>.
 
-namespace Spectra
+namespace MassSpectrometry.Enums
 {
     /// <summary>
-    /// The units of tolerance
+    /// Types of peak smoothing
     /// </summary>
-    public enum ToleranceUnit
+    public enum SmoothingType
     {
         /// <summary>
-        /// Parts per million
+        /// No smoothing
         /// </summary>
-        PPM,
+        None,
 
         /// <summary>
-        /// Daltons
-        /// </summary>
-        DA,
-
-        /// <summary>
-        /// Milli Mass Units
+        /// Box Car smoothing
         /// <para>
-        /// Equivalent to mDa
+        /// A Moving Average
         /// </para>
         /// </summary>
-        MMU
+        BoxCar,
+
+        /// <summary>
+        /// Savitzky-Golay smoothing
+        /// </summary>
+        SavitzkyGolay
     }
 }

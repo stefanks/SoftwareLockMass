@@ -1,6 +1,6 @@
 ﻿// Copyright 2012, 2013, 2014 Derek J. Bailey
 // 
-// This file (IMSDataFile.cs) is part of CSMSL.
+// This file (IMsDataFile.cs) is part of CSMSL.
 // 
 // CSMSL is free software: you can redistribute it and/or modify it
 // under the terms of the GNU Lesser General Public License as published
@@ -18,10 +18,11 @@
 using System;
 using System.Collections.Generic;
 using Spectra;
+using MassSpectrometry.Enums;
 
 namespace MassSpectrometry
 {
-    public interface IMSDataFile : IEnumerable<IMSDataScan>, IDisposable, IEquatable<IMSDataFile>
+    public interface IMsDataFile : IEnumerable<IMsDataScan>, IDisposable, IEquatable<IMsDataFile>
     {
         void Open();
         string Name { get; }
@@ -35,13 +36,13 @@ namespace MassSpectrometry
         DissociationType GetDissociationType(int spectrumNumber, int msnOrder = 2);
         Polarity GetPolarity(int spectrumNumber);
         ISpectrum GetSpectrum(int spectrumNumber);
-        IMSDataScan this[int spectrumNumber] { get; }
+        IMsDataScan this[int spectrumNumber] { get; }
     }
 
-    public interface IMSDataFile<out TSpectrum> : IMSDataFile, IEnumerable<IMSDataScan<TSpectrum>>
+    public interface IMsDataFile<out TSpectrum> : IMsDataFile, IEnumerable<IMsDataScan<TSpectrum>>
         where TSpectrum : ISpectrum
     {
         new TSpectrum GetSpectrum(int spectrumNumber);
-        new IMSDataScan<TSpectrum> this[int spectrumNumber] { get; }
+        new IMsDataScan<TSpectrum> this[int spectrumNumber] { get; }
     }
 }

@@ -24,51 +24,6 @@ namespace Proteomics
 {
     public class AminoAcid : IAminoAcid
     {
-        #region The Twenty Common Amino Acids
-
-        public static AminoAcid Alanine { get; private set; }
-
-        public static AminoAcid Arginine { get; private set; }
-
-        public static AminoAcid Asparagine { get; private set; }
-
-        public static AminoAcid AsparticAcid { get; private set; }
-
-        public static AminoAcid Cysteine { get; private set; }
-
-        public static AminoAcid GlutamicAcid { get; private set; }
-
-        public static AminoAcid Glutamine { get; private set; }
-
-        public static AminoAcid Glycine { get; private set; }
-
-        public static AminoAcid Histidine { get; private set; }
-
-        public static AminoAcid Isoleucine { get; private set; }
-
-        public static AminoAcid Leucine { get; private set; }
-
-        public static AminoAcid Lysine { get; private set; }
-
-        public static AminoAcid Methionine { get; private set; }
-
-        public static AminoAcid Phenylalanine { get; private set; }
-
-        public static AminoAcid Proline { get; private set; }
-
-        public static AminoAcid Selenocysteine { get; private set; }
-
-        public static AminoAcid Serine { get; private set; }
-
-        public static AminoAcid Threonine { get; private set; }
-
-        public static AminoAcid Tryptophan { get; private set; }
-
-        public static AminoAcid Tyrosine { get; private set; }
-
-        public static AminoAcid Valine { get; private set; }
-
-        #endregion The Twenty Common Amino Acids
 
         private static readonly Dictionary<string, AminoAcid> Residues;
 
@@ -108,11 +63,9 @@ namespace Proteomics
             return Residues.TryGetValue(symbol, out residue);
         }
 
-        public static AminoAcid AddResidue(string name, char oneLetterAbbreviation, string threeLetterAbbreviation, string chemicalFormula, ModificationSites site)
+        public static void AddResidue(string name, char oneLetterAbbreviation, string threeLetterAbbreviation, string chemicalFormula, ModificationSites site)
         {
-            var residue = new AminoAcid(name, oneLetterAbbreviation, threeLetterAbbreviation, chemicalFormula, site);
-            AddResidueToDictionary(residue);
-            return residue;
+            AddResidueToDictionary(new AminoAcid(name, oneLetterAbbreviation, threeLetterAbbreviation, chemicalFormula, site));
         }
 
         /// <summary>
@@ -122,27 +75,27 @@ namespace Proteomics
         {
             Residues = new Dictionary<string, AminoAcid>(66);
             ResiduesByLetter = new AminoAcid['z' + 1]; //Make it big enough for all the Upper and Lower characters
-            Alanine = AddResidue("Alanine", 'A', "Ala", "C3H5NO", ModificationSites.A);
-            Arginine = AddResidue("Arginine", 'R', "Arg", "C6H12N4O", ModificationSites.R);
-            Asparagine = AddResidue("Asparagine", 'N', "Asn", "C4H6N2O2", ModificationSites.N);
-            AsparticAcid = AddResidue("Aspartic Acid", 'D', "Asp", "C4H5NO3", ModificationSites.D);
-            Cysteine = AddResidue("Cysteine", 'C', "Cys", "C3H5NOS", ModificationSites.C);
-            GlutamicAcid = AddResidue("Glutamic Acid", 'E', "Glu", "C5H7NO3", ModificationSites.E);
-            Glutamine = AddResidue("Glutamine", 'Q', "Gln", "C5H8N2O2", ModificationSites.Q);
-            Glycine = AddResidue("Glycine", 'G', "Gly", "C2H3NO", ModificationSites.G);
-            Histidine = AddResidue("Histidine", 'H', "His", "C6H7N3O", ModificationSites.H);
-            Isoleucine = AddResidue("Isoleucine", 'I', "Ile", "C6H11NO", ModificationSites.I);
-            Leucine = AddResidue("Leucine", 'L', "Leu", "C6H11NO", ModificationSites.L);
-            Lysine = AddResidue("Lysine", 'K', "Lys", "C6H12N2O", ModificationSites.K);
-            Methionine = AddResidue("Methionine", 'M', "Met", "C5H9NOS", ModificationSites.M);
-            Phenylalanine = AddResidue("Phenylalanine", 'F', "Phe", "C9H9NO", ModificationSites.F);
-            Proline = AddResidue("Proline", 'P', "Pro", "C5H7NO", ModificationSites.P);
-            Selenocysteine = AddResidue("Selenocysteine", 'U', "Sec", "C3H5NOSe", ModificationSites.U);
-            Serine = AddResidue("Serine", 'S', "Ser", "C3H5NO2", ModificationSites.S);
-            Threonine = AddResidue("Threonine", 'T', "Thr", "C4H7NO2", ModificationSites.T);
-            Tryptophan = AddResidue("Tryptophan", 'W', "Trp", "C11H10N2O", ModificationSites.W);
-            Tyrosine = AddResidue("Tyrosine", 'Y', "Try", "C9H9NO2", ModificationSites.Y);
-            Valine = AddResidue("Valine", 'V', "Val", "C5H9NO", ModificationSites.V);
+            AddResidue("Alanine", 'A', "Ala", "C3H5NO", ModificationSites.A);
+            AddResidue("Arginine", 'R', "Arg", "C6H12N4O", ModificationSites.R);
+            AddResidue("Asparagine", 'N', "Asn", "C4H6N2O2", ModificationSites.N);
+            AddResidue("Aspartic Acid", 'D', "Asp", "C4H5NO3", ModificationSites.D);
+            AddResidue("Cysteine", 'C', "Cys", "C3H5NOS", ModificationSites.C);
+            AddResidue("Glutamic Acid", 'E', "Glu", "C5H7NO3", ModificationSites.E);
+            AddResidue("Glutamine", 'Q', "Gln", "C5H8N2O2", ModificationSites.Q);
+            AddResidue("Glycine", 'G', "Gly", "C2H3NO", ModificationSites.G);
+            AddResidue("Histidine", 'H', "His", "C6H7N3O", ModificationSites.H);
+            AddResidue("Isoleucine", 'I', "Ile", "C6H11NO", ModificationSites.I);
+            AddResidue("Leucine", 'L', "Leu", "C6H11NO", ModificationSites.L);
+            AddResidue("Lysine", 'K', "Lys", "C6H12N2O", ModificationSites.K);
+            AddResidue("Methionine", 'M', "Met", "C5H9NOS", ModificationSites.M);
+            AddResidue("Phenylalanine", 'F', "Phe", "C9H9NO", ModificationSites.F);
+            AddResidue("Proline", 'P', "Pro", "C5H7NO", ModificationSites.P);
+            AddResidue("Selenocysteine", 'U', "Sec", "C3H5NOSe", ModificationSites.U);
+            AddResidue("Serine", 'S', "Ser", "C3H5NO2", ModificationSites.S);
+            AddResidue("Threonine", 'T', "Thr", "C4H7NO2", ModificationSites.T);
+            AddResidue("Tryptophan", 'W', "Trp", "C11H10N2O", ModificationSites.W);
+            AddResidue("Tyrosine", 'Y', "Try", "C9H9NO2", ModificationSites.Y);
+            AddResidue("Valine", 'V', "Val", "C5H9NO", ModificationSites.V);
         }
 
         private static void AddResidueToDictionary(AminoAcid residue)
@@ -164,12 +117,12 @@ namespace Proteomics
             Name = name;
             Letter = oneLetterAbbreviation;
             Symbol = threeLetterAbbreviation;
-            ChemicalFormula = chemicalFormula;
-            MonoisotopicMass = ChemicalFormula.MonoisotopicMass;
+            thisChemicalFormula = chemicalFormula;
+            MonoisotopicMass = thisChemicalFormula.MonoisotopicMass;
             Site = site;
         }
 
-        public ChemicalFormula ChemicalFormula { get; private set; }
+        public ChemicalFormula thisChemicalFormula { get; private set; }
 
         public char Letter { get; private set; }
 
@@ -192,7 +145,7 @@ namespace Proteomics
             if (c)
             {
                 Element carbon = PeriodicTable.GetElement("C");
-                int carbon12 = ChemicalFormula.Count(carbon[12]);
+                int carbon12 = thisChemicalFormula.Count(carbon[12]);
                 formula.Add(carbon[12], -carbon12);
                 formula.Add(carbon[13], carbon12);
             }
@@ -200,7 +153,7 @@ namespace Proteomics
             if (n)
             {
                 Element nitrogen = PeriodicTable.GetElement("N");
-                int nitrogen14 = ChemicalFormula.Count(nitrogen[14]);
+                int nitrogen14 = thisChemicalFormula.Count(nitrogen[14]);
                 formula.Add(nitrogen[14], -nitrogen14);
                 formula.Add(nitrogen[15], nitrogen14);
             }

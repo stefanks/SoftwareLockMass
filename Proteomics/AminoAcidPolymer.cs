@@ -401,20 +401,20 @@ namespace Proteomics
         public int ElementCount(string element)
         {
             // Residues count
-            int count = _aminoAcids.Sum(aar => aar.ChemicalFormula.Count(element));
+            int count = _aminoAcids.Sum(aar => aar.thisChemicalFormula.Count(element));
             // Modifications count (if the mod is a IChemicalFormula)
             if (_modifications != null)
-                count += _modifications.Where(mod => mod is IChemicalFormula).Cast<IChemicalFormula>().Sum(mod => mod.ChemicalFormula.Count(element));
+                count += _modifications.Where(mod => mod is IChemicalFormula).Cast<IChemicalFormula>().Sum(mod => mod.thisChemicalFormula.Count(element));
             return count;
         }
 
         public int ElementCount(Isotope isotope)
         {
             // Residues count
-            int count = _aminoAcids.Sum(aar => aar.ChemicalFormula.Count(isotope));
+            int count = _aminoAcids.Sum(aar => aar.thisChemicalFormula.Count(isotope));
             // Modifications count (if the mod is a IChemicalFormula)
             if (_modifications != null)
-                count += _modifications.Where(mod => mod is IChemicalFormula).Cast<IChemicalFormula>().Sum(mod => mod.ChemicalFormula.Count(isotope));
+                count += _modifications.Where(mod => mod is IChemicalFormula).Cast<IChemicalFormula>().Sum(mod => mod.thisChemicalFormula.Count(isotope));
             return count;
         }
 
@@ -1036,20 +1036,20 @@ namespace Proteomics
                     if (chemMod == null)
                         continue;
 
-                    formula.Add(chemMod.ChemicalFormula);
+                    formula.Add(chemMod.thisChemicalFormula);
                 }
             }
 
             // Handle N-Terminus
-            formula.Add(NTerminus.ChemicalFormula);
+            formula.Add(NTerminus.thisChemicalFormula);
 
             // Handle C-Terminus
-            formula.Add(CTerminus.ChemicalFormula);
+            formula.Add(CTerminus.thisChemicalFormula);
 
             // Handle Amino Acid Residues
             for (int i = 0; i < Length; i++)
             {
-                formula.Add(_aminoAcids[i].ChemicalFormula);
+                formula.Add(_aminoAcids[i].thisChemicalFormula);
             }
 
             return formula;
@@ -1079,20 +1079,20 @@ namespace Proteomics
                     if (chemMod == null)
                         return false;
 
-                    formula.Add(chemMod.ChemicalFormula);
+                    formula.Add(chemMod.thisChemicalFormula);
                 }
             }
 
             // Handle N-Terminus
-            formula.Add(NTerminus.ChemicalFormula);
+            formula.Add(NTerminus.thisChemicalFormula);
 
             // Handle C-Terminus
-            formula.Add(CTerminus.ChemicalFormula);
+            formula.Add(CTerminus.thisChemicalFormula);
 
             // Handle Amino Acid Residues
             for (int i = 0; i < Length; i++)
             {
-                formula.Add(_aminoAcids[i].ChemicalFormula);
+                formula.Add(_aminoAcids[i].thisChemicalFormula);
             }
 
             return true;

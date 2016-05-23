@@ -23,7 +23,7 @@ namespace Spectra
     /// <summary>
     /// The tolerance, or error, of two points
     /// </summary>
-    public class Tolerance
+    internal class Tolerance
     {
         /// <summary>
         /// A regex for parsing a string representation of a tolerance

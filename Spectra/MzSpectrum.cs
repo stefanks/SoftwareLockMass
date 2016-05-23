@@ -21,7 +21,7 @@ using System.Collections.Generic;
 
 namespace Spectra
 {
-    public class ReverseComparer : IComparer<double>
+    internal class ReverseComparer : IComparer<double>
     {
         public int Compare(double x, double y)
         {
@@ -34,7 +34,7 @@ namespace Spectra
         }
     }
 
-    public class MZSpectrum : Spectrum<MZPeak>
+    public class MZSpectrum : Spectrum<MzPeak>
     {
         /// <summary>
         /// Initializes a new spectrum
@@ -91,12 +91,12 @@ namespace Spectra
         /// </summary>
         public static readonly MZSpectrum Empty = new MZSpectrum();
 
-        public override MZPeak GetPeak(int index)
+        public override MzPeak GetPeak(int index)
         {
-            return new MZPeak(Masses[index], Intensities[index]);
+            return new MzPeak(Masses[index], Intensities[index]);
         }
 
-        public override Spectrum<MZPeak> Extract(double minMZ, double maxMZ)
+        public override Spectrum<MzPeak> Extract(double minMZ, double maxMZ)
         {
             if (Count == 0)
                 return Empty;
@@ -124,12 +124,12 @@ namespace Spectra
             return new MZSpectrum(mz, intensity, false);
         }
 
-        public override Spectrum<MZPeak> Clone()
+        public override Spectrum<MzPeak> Clone()
         {
             return new MZSpectrum(this);
         }
 
-        public override Spectrum<MZPeak> FilterByIntensity(double minIntensity = 0, double maxIntensity = double.MaxValue)
+        public override Spectrum<MzPeak> FilterByIntensity(double minIntensity = 0, double maxIntensity = double.MaxValue)
         {
             if (Count == 0)
                 return Empty;
@@ -161,7 +161,7 @@ namespace Spectra
             return new MZSpectrum(mz, intensities, false);
         }
 
-        public override Spectrum<MZPeak> FilterByNumberOfMostIntense(int topNPeaks)
+        public override Spectrum<MzPeak> FilterByNumberOfMostIntense(int topNPeaks)
         {
             double[] mz = new double[topNPeaks];
             double[] intensities = new double[topNPeaks];
@@ -177,7 +177,7 @@ namespace Spectra
 
         }
 
-        public override Spectrum<MZPeak> FilterByMZ(IEnumerable<IRange<double>> mzRanges)
+        public override Spectrum<MzPeak> FilterByMZ(IEnumerable<IRange<double>> mzRanges)
         {
             if (Count == 0)
                 return new MZSpectrum();
@@ -229,7 +229,7 @@ namespace Spectra
             return new MZSpectrum(mz, intensities, false);
         }
 
-        public override Spectrum<MZPeak> FilterByMZ(double minMZ, double maxMZ)
+        public override Spectrum<MzPeak> FilterByMZ(double minMZ, double maxMZ)
         {
             if (Count == 0)
                 return new MZSpectrum();

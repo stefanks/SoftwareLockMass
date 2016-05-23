@@ -20,7 +20,7 @@ using System.Collections.Generic;
 
 namespace Spectra
 {
-    public interface ISpectrum : IEnumerable<MZPeak>
+    public interface ISpectrum : IEnumerable<MzPeak>
     {
         /// <summary>
         /// The number of peaks in the spectrum
@@ -94,11 +94,11 @@ namespace Spectra
 
         double[,] ToArray();
 
-        MZPeak GetPeak(int index);
+        MzPeak GetPeak(int index);
 
-        MZPeak GetClosestPeak(double mean);
+        MzPeak GetClosestPeak(double mean);
 
-        MZPeak GetClosestPeak(IRange<double> rangeMZ);
+        MzPeak GetClosestPeak(IRange<double> rangeMZ);
 
         ISpectrum Extract(IRange<double> mzRange);
 

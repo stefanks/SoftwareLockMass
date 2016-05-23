@@ -63,12 +63,12 @@ namespace Spectra
         /// </summary>
         /// <param name="mean">The mean value for the range</param>
         /// <param name="tolerance">The tolerance range</param>
-        public DoubleRange(double mean, Tolerance tolerance)
+        internal DoubleRange(double mean, Tolerance tolerance)
         {
             SetTolerance(mean, tolerance);
         }
 
-        private void SetTolerance(double mean, Tolerance tolerance)
+        internal void SetTolerance(double mean, Tolerance tolerance)
         {
             if (tolerance == null)
             {

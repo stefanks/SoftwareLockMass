@@ -4,7 +4,7 @@ using System.Linq;
 
 namespace Proetomics
 {
-    public static class ClassExtensions
+    internal static class ClassExtensions
     {
         public static T[] SubArray<T>(this T[] data, int index, int length)
         {
@@ -12,8 +12,7 @@ namespace Proetomics
             Array.Copy(data, index, result, 0, length);
             return result;
         }
-
-
+        
         /// <summary>
         /// Checks if two collections are equivalent, regardless of the order of their contents
         /// </summary>

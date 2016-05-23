@@ -17,7 +17,7 @@
 
 using Spectra;
 
-namespace Spectra
+namespace MassSpectrometry
 {
     public sealed class ChromatographicPeak : IPeak
     {

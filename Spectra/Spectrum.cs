@@ -28,7 +28,7 @@ namespace Spectra
     /// </summary>
     [Serializable]
     public abstract class Spectrum<TPeak> : ISpectrum<TPeak>
-        where TPeak : MZPeak
+        where TPeak : MzPeak
     {
         /// <summary>
         /// The m/z of this spectrum in ascending order
@@ -353,12 +353,12 @@ namespace Spectra
 
         #region ISpectrum
 
-        MZPeak ISpectrum.GetClosestPeak(IRange<double> massRange)
+        MzPeak ISpectrum.GetClosestPeak(IRange<double> massRange)
         {
             return GetClosestPeak(massRange);
         }
 
-        MZPeak ISpectrum.GetClosestPeak(double mean)
+        MzPeak ISpectrum.GetClosestPeak(double mean)
         {
             return GetClosestPeak(mean);
         }
@@ -408,7 +408,7 @@ namespace Spectra
         public abstract Spectrum<TPeak> FilterByMZ(IEnumerable<IRange<double>> mzRanges);
         public abstract Spectrum<TPeak> FilterByMZ(double minMZ, double maxMZ);
         public abstract Spectrum<TPeak> FilterByIntensity(double minIntensity = 0, double maxIntensity = double.MaxValue);
-        public abstract Spectrum<MZPeak> FilterByNumberOfMostIntense(int topNPeaks);
+        public abstract Spectrum<MzPeak> FilterByNumberOfMostIntense(int topNPeaks);
         /// <summary>
         /// Returns a new deep clone of this spectrum.
         /// </summary>
@@ -568,12 +568,12 @@ namespace Spectra
             return FilterByIntensity(intenistyRange);
         }
 
-        MZPeak ISpectrum.GetPeak(int index)
+        MzPeak ISpectrum.GetPeak(int index)
         {
             return GetPeak(index);
         }
 
-        IEnumerator<MZPeak> IEnumerable<MZPeak>.GetEnumerator()
+        IEnumerator<MzPeak> IEnumerable<MzPeak>.GetEnumerator()
         {
             return GetEnumerator();
         }

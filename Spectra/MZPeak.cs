@@ -23,13 +23,13 @@ namespace Spectra
     /// <summary>
     /// A peak in a mass spectrum that has a well defined m/z and intenisty value
     /// </summary>
-    public class MZPeak : IPeak, IEquatable<MZPeak>
+    public class MzPeak : IPeak, IEquatable<MzPeak>
     {
         public double Intensity { get; private set; }
 
         public double MZ { get; private set; }
 
-        public MZPeak(double mz = 0.0, double intensity = 0.0)
+        public MzPeak(double mz = 0.0, double intensity = 0.0)
         {
             MZ = mz;
             Intensity = intensity;
@@ -90,7 +90,7 @@ namespace Spectra
 
         public override bool Equals(object obj)
         {
-            return obj is MZPeak && Equals((MZPeak) obj);
+            return obj is MzPeak && Equals((MzPeak) obj);
         }
 
         public override int GetHashCode()
@@ -98,7 +98,7 @@ namespace Spectra
             return MZ.GetHashCode() ^ Intensity.GetHashCode();
         }
 
-        public bool Equals(MZPeak other)
+        public bool Equals(MzPeak other)
         {
             // Odd to use mass equals on intensity, might have to make that more generic sometime
             return MZ.FuzzyEquals(other.MZ) && Intensity.FuzzyEquals(other.Intensity);

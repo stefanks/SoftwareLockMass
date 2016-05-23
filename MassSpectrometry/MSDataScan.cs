@@ -1,7 +1,7 @@
 ﻿// Copyright 2012, 2013, 2014 Derek J. Bailey
 // Modified work Copyright 2016 Stefan Solntsev
 //
-// This file (MSDataScan.cs) is part of CSMSL.
+// This file (MsDataScan.cs) is part of CSMSL.
 //
 // CSMSL is free software: you can redistribute it and/or modify it
 // under the terms of the GNU Lesser General Public License as published
@@ -16,15 +16,16 @@
 // You should have received a copy of the GNU Lesser General Public
 // License along with CSMSL. If not, see <http://www.gnu.org/licenses/>.
 
+using MassSpectrometry.Enums;
 using Spectra;
 using System;
 
 namespace MassSpectrometry
 {
-    public class MSDataScan<TSpectrum> : IMSDataScan<TSpectrum>, IEquatable<MSDataScan<TSpectrum>> 
+    public class MsDataScan<TSpectrum> : IMsDataScan<TSpectrum>, IEquatable<MsDataScan<TSpectrum>> 
         where TSpectrum : ISpectrum
     {
-        public MSDataFile<TSpectrum> ParentFile { get; private set; }
+        public MsDataFile<TSpectrum> ParentFile { get; private set; }
 
         private TSpectrum _massMzSpectrum;
 
@@ -282,12 +283,12 @@ namespace MassSpectrometry
             internal set { _selectedIonIsolationIntensity = value; }
         }
 
-        public MSDataScan()
+        public MsDataScan()
         {
             MsnOrder = -1;
         }
 
-        public MSDataScan(int spectrumNumber, int msnOrder = 1, MSDataFile<TSpectrum> parentFile = null)
+        public MsDataScan(int spectrumNumber, int msnOrder = 1, MsDataFile<TSpectrum> parentFile = null)
         {
             SpectrumNumber = spectrumNumber;
             MsnOrder = msnOrder;
@@ -308,7 +309,7 @@ namespace MassSpectrometry
             return ParentFile.GetHashCode() ^ SpectrumNumber;
         }
 
-        public bool Equals(MSDataScan<TSpectrum> other)
+        public bool Equals(MsDataScan<TSpectrum> other)
         {
             if (ReferenceEquals(this, other)) return true;
             return SpectrumNumber.Equals(other.SpectrumNumber) && ParentFile.Equals(other.ParentFile);

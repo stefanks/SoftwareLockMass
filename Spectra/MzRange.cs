@@ -28,7 +28,7 @@ namespace Spectra
         {
         }
 
-        public MzRange(double meanMZ, Tolerance toleranceWidth)
+        internal MzRange(double meanMZ, Tolerance toleranceWidth)
             : base(meanMZ, toleranceWidth)
         {
         }

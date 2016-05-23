@@ -32,6 +32,10 @@
     <WarningLevel>4</WarningLevel>
   </PropertyGroup>
   <ItemGroup>
+    <Reference Include="Chemistry, Version=1.0.4.0, Culture=neutral, processorArchitecture=AMD64">
+      <HintPath>..\packages\Chemistry.1.0.4\lib\net451\Chemistry.dll</HintPath>
+      <Private>True</Private>
+    </Reference>
     <Reference Include="System" />
     <Reference Include="System.Core" />
     <Reference Include="System.Xml.Linq" />
@@ -42,22 +46,30 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="DissociationType.cs" />
+    <Compile Include="Chromatogram.cs" />
+    <Compile Include="ChromatographicElutionProfile.cs" />
+    <Compile Include="ChromatographicPeak.cs" />
     <Compile Include="IMassSpectrum.cs" />
-    <Compile Include="IMSDataFile.cs" />
-    <Compile Include="IMSDataScan.cs" />
+    <Compile Include="Util\ClassExtensions.cs" />
+    <Compile Include="Enums\DissociationType.cs" />
+    <Compile Include="IMsDataFile.cs" />
+    <Compile Include="IMsDataScan.cs" />
     <Compile Include="MsDataFile.cs" />
-    <Compile Include="MsDataFileType.cs" />
-    <Compile Include="MSDataScan.cs" />
-    <Compile Include="MzAnalyzerType.cs" />
-    <Compile Include="Polarity.cs" />
+    <Compile Include="Enums\MsDataFileType.cs" />
+    <Compile Include="MsDataScan.cs" />
+    <Compile Include="Enums\MzAnalyzerType.cs" />
+    <Compile Include="Enums\Polarity.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="Enums\SmoothingType.cs" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\Spectra\Spectra.csproj">
       <Project>{088e4fcb-d580-4bad-a811-a1796a7666d2}</Project>
       <Name>Spectra</Name>
     </ProjectReference>
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="packages.config" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 

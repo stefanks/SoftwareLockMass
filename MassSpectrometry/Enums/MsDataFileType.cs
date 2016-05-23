@@ -15,9 +15,9 @@
 // You should have received a copy of the GNU Lesser General Public
 // License along with CSMSL. If not, see <http://www.gnu.org/licenses/>.
 
-namespace MassSpectrometry
+namespace MassSpectrometry.Enums
 {
-    public enum MSDataFileType
+    public enum MsDataFileType
     {
         UnKnown = 0,
         Mzml = 1,

@@ -1,9 +1,8 @@
 ﻿using Spectra;
 using System.Collections.Generic;
 using System.Linq;
-using System.Security.Cryptography.X509Certificates;
 
-namespace Spectra
+namespace MassSpectrometry
 {
     public class ChromatographicElutionProfile<T> where T : IPeak
     {

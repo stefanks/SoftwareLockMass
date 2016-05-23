@@ -15,13 +15,14 @@
 // You should have received a copy of the GNU Lesser General Public
 // License along with CSMSL. If not, see <http://www.gnu.org/licenses/>.
 
+using MassSpectrometry.Enums;
 using Spectra;
 using System;
 using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
 
-namespace Spectra
+namespace MassSpectrometry
 {
     public class Chromatogram : Chromatogram<ChromatographicPeak>
     {
@@ -143,11 +144,6 @@ namespace Spectra
         public abstract T GetPeak(int index);
 
         public abstract byte[] ToBytes(bool zlibCompressed);
-
-        public Range<double> GetTimeRange()
-        {
-            return new Range<double>(FirstTime, LastTime);
-        }
 
         public double[] GetTimes()
         {

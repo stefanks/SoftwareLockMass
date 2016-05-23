@@ -2,13 +2,10 @@
 using System.Collections.Generic;
 using System.IO;
 using System.IO.Compression;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
-namespace Spectra
+namespace MassSpectrometry
 {
-    static class ClassExtensions
+    internal static class ClassExtensions
     {
         public static double[] BoxCarSmooth(this double[] data, int points)
         {
@@ -40,38 +37,22 @@ namespace Spectra
             return smoothedData;
         }
 
-        public static T[] SubArray<T>(this T[] data, int index, int length)
-        {
-            T[] result = new T[length];
-            Array.Copy(data, index, result, 0, length);
-            return result;
-        }
 
         /// <summary>
-        /// Compares two doubles for equality based on their absolute difference being less
-        /// than some specified tolerance.
+        /// Compresses a byte array using Gzip compression
         /// </summary>
-        /// <param name="item1"></param>
-        /// <param name="item2"></param>
-        /// <param name="tolerance"></param>
-        /// <returns></returns>
-        public static bool FuzzyEquals(this double item1, double item2, double tolerance = 1e-10)
+        /// <param name="bytes">The byte array to compress</param>
+        /// <returns>The compressed byte array</returns>
+        public static byte[] Compress(this byte[] bytes)
         {
-            return Math.Abs(item1 - item2) < tolerance;
+            var compressedStream = new MemoryStream();
+            using (var stream = new GZipStream(compressedStream, CompressionMode.Compress))
+            {
+                new MemoryStream(bytes).CopyTo(stream);
+            }
+            return compressedStream.ToArray();
         }
 
-        /// <summary>
-        /// Compares two floats for equality based on their absolute difference being less
-        /// than some specified tolerance.
-        /// </summary>
-        /// <param name="item1"></param>
-        /// <param name="item2"></param>
-        /// <param name="tolerance"></param>
-        /// <returns></returns>
-        public static bool FuzzyEquals(this float item1, float item2, double tolerance = 1e-10)
-        {
-            return Math.Abs(item1 - item2) < tolerance;
-        }
         public static int MaxIndex<TSource>(this IEnumerable<TSource> items) where TSource : IComparable<TSource>
         {
             TSource maxItem;
@@ -79,6 +60,7 @@ namespace Spectra
         }
 
         public static int MaxIndex<TSource>(this IEnumerable<TSource> items, out TSource maxItem) where TSource : IComparable<TSource>
+
         {
             return MaxIndex(items, o => o, out maxItem);
         }
@@ -124,42 +106,6 @@ namespace Spectra
             }
             return maxIndex;
         }
-        /// <summary>
-        /// Decompresses a byte array using Gzip decompression
-        /// </summary>
-        /// <param name="bytes">The byte array to decompress</param>
-        /// <returns>The decompressed byte array</returns>
-        public static byte[] Decompress(this byte[] bytes)
-        {
-            var bigStreamOut = new MemoryStream();
-            new GZipStream(new MemoryStream(bytes), CompressionMode.Decompress).CopyTo(bigStreamOut);
-            return bigStreamOut.ToArray();
-        }
-
-        /// <summary>
-        /// Checks if the byte array is compressed using Gzip compression.
-        /// </summary>
-        /// <param name="bytes">The byte array to check for compression</param>
-        /// <returns></returns>
-        public static bool IsCompressed(this byte[] bytes)
-        {
-            // From http://stackoverflow.com/questions/19364497/how-to-tell-if-a-byte-array-is-gzipped
-            return bytes.Length >= 2 && bytes[0] == 31 && bytes[1] == 139;
-        }
-
-        /// <summary>
-        /// Compresses a byte array using Gzip compression
-        /// </summary>
-        /// <param name="bytes">The byte array to compress</param>
-        /// <returns>The compressed byte array</returns>
-        public static byte[] Compress(this byte[] bytes)
-        {
-            var compressedStream = new MemoryStream();
-            using (var stream = new GZipStream(compressedStream, CompressionMode.Compress))
-            {
-                new MemoryStream(bytes).CopyTo(stream);
-            }
-            return compressedStream.ToArray();
-        }
     }
 }
+

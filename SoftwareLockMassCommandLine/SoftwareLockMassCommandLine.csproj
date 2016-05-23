@@ -48,8 +48,8 @@
     <WarningLevel>4</WarningLevel>
   </PropertyGroup>
   <ItemGroup>
-    <Reference Include="Chemistry, Version=1.0.3.0, Culture=neutral, processorArchitecture=AMD64">
-      <HintPath>..\packages\Chemistry.1.0.3\lib\net451\Chemistry.dll</HintPath>
+    <Reference Include="Chemistry, Version=1.0.4.0, Culture=neutral, processorArchitecture=AMD64">
+      <HintPath>..\packages\Chemistry.1.0.4\lib\net451\Chemistry.dll</HintPath>
       <Private>True</Private>
     </Reference>
     <Reference Include="System" />
@@ -75,14 +75,6 @@
     <None Include="packages.config" />
   </ItemGroup>
   <ItemGroup>
-    <ProjectReference Include="..\..\CSMSL\CSMSL\IO\MzML\MzML.csproj">
-      <Project>{012434FB-88A9-4DEC-B887-5F64C0B481D4}</Project>
-      <Name>MzML</Name>
-    </ProjectReference>
-    <ProjectReference Include="..\..\CSMSL\CSMSL\IO\Thermo\Thermo.csproj">
-      <Project>{24DC85FF-E97B-4140-9614-77DD8FDDD32F}</Project>
-      <Name>Thermo</Name>
-    </ProjectReference>
     <ProjectReference Include="..\SoftwareLockMass\SoftwareLockMass.csproj">
       <Project>{475C3B7B-4367-4BC8-8192-2A850C72812B}</Project>
       <Name>SoftwareLockMass</Name>

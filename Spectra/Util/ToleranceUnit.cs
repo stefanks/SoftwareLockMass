@@ -1,6 +1,6 @@
 ﻿// Copyright 2012, 2013, 2014 Derek J. Bailey
 // 
-// This file (DissociationType.cs) is part of CSMSL.
+// This file (ToleranceUnit.cs) is part of CSMSL.
 // 
 // CSMSL is free software: you can redistribute it and/or modify it
 // under the terms of the GNU Lesser General Public License as published
@@ -15,22 +15,29 @@
 // You should have received a copy of the GNU Lesser General Public
 // License along with CSMSL. If not, see <http://www.gnu.org/licenses/>.
 
-namespace MassSpectrometry
+namespace Spectra
 {
-    public enum DissociationType
+    /// <summary>
+    /// The units of tolerance
+    /// </summary>
+    internal enum ToleranceUnit
     {
-        UnKnown = -1,
-        None = 6,
-        CID = 0,
-        HCD = 5,
-        ETD = 4,
-        MPD = 1,
-        ECD = 2,
-        PQD = 3,
-        SA = 7,
-        PTR = 8,
-        NETD = 9,
-        NPTR = 10,
-        CI = 11
+        /// <summary>
+        /// Parts per million
+        /// </summary>
+        PPM,
+
+        /// <summary>
+        /// Daltons
+        /// </summary>
+        DA,
+
+        /// <summary>
+        /// Milli Mass Units
+        /// <para>
+        /// Equivalent to mDa
+        /// </para>
+        /// </summary>
+        MMU
     }
 }
