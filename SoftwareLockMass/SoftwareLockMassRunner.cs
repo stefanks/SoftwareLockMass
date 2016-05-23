@@ -1,67 +1,39 @@
-﻿using CSMSL;
-using CSMSL.Chemistry;
-using CSMSL.IO;
+﻿using Chemistry;
 using CSMSL.IO.MzML;
 using CSMSL.IO.Thermo;
-using CSMSL.Proteomics;
-using CSMSL.Spectral;
+using MassSpectrometry;
+using MathNet.Numerics.Statistics;
+using Proteomics;
+using Spectra;
 using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
-using System.Text;
 using System.Text.RegularExpressions;
-using System.Threading.Tasks;
 using System.Xml.Serialization;
-using MathNet.Numerics.Statistics;
 
 namespace SoftwareLockMass
 {
-    public class SoftwareLockMassRunner
+    public static class SoftwareLockMassRunner
     {
-        // Important for every setting. Realized only 0 and 0.01 give meaningful results when looking at performance
-        // 0 IS BEST!!!
-        private const double thresholdPassParameter = 0;
-        //private const double thresholdPassParameter = 0.01;
+        public static SoftwareLockMassParams p;
 
-        // DO NOT GO UNDER 0.01!!!!! Maybe even increase.
-        private const double toleranceInMZforSearch = 0.01;
-
-        // 1e5 is too sparse. 1e4 is nice, but misses one I like So using 5e3. 1e3 is nice. Try 0!
-        private const double intensityCutoff = 1e3;
-
-        // My parameters!
-        private const bool MZID_MASS_DATA = false;
-
-        #region isotopologue parameters
-        // THIS PARAMETER IS FRAGILE!!!
-        // TUNED TO CORRESPOND TO SPECTROMETER OUTPUT
-        // BETTER SPECTROMETERS WOULD HAVE BETTER (LOWER) RESOLUIONS
-        // Parameter for isotopolouge distribution searching
-        private const double fineResolution = 0.1;
-
-        // Good number
-        private const int numIsotopologuesToConsider = 10;
-
-        // Higher means more discriminating at selecting training points. 
-        private const int numIsotopologuesNeededToBeConsideredIdentified = 3;
-        #endregion
-
-
-        private SoftwareLockMassParams p;
-
-        public SoftwareLockMassRunner(SoftwareLockMassParams p)
-        {
-            this.p = p;
-        }
-
-        public void Run()
+        public static void Run()
         {
             Console.WriteLine("Welcome to my software lock mass implementation");
-            Console.WriteLine("Reading uncalibrated raw/mzML file");
+            IMSDataFile<ISpectrum<IPeak>> myMSDataFile = null;
 
-            //IMSDataFile<ISpectrum<IPeak>> myMSDataFile = new Mzml(origDataFile);
-            IMSDataFile<ISpectrum<IPeak>> myMSDataFile = new ThermoRawFile(p.fileToCalibrate);
+            if (p.mzML())
+            {
+                Console.WriteLine("Reading uncalibrated mzML file");
+                myMSDataFile = new Mzml(p.fileToCalibrate);
+            }
+            else{
+                Console.WriteLine("Reading uncalibrated raw file");
+                myMSDataFile = new ThermoRawFile(p.fileToCalibrate);
+            }
+
+
             myMSDataFile.Open();
 
             //Console.WriteLine("Spectrum number 2810, peak num 2213: " + myMSDataFile[2810].MassSpectrum.GetPeak(2212).X);
@@ -153,16 +125,9 @@ namespace SoftwareLockMass
 
             // Get the training data out of xml
             List<TrainingPoint> trainingPointsToReturn = new List<TrainingPoint>();
-
-            // Read a database of modifications 
-            XmlSerializer unimodSerializer = new XmlSerializer(typeof(unimod));
-            Stream stream2 = new FileStream(@"E:\Stefan\data\Unimod\unimod_tables.xml", FileMode.Open);
-            unimod unimodDeserialized = unimodSerializer.Deserialize(stream2) as unimod;
-
-            // Read a database of modifications 
-            XmlSerializer psimodSerializer = new XmlSerializer(typeof(obo));
-            Stream stream3 = new FileStream(@"E:\Stefan\data\PSI-MOD\PSI-MOD.obo.xml", FileMode.Open);
-            obo psimodDeserialized = psimodSerializer.Deserialize(stream3) as obo;
+            
+            UsefulProteomicsDatabases.unimod unimodDeserialized = UsefulProteomicsDatabases.Loaders.LoadUnimod();
+            UsefulProteomicsDatabases.obo psimodDeserialized = UsefulProteomicsDatabases.Loaders.LoadPsiMod();
 
             HashSet<Tuple<double, double>> peaksAddedHashSet = new HashSet<Tuple<double, double>>();
 
@@ -174,7 +139,7 @@ namespace SoftwareLockMass
                     Console.Write("" + (matchIndex / (dd.DataCollection.AnalysisData.SpectrumIdentificationList[0].SpectrumIdentificationResult.Length / 100)) + "% ");
                 if (dd.SequenceCollection.PeptideEvidence[matchIndex].isDecoy)
                     continue;
-                if (Convert.ToDouble(dd.DataCollection.AnalysisData.SpectrumIdentificationList[0].SpectrumIdentificationResult[matchIndex].SpectrumIdentificationItem[0].cvParam[1].value) > thresholdPassParameter)
+                if (Convert.ToDouble(dd.DataCollection.AnalysisData.SpectrumIdentificationList[0].SpectrumIdentificationResult[matchIndex].SpectrumIdentificationItem[0].cvParam[1].value) > p.thresholdPassParameter)
                     break;
 
                 string ms2spectrumID = dd.DataCollection.AnalysisData.SpectrumIdentificationList[0].SpectrumIdentificationResult[matchIndex].spectrumID;
@@ -189,7 +154,7 @@ namespace SoftwareLockMass
                 //    Console.WriteLine(" Error according to single morpheus point: " + ((dd.DataCollection.AnalysisData.SpectrumIdentificationList[0].SpectrumIdentificationResult[matchIndex].SpectrumIdentificationItem[0].experimentalMassToCharge) - (dd.DataCollection.AnalysisData.SpectrumIdentificationList[0].SpectrumIdentificationResult[matchIndex].SpectrumIdentificationItem[0].calculatedMassToCharge)));
                 //}
                 Spectrum<MZPeak> distributionSpectrum;
-                if (MZID_MASS_DATA)
+                if (p.MZID_MASS_DATA)
                 {
                     double calculatedMassToCharge = dd.DataCollection.AnalysisData.SpectrumIdentificationList[0].SpectrumIdentificationResult[matchIndex].SpectrumIdentificationItem[0].calculatedMassToCharge;
                     int chargeState = dd.DataCollection.AnalysisData.SpectrumIdentificationList[0].SpectrumIdentificationResult[matchIndex].SpectrumIdentificationItem[0].chargeState;
@@ -221,9 +186,9 @@ namespace SoftwareLockMass
                             }
                             else if (dd.SequenceCollection.Peptide[matchIndex].Modification[i].cvParam[0].cvRef == "PSI-MOD")
                             {
-                                Console.WriteLine("PSI-MOD modification");
+                                //Console.WriteLine("PSI-MOD modification");
                                 string psimodAcession = dd.SequenceCollection.Peptide[matchIndex].Modification[i].cvParam[0].accession;
-                                oboTerm ksadklfj = (oboTerm)psimodDeserialized.Items[GetLastNumberFromString(psimodAcession) + 2];
+                                UsefulProteomicsDatabases.oboTerm ksadklfj = (UsefulProteomicsDatabases.oboTerm)psimodDeserialized.Items[GetLastNumberFromString(psimodAcession) + 2];
                                 if (GetLastNumberFromString(psimodAcession) != GetLastNumberFromString(ksadklfj.id))
                                     throw new Exception("Error in reading psi-mod file");
                                 else
@@ -233,7 +198,7 @@ namespace SoftwareLockMass
                                         if (a.dbname == "DiffFormula")
                                         {
                                             theFormula = a.name;
-                                            Console.WriteLine(theFormula);
+                                            //Console.WriteLine(theFormula);
                                             break;
                                         }
                                     }
@@ -248,9 +213,12 @@ namespace SoftwareLockMass
                         }
                     }
                     // Calculate isotopic distribution
-                    IsotopicDistribution dist = new IsotopicDistribution(fineResolution);
-                    var fullSpectrum = dist.CalculateDistribuition(peptide1.GetChemicalFormula());
-                    distributionSpectrum = fullSpectrum.FilterByNumberOfMostIntense(Math.Min(numIsotopologuesToConsider, fullSpectrum.Count));
+                    IsotopicDistribution dist = new IsotopicDistribution(p.fineResolution);
+                    double[] masses;
+                    double[] intensities;
+                    dist.CalculateDistribuition(peptide1.GetChemicalFormula(), out masses, out intensities);
+                    var fullSpectrum = new MZSpectrum(masses, intensities, false);
+                    distributionSpectrum = fullSpectrum.FilterByNumberOfMostIntense(Math.Min(p.numIsotopologuesToConsider, fullSpectrum.Count));
                 }
 
                 SearchMS1Spectra(myMSDataFile, distributionSpectrum, trainingPointsToReturn, ms2spectrumIndex, -1, peaksAddedHashSet);
@@ -291,7 +259,7 @@ namespace SoftwareLockMass
                 var fullMS1spectrum = myMSDataFile[theIndex];
                 double ms1RetentionTime = fullMS1spectrum.RetentionTime;
                 var rangeOfSpectrum = fullMS1spectrum.MzRange;
-                var ms1FilteredByHighIntensities = fullMS1spectrum.MassSpectrum.FilterByIntensity(intensityCutoff, double.MaxValue);
+                var ms1FilteredByHighIntensities = fullMS1spectrum.MassSpectrum.FilterByIntensity(p.intensityCutoff, double.MaxValue);
                 if (ms1FilteredByHighIntensities.Count == 0)
                 {
                     theIndex += direction;
@@ -308,11 +276,11 @@ namespace SoftwareLockMass
                         break;
 
                     List<TrainingPoint> trainingPointsToAverage = new List<TrainingPoint>();
-                    for (int isotopologueIndex = 0; isotopologueIndex < Math.Min(numIsotopologuesToConsider, chargedDistribution.Count); isotopologueIndex++)
+                    for (int isotopologueIndex = 0; isotopologueIndex < Math.Min(p.numIsotopologuesToConsider, chargedDistribution.Count); isotopologueIndex++)
                     {
                         var closestPeak = ms1FilteredByHighIntensities.GetClosestPeak(chargedDistribution[isotopologueIndex].MZ);
                         var theTuple = Tuple.Create<double, double>(closestPeak.X, ms1RetentionTime);
-                        if (Math.Abs(chargedDistribution[isotopologueIndex].MZ - closestPeak.X) < toleranceInMZforSearch && !peaksAddedHashSet.Contains(theTuple))
+                        if (Math.Abs(chargedDistribution[isotopologueIndex].MZ - closestPeak.X) < p.toleranceInMZforSearch && !peaksAddedHashSet.Contains(theTuple))
                         {
                             peaksAddedHashSet.Add(theTuple);
                             //if (ms2spectrumIndex == 2813 || ms2spectrumIndex == 11279 || ms2spectrumIndex == 11357 || ms2spectrumIndex == 4903 || ms2spectrumIndex == 3181)
@@ -327,7 +295,7 @@ namespace SoftwareLockMass
                         else
                             break;
                     }
-                    if (trainingPointsToAverage.Count >= numIsotopologuesNeededToBeConsideredIdentified)
+                    if (trainingPointsToAverage.Count >= p.numIsotopologuesNeededToBeConsideredIdentified)
                     {
                         added = true;
                         // Hack! Last isotopologue seems to be troublesome, often has error
@@ -535,12 +503,12 @@ namespace SoftwareLockMass
 
                 // Polarity
                 _indexedmzMLConnection.mzML.run.spectrumList.spectrum[i].cvParam[3] = new CVParamType();
-                if (myMSDataFile[i + 1].Polarity == CSMSL.Polarity.Negative)
+                if (myMSDataFile[i + 1].Polarity == Polarity.Negative)
                 {
                     _indexedmzMLConnection.mzML.run.spectrumList.spectrum[i].cvParam[3].name = "negative scan";
                     _indexedmzMLConnection.mzML.run.spectrumList.spectrum[i].cvParam[3].accession = "MS:1000129";
                 }
-                else if (myMSDataFile[i + 1].Polarity == CSMSL.Polarity.Positive)
+                else if (myMSDataFile[i + 1].Polarity == Polarity.Positive)
                 {
                     _indexedmzMLConnection.mzML.run.spectrumList.spectrum[i].cvParam[3].name = "positive scan";
                     _indexedmzMLConnection.mzML.run.spectrumList.spectrum[i].cvParam[3].accession = "MS:1000130";
