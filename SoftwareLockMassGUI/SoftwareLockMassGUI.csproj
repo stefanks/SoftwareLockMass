@@ -38,8 +38,25 @@
       <HintPath>..\packages\Chemistry.1.0.7\lib\net451\Chemistry.dll</HintPath>
       <Private>True</Private>
     </Reference>
+    <Reference Include="MassSpectrometry, Version=1.0.1.0, Culture=neutral, processorArchitecture=AMD64">
+      <HintPath>..\packages\MassSpectrometry.1.0.1\lib\net451\MassSpectrometry.dll</HintPath>
+      <Private>True</Private>
+    </Reference>
+    <Reference Include="MathNet.Numerics, Version=3.11.1.0, Culture=neutral, processorArchitecture=MSIL">
+      <HintPath>..\packages\MathNet.Numerics.3.11.1\lib\net40\MathNet.Numerics.dll</HintPath>
+      <Private>True</Private>
+    </Reference>
+    <Reference Include="Proteomics, Version=1.0.0.0, Culture=neutral, processorArchitecture=AMD64">
+      <HintPath>..\packages\Proteomics.1.0.0\lib\net451\Proteomics.dll</HintPath>
+      <Private>True</Private>
+    </Reference>
+    <Reference Include="Spectra, Version=1.0.0.0, Culture=neutral, processorArchitecture=AMD64">
+      <HintPath>..\packages\MassSpectrometry.1.0.1\lib\net451\Spectra.dll</HintPath>
+      <Private>True</Private>
+    </Reference>
     <Reference Include="System" />
     <Reference Include="System.Core" />
+    <Reference Include="System.Numerics" />
     <Reference Include="System.Xml.Linq" />
     <Reference Include="System.Data.DataSetExtensions" />
     <Reference Include="Microsoft.CSharp" />
@@ -94,10 +111,6 @@
     <ProjectReference Include="..\SoftwareLockMass\SoftwareLockMass.csproj">
       <Project>{475C3B7B-4367-4BC8-8192-2A850C72812B}</Project>
       <Name>SoftwareLockMass</Name>
-    </ProjectReference>
-    <ProjectReference Include="..\Spectra\Spectra.csproj">
-      <Project>{088E4FCB-D580-4BAD-A811-A1796A7666D2}</Project>
-      <Name>Spectra</Name>
     </ProjectReference>
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />

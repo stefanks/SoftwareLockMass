@@ -27,7 +27,7 @@ namespace SoftwareLockMass
             SoftwareLockMassRunner.p.outputFile = outputFilePath;
             SoftwareLockMassRunner.p.outputHandler += P_outputHandler;
             SoftwareLockMassRunner.p.progressHandler += P_progressHandler;
-            SoftwareLockMassRunner.p.watchHandler += P_outputHandler;
+            //SoftwareLockMassRunner.p.watchHandler += P_outputHandler;
 
             SoftwareLockMassRunner.Run();
 

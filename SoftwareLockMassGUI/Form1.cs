@@ -25,8 +25,8 @@ namespace SoftwareLockMassGUI
             Loaders.LoadElements();
             
             // THIS IS JUST FOR DEBUGGING   
-            origDataFile = @"E:\Stefan\data\jurkat\120426_Jurkat_highLC_Frac4.raw";
-            mzidFile = @"E:\Stefan\data\4FileExperiments\4FileExperiment10ppmForCalibration\120426_Jurkat_highLC_Frac4.mzid";
+            origDataFile = @"E:\Stefan\data\jurkat\120426_Jurkat_highLC_Frac1.raw";
+            mzidFile = @"E:\Stefan\data\4FileExperiments\4FileExperiment10ppmForCalibration\120426_Jurkat_highLC_Frac1.mzid";
 
             SoftwareLockMassRunner.p = new SoftwareLockMassParams(origDataFile, mzidFile);
             SoftwareLockMassRunner.p.outputHandler += P_outputHandler;
@@ -48,7 +48,6 @@ namespace SoftwareLockMassGUI
             Thread thread = new Thread(new ThreadStart(SoftwareLockMassRunner.Run));
             thread.IsBackground = true;
             thread.Start();
-
 
         }
 

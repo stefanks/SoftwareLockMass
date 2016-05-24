@@ -39,9 +39,7 @@ namespace SoftwareLockMass
 
             p.OnOutput(new OutputHandlerEventArgs("Getting Training Points"));
             List<TrainingPoint> trainingPoints = GetTrainingPoints(myMsDataFile, p.mzidFile);
-
-            return;
-
+            
             p.OnOutput(new OutputHandlerEventArgs("Writing training points to file"));
             WriteTrainingDataToFiles(trainingPoints);
 
