@@ -11,14 +11,18 @@ namespace SoftwareLockMass
         private double[] CentroidMZfinal;
         private double[] CentroidTimefinal;
         private double[] errorAtClusterfinal;
+        private Action<OutputHandlerEventArgs> onOutput;
+        private int v;
 
         private double dist(double v1, double v2, int j, double[] CentroidMZdist, double[] CentroidTimedist)
         {
             return Math.Pow(v1 - CentroidMZdist[j],2) + Math.Pow(v2 - CentroidTimedist[j],2);
         }
+        
 
-        public CalibrationFunctionClustering(int numClusters)
+        public CalibrationFunctionClustering(Action<OutputHandlerEventArgs> onOutput, int numClusters)
         {
+            this.onOutput = onOutput;
             this.numClusters = numClusters;
         }
 
@@ -42,7 +46,7 @@ namespace SoftwareLockMass
                 for (int i = 0; i < numClusters; i++)
                 {
                     var kk = randNum.Next(numTp);
-                    //Console.WriteLine(kk);
+                    //p.OnOutput(new OutputHandlerEventArgs((kk);
                     CentroidMZ[i] = trainingList[kk].dp.mz;
                     CentroidTime[i] = trainingList[kk].dp.rt;
                     errorAtCluster[i] = trainingList[kk].l;
@@ -101,11 +105,11 @@ namespace SoftwareLockMass
                     errorAtClusterfinal = (double[])errorAtCluster.Clone();
 
                     totalError = mseInCluster.Sum();
-                    Console.WriteLine("New total MSE: " + totalError);
-                    Console.WriteLine("New total MSE other calucation: " + getMSE(trainingList));
+                    onOutput(new OutputHandlerEventArgs("New total MSE: " + totalError));
+                    onOutput(new OutputHandlerEventArgs("New total MSE other calucation: " + getMSE(trainingList)));
                     for (int j = 0; j < numClusters; j++)
                     {
-                        Console.WriteLine(" " + CentroidMZ[j] + " " + CentroidTime[j] + " " + errorAtCluster[j]);
+                        onOutput(new OutputHandlerEventArgs(" " + CentroidMZ[j] + " " + CentroidTime[j] + " " + errorAtCluster[j]));
                     }
                 }
             }

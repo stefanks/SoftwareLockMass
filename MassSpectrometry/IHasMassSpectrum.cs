@@ -1,6 +1,6 @@
 ﻿// Copyright 2012, 2013, 2014 Derek J. Bailey
 // 
-// This file (IMassSpectrum.cs) is part of CSMSL.
+// This file (IHasMassSpectrum.cs) is part of CSMSL.
 // 
 // CSMSL is free software: you can redistribute it and/or modify it
 // under the terms of the GNU Lesser General Public License as published
@@ -22,7 +22,7 @@ namespace MassSpectrometry
     /// <summary>
     /// An object that contains a mass spectrum
     /// </summary>
-    public interface IMassSpectrum
+    public interface IHasMassSpectrum
     {
         ISpectrum MassSpectrum { get; }
     }

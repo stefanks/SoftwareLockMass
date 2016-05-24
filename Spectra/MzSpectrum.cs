@@ -15,7 +15,6 @@
 // You should have received a copy of the GNU Lesser General Public
 // License along with CSMSL. If not, see <http://www.gnu.org/licenses/>.
 
-using Spectra;
 using System;
 using System.Collections.Generic;
 

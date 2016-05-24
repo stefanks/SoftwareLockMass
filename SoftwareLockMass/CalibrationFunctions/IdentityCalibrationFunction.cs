@@ -7,7 +7,12 @@ namespace SoftwareLockMass
 {
     internal class IdentityCalibrationFunction : CalibrationFunction
     {
-        
+        private Action<OutputHandlerEventArgs> onOutput;
+
+        public IdentityCalibrationFunction(Action<OutputHandlerEventArgs> onOutput)
+        {
+            this.onOutput = onOutput;
+        }
 
         public override double Predict(DataPoint t)
         {

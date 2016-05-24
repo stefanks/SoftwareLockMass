@@ -17,8 +17,9 @@ namespace SoftwareLockMass
         bool average;
         int numToSelect;
         double relativeWeight;
+        private Action<OutputHandlerEventArgs> onOutput;
 
-        public MedianCalibrationFunction(int mzCount= 50, int rtCount = 50, bool average = false, int numToSelect = 10, double maxMZ = 2000, double maxrt = 200, double relativeWeight = 1)
+        public MedianCalibrationFunction(Action<OutputHandlerEventArgs> onOutput, int mzCount= 50, int rtCount = 50, bool average = false, int numToSelect = 10, double maxMZ = 2000, double maxrt = 200, double relativeWeight = 1)
         {
             this.mzCount = mzCount;
             this.rtCount = rtCount;
@@ -27,8 +28,9 @@ namespace SoftwareLockMass
             this.average = average;
             this.numToSelect= numToSelect;
             this.relativeWeight = relativeWeight;
+            this.onOutput = onOutput;
         }
-
+        
         public override void Train(List<TrainingPoint> trainingList)
         {
             theErrors = new double[mzCount, rtCount];

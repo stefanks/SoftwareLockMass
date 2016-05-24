@@ -107,7 +107,7 @@ namespace Proteomics
             ResiduesByLetter[Char.ToLower(residue.Letter)] = residue;
         }
 
-        internal AminoAcid(string name, char oneLetterAbbreviation, string threeLetterAbbreviation, string chemicalFormula, ModificationSites site)
+        public AminoAcid(string name, char oneLetterAbbreviation, string threeLetterAbbreviation, string chemicalFormula, ModificationSites site)
             : this(name, oneLetterAbbreviation, threeLetterAbbreviation, new ChemicalFormula(chemicalFormula), site)
         {
         }

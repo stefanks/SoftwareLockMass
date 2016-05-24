@@ -20,7 +20,7 @@ namespace Spectra
     /// <summary>
     /// The units of tolerance
     /// </summary>
-    internal enum ToleranceUnit
+    public enum ToleranceUnit
     {
         /// <summary>
         /// Parts per million

@@ -25,6 +25,12 @@ namespace SoftwareLockMass
         private double m;
         private double n;
         private double o;
+        private Action<OutputHandlerEventArgs> onOutput;
+
+        public QuarticCalibrationFunction(Action<OutputHandlerEventArgs> onOutput)
+        {
+            this.onOutput = onOutput;
+        }
 
         public override double Predict(DataPoint t)
         {

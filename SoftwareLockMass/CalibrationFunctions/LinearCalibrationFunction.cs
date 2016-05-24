@@ -10,6 +10,12 @@ namespace SoftwareLockMass
         private double a;
         private double b;
         private double c;
+        private Action<OutputHandlerEventArgs> onOutput;
+
+        public LinearCalibrationFunction(Action<OutputHandlerEventArgs> onOutput)
+        {
+            this.onOutput = onOutput;
+        }
 
         public override double Predict(DataPoint t)
         {

@@ -27,7 +27,7 @@ namespace Proteomics
     /// <summary>
     /// A linear polymer of amino acids
     /// </summary>
-    public abstract class AminoAcidPolymer : IEquatable<AminoAcidPolymer>, IMass, IAminoAcidSequence
+    public abstract class AminoAcidPolymer : IEquatable<AminoAcidPolymer>, IHasMass, IAminoAcidSequence
     {
         #region Static Properties
 
@@ -55,18 +55,18 @@ namespace Proteomics
         /// <summary>
         /// The C-terminus chemical formula cap. This is different from the C-Terminus modification.
         /// </summary>
-        private IChemicalFormula _cTerminus;
+        private IHasChemicalFormula _cTerminus;
 
         /// <summary>
         /// The N-terminus chemical formula cap. This is different from the N-Terminus modification.
         /// </summary>
-        private IChemicalFormula _nTerminus;
+        private IHasChemicalFormula _nTerminus;
 
         /// <summary>
         /// All of the modifications indexed by position from N to C. This array is 2 bigger than the amino acid array
         /// as index 0 and Count - 1 represent the N and C terminus, respectively
         /// </summary>
-        private IMass[] _modifications;
+        private IHasMass[] _modifications;
 
         /// <summary>
         /// All of the amino acid residues indexed by position from N to C.
@@ -110,7 +110,7 @@ namespace Proteomics
         {
         }
 
-        protected AminoAcidPolymer(string sequence, IChemicalFormula nTerm, IChemicalFormula cTerm)
+        protected AminoAcidPolymer(string sequence, IHasChemicalFormula nTerm, IHasChemicalFormula cTerm)
         {
             MonoisotopicMass = 0;
             Length = sequence.Length;
@@ -147,14 +147,14 @@ namespace Proteomics
 
             if (includeModifications && aminoAcidPolymer.ContainsModifications())
             {
-                _modifications = new IMass[length + 2];
+                _modifications = new IHasMass[length + 2];
                 for (int i = 0; i < length; i++)
                 {
                     var aa = otherAminoAcids[i + firstResidue];
                     _aminoAcids[i] = aa;
                     monoMass += aa.MonoisotopicMass;
 
-                    IMass mod = aminoAcidPolymer._modifications[i + firstResidue + 1];
+                    IHasMass mod = aminoAcidPolymer._modifications[i + firstResidue + 1];
                     if (mod == null)
                         continue;
 
@@ -192,7 +192,7 @@ namespace Proteomics
         /// <summary>
         /// Gets or sets the C terminus of this amino acid polymer
         /// </summary>
-        public IChemicalFormula CTerminus
+        public IHasChemicalFormula CTerminus
         {
             get { return _cTerminus; }
             set { ReplaceTerminus(ref _cTerminus, value); }
@@ -201,7 +201,7 @@ namespace Proteomics
         /// <summary>
         /// Gets or sets the N terminus of this amino acid polymer
         /// </summary>
-        public IChemicalFormula NTerminus
+        public IHasChemicalFormula NTerminus
         {
             get { return _nTerminus; }
             set { ReplaceTerminus(ref _nTerminus, value); }
@@ -224,7 +224,7 @@ namespace Proteomics
         /// <summary>
         /// The internal data store for the modifications (2 larger than the length to handle the N and C termini)
         /// </summary>
-        public IMass[] Modifications
+        public IHasMass[] Modifications
         {
             get { return _modifications; }
         }
@@ -325,7 +325,7 @@ namespace Proteomics
 
             StringBuilder modSeqSb = new StringBuilder(Length);
 
-            IMass mod;
+            IHasMass mod;
 
             // Handle N-Terminus Modification
             if ((mod = _modifications[0]) != null && !Modification.Empty.Equals(mod) && !mod.MassEquals(0))
@@ -402,9 +402,9 @@ namespace Proteomics
         {
             // Residues count
             int count = _aminoAcids.Sum(aar => aar.thisChemicalFormula.Count(element));
-            // Modifications count (if the mod is a IChemicalFormula)
+            // Modifications count (if the mod is a IHasChemicalFormula)
             if (_modifications != null)
-                count += _modifications.Where(mod => mod is IChemicalFormula).Cast<IChemicalFormula>().Sum(mod => mod.thisChemicalFormula.Count(element));
+                count += _modifications.Where(mod => mod is IHasChemicalFormula).Cast<IHasChemicalFormula>().Sum(mod => mod.thisChemicalFormula.Count(element));
             return count;
         }
 
@@ -412,9 +412,9 @@ namespace Proteomics
         {
             // Residues count
             int count = _aminoAcids.Sum(aar => aar.thisChemicalFormula.Count(isotope));
-            // Modifications count (if the mod is a IChemicalFormula)
+            // Modifications count (if the mod is a IHasChemicalFormula)
             if (_modifications != null)
-                count += _modifications.Where(mod => mod is IChemicalFormula).Cast<IChemicalFormula>().Sum(mod => mod.thisChemicalFormula.Count(isotope));
+                count += _modifications.Where(mod => mod is IHasChemicalFormula).Cast<IHasChemicalFormula>().Sum(mod => mod.thisChemicalFormula.Count(isotope));
             return count;
         }
 
@@ -473,12 +473,14 @@ namespace Proteomics
                 ChemicalFormula capFormula = type.GetIonCap();
                 bool isCTerminal = type.GetTerminus() == Terminus.C;
 
+                // OK 1
                 double monoMass = capFormula.MonoisotopicMass;
                 ChemicalFormula formula = new ChemicalFormula(capFormula);
 
-                IChemicalFormula terminus = isCTerminal ? CTerminus : NTerminus;
-                monoMass += terminus.MonoisotopicMass;
 
+                // OK 2
+                IHasChemicalFormula terminus = isCTerminal ? CTerminus : NTerminus;
+                monoMass += terminus.MonoisotopicMass;
                 if (isChemicalFormula)
                 {
                     formula += terminus;
@@ -492,7 +494,7 @@ namespace Proteomics
                     int aaIndex = isCTerminal ? Length - i : i - 1;
 
                     // Handle the terminus mods first in a special case
-                    IMass mod;
+                    IHasMass mod;
                     if (first)
                     {
                         first = false;
@@ -501,11 +503,11 @@ namespace Proteomics
                             mod = _modifications[aaIndex + 1];
                             if (mod != null)
                             {
+                                // OK 3
                                 monoMass += mod.MonoisotopicMass;
-
                                 if (isChemicalFormula)
                                 {
-                                    IChemicalFormula modFormula = mod as IChemicalFormula;
+                                    IHasChemicalFormula modFormula = mod as IHasChemicalFormula;
                                     if (modFormula != null)
                                     {
                                         formula.Add(modFormula);
@@ -520,6 +522,7 @@ namespace Proteomics
                         continue;
                     }
 
+                    // OK 4
                     monoMass += _aminoAcids[aaIndex].MonoisotopicMass;
                     formula.Add(_aminoAcids[aaIndex]);
 
@@ -529,11 +532,11 @@ namespace Proteomics
 
                         if (mod != null)
                         {
+                            // OK 5
                             monoMass += mod.MonoisotopicMass;
-
                             if (isChemicalFormula)
                             {
-                                IChemicalFormula modFormula = mod as IChemicalFormula;
+                                IHasChemicalFormula modFormula = mod as IHasChemicalFormula;
                                 if (modFormula != null)
                                 {
                                     formula.Add(modFormula);
@@ -570,22 +573,22 @@ namespace Proteomics
             return _modifications != null && _modifications.Any(m => m != null);
         }
 
-        public IMass[] GetModifications()
+        public IHasMass[] GetModifications()
         {
-            IMass[] mods = new IMass[Length + 2];
+            IHasMass[] mods = new IHasMass[Length + 2];
             if (_modifications != null)
                 Array.Copy(_modifications, mods, _modifications.Length);
             return mods;
         }
 
-        public ISet<T> GetUniqueModifications<T>() where T : IMass
+        public ISet<T> GetUniqueModifications<T>() where T : IHasMass
         {
             HashSet<T> uniqueMods = new HashSet<T>();
 
             if (_modifications == null)
                 return uniqueMods;
 
-            foreach (IMass mod in _modifications)
+            foreach (IHasMass mod in _modifications)
             {
                 if (mod is T)
                     uniqueMods.Add((T) mod);
@@ -596,7 +599,7 @@ namespace Proteomics
         /// <summary>
         /// Gets or sets the modification of the C terminus on this amino acid polymer
         /// </summary>
-        public IMass CTerminusModification
+        public IHasMass CTerminusModification
         {
             get { return GetModification(Length + 1); }
             set { ReplaceMod(Length + 1, value); }
@@ -605,7 +608,7 @@ namespace Proteomics
         /// <summary>
         /// Gets or sets the modification of the C terminus on this amino acid polymer
         /// </summary>
-        public IMass NTerminusModification
+        public IHasMass NTerminusModification
         {
             get { return GetModification(0); }
             set { ReplaceMod(0, value); }
@@ -625,7 +628,7 @@ namespace Proteomics
         /// </summary>
         /// <param name="modification">The modification to count</param>
         /// <returns>The number of modifications</returns>
-        public int ModificationCount(IMass modification)
+        public int ModificationCount(IHasMass modification)
         {
             if (modification == null || _modifications == null)
                 return 0;
@@ -638,7 +641,7 @@ namespace Proteomics
         /// </summary>
         /// <param name="modification">The modification to look for</param>
         /// <returns>True if the modification is found, false otherwise</returns>
-        public bool Contains(IMass modification)
+        public bool Contains(IHasMass modification)
         {
             if (modification == null || _modifications == null)
                 return false;
@@ -651,12 +654,12 @@ namespace Proteomics
         /// </summary>
         /// <param name="residueNumber">The amino acid residue number</param>
         /// <returns>The modification at the site, null if there isn't any modification present</returns>
-        public IMass GetModification(int residueNumber)
+        public IHasMass GetModification(int residueNumber)
         {
             return _modifications == null ? null : _modifications[residueNumber];
         }
 
-        public bool TryGetModification(int residueNumber, out IMass mod)
+        public bool TryGetModification(int residueNumber, out IHasMass mod)
         {
             if (residueNumber > Length || residueNumber < 1 || _modifications == null)
             {
@@ -667,9 +670,9 @@ namespace Proteomics
             return mod != null;
         }
 
-        public bool TryGetModification<T>(int residueNumber, out T mod) where T : class, IMass
+        public bool TryGetModification<T>(int residueNumber, out T mod) where T : class, IHasMass
         {
-            IMass outMod;
+            IHasMass outMod;
             if (TryGetModification(residueNumber, out outMod))
             {
                 mod = outMod as T;
@@ -684,7 +687,7 @@ namespace Proteomics
         /// </summary>
         /// <param name="mod">The modification to set</param>
         /// <param name="terminus">The termini to set the mod at</param>
-        public virtual void SetModification(IMass mod, Terminus terminus)
+        public virtual void SetModification(IHasMass mod, Terminus terminus)
         {
             if ((terminus & Terminus.N) == Terminus.N)
                 NTerminusModification = mod;
@@ -699,7 +702,7 @@ namespace Proteomics
         /// <param name="mod">The modification to set</param>
         /// <param name="sites">The sites to set the modification at</param>
         /// <returns>The number of modifications added to this amino acid polymer</returns>
-        public virtual int SetModification(IMass mod, ModificationSites sites)
+        public virtual int SetModification(IHasMass mod, ModificationSites sites)
         {
             int count = 0;
 
@@ -734,7 +737,7 @@ namespace Proteomics
         /// <param name="mod">The modification to set</param>
         /// <param name="letter">The residue character to set the modification at</param>
         /// <returns>The number of modifications added to this amino acid polymer</returns>
-        public virtual int SetModification(IMass mod, char letter)
+        public virtual int SetModification(IHasMass mod, char letter)
         {
             int count = 0;
             for (int i = 0; i < Length; i++)
@@ -755,14 +758,13 @@ namespace Proteomics
         /// <param name="mod">The modification to set</param>
         /// <param name="residue">The residue to set the modification at</param>
         /// <returns>The number of modifications added to this amino acid polymer</returns>
-        public virtual int SetModification(IMass mod, IAminoAcid residue)
+        public virtual int SetModification(IHasMass mod, IAminoAcid residue)
         {
             int count = 0;
             for (int i = 0; i < Length; i++)
             {
-                if (!residue.Equals(_aminoAcids[i]))
+                if (!residue.Letter.Equals(_aminoAcids[i].Letter))
                     continue;
-
                 ReplaceMod(i + 1, mod);
                 count++;
             }
@@ -774,7 +776,7 @@ namespace Proteomics
         /// </summary>
         /// <param name="mod">The modification to set</param>
         /// <param name="residueNumber">The residue number to set the modification at</param>
-        public virtual void SetModification(IMass mod, int residueNumber)
+        public virtual void SetModification(IHasMass mod, int residueNumber)
         {
             if (residueNumber > Length || residueNumber < 1)
                 throw new IndexOutOfRangeException(string.Format("Residue number not in the correct range: [{0}-{1}] you specified: {2}", 1, Length, residueNumber));
@@ -802,7 +804,7 @@ namespace Proteomics
         /// </summary>
         /// <param name="mod"></param>
         /// <param name="residueNumbers">(1-based) residue number</param>
-        public void SetModification(IMass mod, params int[] residueNumbers)
+        public void SetModification(IHasMass mod, params int[] residueNumbers)
         {
             foreach (int residueNumber in residueNumbers)
             {
@@ -816,7 +818,7 @@ namespace Proteomics
         /// <param name="oldMod">The modification to remove</param>
         /// <param name="newMod">The modification to replace it with</param>
         /// <returns>The number of modifications added to this amino acid polymer</returns>
-        public virtual int ReplaceModification(IMass oldMod, IMass newMod)
+        public virtual int ReplaceModification(IHasMass oldMod, IHasMass newMod)
         {
             if (oldMod == null)
                 throw new ArgumentException("Cannot replace a null modification");
@@ -828,7 +830,7 @@ namespace Proteomics
             int count = 0;
             for (int i = 0; i < Length + 2; i++)
             {
-                IMass mod = GetModification(i);
+                IHasMass mod = GetModification(i);
                 if (mod == null || !oldMod.Equals(mod))
                     continue;
 
@@ -843,9 +845,9 @@ namespace Proteomics
         /// </summary>
         /// <param name="modification">The modification to set</param>
         /// <param name="terminus">The termini to set the mod at</param>
-        public virtual int AddModification(IMass modification, Terminus terminus)
+        public virtual int AddModification(IHasMass modification, Terminus terminus)
         {
-            IMass currentMod;
+            IHasMass currentMod;
             int count = 0;
 
             if ((terminus & Terminus.N) == Terminus.N)
@@ -869,13 +871,13 @@ namespace Proteomics
             return AddModification(modification, modification.Sites);
         }
 
-        public virtual int AddModification(IMass modification, ModificationSites sites)
+        public virtual int AddModification(IHasMass modification, ModificationSites sites)
         {
             if (_modifications == null)
-                _modifications = new IMass[Length + 2];
+                _modifications = new IHasMass[Length + 2];
 
             int count = 0;
-            IMass currentMod;
+            IHasMass currentMod;
             if ((sites & ModificationSites.NPep) == ModificationSites.NPep)
             {
                 currentMod = NTerminusModification;
@@ -909,12 +911,12 @@ namespace Proteomics
         /// </summary>
         /// <param name="modification">The modification to set</param>
         /// <param name="residueNumber">The residue number to set the modification at</param>
-        public virtual void AddModification(IMass modification, int residueNumber)
+        public virtual void AddModification(IHasMass modification, int residueNumber)
         {
             if (residueNumber > Length || residueNumber < 1)
                 throw new IndexOutOfRangeException(string.Format("Residue number not in the correct range: [{0}-{1}] you specified: {2}", 1, Length, residueNumber));
 
-            IMass currentMod = GetModification(residueNumber);
+            IHasMass currentMod = GetModification(residueNumber);
             ReplaceMod(residueNumber, currentMod == null ? modification : new ModificationCollection(currentMod, modification));
         }
 
@@ -994,7 +996,7 @@ namespace Proteomics
         /// Removes the specified mod from all locations on this polymer
         /// </summary>
         /// <param name="mod">The modification to remove from this polymer</param>
-        public void ClearModifications(IMass mod)
+        public void ClearModifications(IHasMass mod)
         {
             if (mod == null || _modifications == null)
                 return;
@@ -1031,7 +1033,7 @@ namespace Proteomics
             {
                 for (int i = 0; i < Length + 2; i++)
                 {
-                    IChemicalFormula chemMod = _modifications[i] as IChemicalFormula;
+                    IHasChemicalFormula chemMod = _modifications[i] as IHasChemicalFormula;
 
                     if (chemMod == null)
                         continue;
@@ -1057,7 +1059,7 @@ namespace Proteomics
 
         /// <summary>
         /// Try and get the chemical formula for the whole amino acid polymer. Modifications
-        /// may not always be of IChemicalFormula and this method will return false if any
+        /// may not always be of IHasChemicalFormula and this method will return false if any
         /// modification is not a chemical formula
         /// </summary>
         /// <param name="formula"></param>
@@ -1071,11 +1073,11 @@ namespace Proteomics
             {
                 for (int i = 0; i < Length + 2; i++)
                 {
-                    IMass mod;
+                    IHasMass mod;
                     if ((mod = _modifications[i]) == null)
                         continue;
 
-                    IChemicalFormula chemMod = mod as IChemicalFormula;
+                    IHasChemicalFormula chemMod = mod as IHasChemicalFormula;
                     if (chemMod == null)
                         return false;
 
@@ -1167,7 +1169,7 @@ namespace Proteomics
 
         #region Private Methods
 
-        private bool ReplaceTerminus(ref IChemicalFormula terminus, IChemicalFormula value)
+        private bool ReplaceTerminus(ref IHasChemicalFormula terminus, IHasChemicalFormula value)
         {
             if (Equals(value, terminus))
                 return false;
@@ -1188,17 +1190,17 @@ namespace Proteomics
         /// </summary>
         /// <param name="index">The residue index to replace at</param>
         /// <param name="mod">The modification to replace with</param>
-        private bool ReplaceMod(int index, IMass mod)
+        private bool ReplaceMod(int index, IHasMass mod)
         {
             // No error checking here as all validation will occur before this method is call. This is to prevent
             // unneeded bounds checking
 
             if (_modifications == null)
             {
-                _modifications = new IMass[Length + 2];
+                _modifications = new IHasMass[Length + 2];
             }
 
-            IMass oldMod = _modifications[index]; // Get the mod at the index, if present
+            IHasMass oldMod = _modifications[index]; // Get the mod at the index, if present
 
             if (Equals(mod, oldMod))
                 return false; // Same modifications, no change is required
@@ -1248,7 +1250,7 @@ namespace Proteomics
 
                         string modString = modSb.ToString();
                         modSb.Clear();
-                        IMass modification;
+                        IHasMass modification;
                         switch (modString)
                         {
                             case "#": // Make the modification unverisally heavy (all C12 and N14s are promoted to C13 and N15s)
@@ -1275,7 +1277,7 @@ namespace Proteomics
                         monoMass += modification.MonoisotopicMass;
 
                         if (_modifications == null)
-                            _modifications = new IMass[Length + 2];
+                            _modifications = new IHasMass[Length + 2];
 
                         if (cterminalMod)
                         {

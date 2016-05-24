@@ -1,5 +1,7 @@
 ﻿using SoftwareLockMass;
+using Spectra;
 using System;
+using System.Threading;
 using System.Windows.Forms;
 using UsefulProteomicsDatabases;
 
@@ -21,6 +23,33 @@ namespace SoftwareLockMassGUI
             Loaders.psimodLocation = psimodLocation;
             Loaders.elementLocation = elementsLocation;
             Loaders.LoadElements();
+            
+            // THIS IS JUST FOR DEBUGGING   
+            origDataFile = @"E:\Stefan\data\jurkat\120426_Jurkat_highLC_Frac4.raw";
+            mzidFile = @"E:\Stefan\data\4FileExperiments\4FileExperiment10ppmForCalibration\120426_Jurkat_highLC_Frac4.mzid";
+
+            SoftwareLockMassRunner.p = new SoftwareLockMassParams(origDataFile, mzidFile);
+            SoftwareLockMassRunner.p.outputHandler += P_outputHandler;
+            SoftwareLockMassRunner.p.progressHandler += P_progressHandler;
+            SoftwareLockMassRunner.p.watchHandler += P_watchHandler;
+
+            //SoftwareLockMassRunner.p.MS1spectraToWatch.Add(11187);
+            //SoftwareLockMassRunner.p.MS2spectraToWatch.Add(11188);
+            //SoftwareLockMassRunner.p.mzRange = new Range<double>(1113.4,1114.5);
+
+            //SoftwareLockMassRunner.p.MS1spectraToWatch.Add(11289);
+            //SoftwareLockMassRunner.p.MS2spectraToWatch.Add(11290);
+            //SoftwareLockMassRunner.p.mzRange = new Range<double>(1163, 1167);
+
+            //SoftwareLockMassRunner.p.MS1spectraToWatch.Add(5893);
+            //SoftwareLockMassRunner.p.MS2spectraToWatch.Add(5894);
+            //SoftwareLockMassRunner.p.mzRange = new Range<double>(948,952);
+
+            Thread thread = new Thread(new ThreadStart(SoftwareLockMassRunner.Run));
+            thread.IsBackground = true;
+            thread.Start();
+
+
         }
 
         private void button1_Click(object sender, EventArgs e)
@@ -57,8 +86,57 @@ namespace SoftwareLockMassGUI
         {
 
             SoftwareLockMassRunner.p = new SoftwareLockMassParams(origDataFile, mzidFile);
-            SoftwareLockMassRunner.Run();
+            SoftwareLockMassRunner.p.outputHandler += P_outputHandler;
+            SoftwareLockMassRunner.p.progressHandler += P_progressHandler;
+            SoftwareLockMassRunner.p.watchHandler += P_watchHandler;
+
+            Thread thread = new Thread(new ThreadStart(SoftwareLockMassRunner.Run));
+            thread.IsBackground = true;
+            thread.Start();
 
         }
+
+        private void P_watchHandler(object sender, OutputHandlerEventArgs e)
+        {
+            if (textBox2.InvokeRequired)
+            {
+                SetTextCallback d = new SetTextCallback(P_watchHandler);
+                Invoke(d, new object[] { sender, e });
+            }
+            else
+            {
+                textBox2.AppendText(e.output + "\n");
+            }
+        }
+
+        private void P_progressHandler(object sender, ProgressHandlerEventArgs e)
+        {
+            if (progressBar1.InvokeRequired)
+            {
+                SetProgressCallback d = new SetProgressCallback(P_progressHandler);
+                Invoke(d, new object[] { sender, e });
+            }
+            else
+            {
+                progressBar1.Value = e.progress;
+            }
+        }
+
+        private void P_outputHandler(object sender, OutputHandlerEventArgs e)
+        {
+            if (textBox1.InvokeRequired)
+            {
+                SetTextCallback d = new SetTextCallback(P_outputHandler);
+                Invoke(d, new object[] { sender,  e });
+            }
+            else
+            {
+                textBox1.AppendText(e.output + "\n");
+            }
+        }
+
+        delegate void SetTextCallback(object sender, OutputHandlerEventArgs e);
+        delegate void SetProgressCallback(object sender, ProgressHandlerEventArgs e);
+        
     }
 }

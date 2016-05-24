@@ -19,7 +19,7 @@ using Chemistry;
 
 namespace Proteomics
 {
-    public class ChemicalFormulaFragment : Fragment, IChemicalFormula
+    public class ChemicalFormulaFragment : Fragment, IHasChemicalFormula
     {
         public ChemicalFormula thisChemicalFormula { get; private set; }
 

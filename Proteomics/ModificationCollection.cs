@@ -25,16 +25,16 @@ using System.Text;
 
 namespace Proteomics
 {
-    public class ModificationCollection : ICollection<IMass>, IMass, IEquatable<ModificationCollection>
+    public class ModificationCollection : ICollection<IHasMass>, IHasMass, IEquatable<ModificationCollection>
     {
-        private readonly List<IMass> _modifications;
+        private readonly List<IHasMass> _modifications;
 
         public double MonoisotopicMass { get; private set; }
 
         public override string ToString()
         {
             StringBuilder sb = new StringBuilder();
-            foreach (IMass mod in _modifications)
+            foreach (IHasMass mod in _modifications)
             {
                 sb.Append(mod);
                 sb.Append(" | ");
@@ -46,13 +46,13 @@ namespace Proteomics
             return sb.ToString();
         }
 
-        public ModificationCollection(params IMass[] mods)
+        public ModificationCollection(params IHasMass[] mods)
         {
             _modifications = mods.ToList();
             MonoisotopicMass = _modifications.Sum(m => m.MonoisotopicMass);
         }
 
-        public void Add(IMass item)
+        public void Add(IHasMass item)
         {
             _modifications.Add(item);
             MonoisotopicMass += item.MonoisotopicMass;
@@ -64,12 +64,12 @@ namespace Proteomics
             MonoisotopicMass = 0;
         }
 
-        public bool Contains(IMass item)
+        public bool Contains(IHasMass item)
         {
             return _modifications.Contains(item);
         }
 
-        public void CopyTo(IMass[] array, int arrayIndex)
+        public void CopyTo(IHasMass[] array, int arrayIndex)
         {
             _modifications.CopyTo(array, arrayIndex);
         }
@@ -84,7 +84,7 @@ namespace Proteomics
             get { return false; }
         }
 
-        public bool Remove(IMass item)
+        public bool Remove(IHasMass item)
         {
             if (!_modifications.Remove(item))
                 return false;
@@ -92,7 +92,7 @@ namespace Proteomics
             return true;
         }
 
-        public IEnumerator<IMass> GetEnumerator()
+        public IEnumerator<IHasMass> GetEnumerator()
         {
             return _modifications.GetEnumerator();
         }

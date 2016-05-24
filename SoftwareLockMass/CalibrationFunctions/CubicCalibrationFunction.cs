@@ -19,6 +19,12 @@ namespace SoftwareLockMass
         private double h;
         private double i;
         private double j;
+        private Action<OutputHandlerEventArgs> onOutput;
+
+        public CubicCalibrationFunction(Action<OutputHandlerEventArgs> onOutput)
+        {
+            this.onOutput = onOutput;
+        }
 
         public override double Predict(DataPoint t)
         {

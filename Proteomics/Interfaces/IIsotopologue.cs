@@ -20,7 +20,7 @@ using System.Collections.Generic;
 
 namespace Proteomics
 {
-    public interface IIsotopologue : IMass, IEnumerable<Modification>
+    public interface IIsotopologue : IHasMass, IEnumerable<Modification>
     {
     }
 }

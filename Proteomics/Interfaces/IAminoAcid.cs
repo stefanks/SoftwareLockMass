@@ -19,7 +19,7 @@ using Chemistry;
 
 namespace Proteomics
 {
-    public interface IAminoAcid : IChemicalFormula
+    public interface IAminoAcid : IHasChemicalFormula
     {
         char Letter { get; }
 

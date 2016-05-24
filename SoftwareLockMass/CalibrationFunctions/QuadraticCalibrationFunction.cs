@@ -13,6 +13,12 @@ namespace SoftwareLockMass
         private double d;
         private double e;
         private double f;
+        private Action<OutputHandlerEventArgs> onOutput;
+
+        public QuadraticCalibrationFunction(Action<OutputHandlerEventArgs> onOutput)
+        {
+            this.onOutput = onOutput;
+        }
 
         public override double Predict(DataPoint t)
         {

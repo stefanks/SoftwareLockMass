@@ -19,7 +19,7 @@ using Chemistry;
 
 namespace Proteomics
 {
-    public class ChemicalFormulaModification : Modification, IChemicalFormula
+    public class ChemicalFormulaModification : Modification, IHasChemicalFormula
     {
         /// <summary>
         /// The Chemical Formula of this modifications

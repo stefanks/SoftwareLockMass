@@ -21,7 +21,7 @@ using System.Collections.Generic;
 
 namespace Proteomics
 {
-    public class Fragment : IMass, IEquatable<Fragment>
+    public class Fragment : IHasMass, IEquatable<Fragment>
     {
         public Fragment(FragmentTypes type, int number, double monoisotopicMass, AminoAcidPolymer parent)
         {
@@ -45,7 +45,7 @@ namespace Proteomics
         // Might add this
         //}
 
-        public IEnumerable<IMass> GetModifications()
+        public IEnumerable<IHasMass> GetModifications()
         {
             if (Parent == null)
                 yield break;

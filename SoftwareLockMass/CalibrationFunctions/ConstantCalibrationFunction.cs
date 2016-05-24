@@ -8,6 +8,12 @@ namespace SoftwareLockMass
     internal class ConstantCalibrationFunction : CalibrationFunction
     {
         private double a;
+        private Action<OutputHandlerEventArgs> onOutput;
+
+        public ConstantCalibrationFunction(Action<OutputHandlerEventArgs> onOutput)
+        {
+            this.onOutput = onOutput;
+        }
 
         public override double Predict(DataPoint t)
         {

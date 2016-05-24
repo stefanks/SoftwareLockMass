@@ -20,7 +20,7 @@ namespace Spectra
     /// <summary>
     /// The type of tolerance
     /// </summary>
-    internal enum ToleranceType
+    public enum ToleranceType
     {
         /// <summary>
         /// Plus and Minus (±)

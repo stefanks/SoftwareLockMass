@@ -48,7 +48,7 @@ namespace MassSpectrometry
             internal set { _massMzSpectrum = value; }
         }
 
-        ISpectrum IMassSpectrum.MassSpectrum
+        ISpectrum IHasMassSpectrum.MassSpectrum
         {
             get { return MassSpectrum; }
         }

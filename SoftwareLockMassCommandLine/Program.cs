@@ -1,4 +1,5 @@
-﻿using UsefulProteomicsDatabases;
+﻿using System;
+using UsefulProteomicsDatabases;
 
 namespace SoftwareLockMass
 {
@@ -24,8 +25,22 @@ namespace SoftwareLockMass
             
             SoftwareLockMassRunner.p = new SoftwareLockMassParams(origDataFile, mzidFile);
             SoftwareLockMassRunner.p.outputFile = outputFilePath;
+            SoftwareLockMassRunner.p.outputHandler += P_outputHandler;
+            SoftwareLockMassRunner.p.progressHandler += P_progressHandler;
+            SoftwareLockMassRunner.p.watchHandler += P_outputHandler;
+
             SoftwareLockMassRunner.Run();
 
+        }
+
+        private static void P_progressHandler(object sender, ProgressHandlerEventArgs e)
+        {
+            Console.Write(e.progress + "% ");
+        }
+
+        private static void P_outputHandler(object sender, OutputHandlerEventArgs e)
+        {
+            Console.WriteLine(e.output);
         }
     }
 }

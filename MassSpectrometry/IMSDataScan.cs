@@ -21,7 +21,7 @@ using Spectra;
 
 namespace MassSpectrometry
 {
-    public interface IMsDataScan : IMassSpectrum
+    public interface IMsDataScan : IHasMassSpectrum
     {
         int SpectrumNumber { get; }
         int MsnOrder { get; }

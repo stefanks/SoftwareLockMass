@@ -24,7 +24,7 @@ namespace Proteomics
     /// <summary>
     /// Represents a modification with a mass and name and default amino acid sites of modification
     /// </summary>
-    public class Modification : IMass, IEquatable<Modification>
+    public class Modification : IHasMass, IEquatable<Modification>
     {
         /// <summary>
         /// The default empty modification

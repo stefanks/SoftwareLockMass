@@ -10,15 +10,21 @@ namespace SoftwareLockMass
     internal class KDTreeCalibrationFunction : CalibrationFunction
     {
         KDTree kdTree;
+        private Action<OutputHandlerEventArgs> onOutput;
 
         public KDTreeCalibrationFunction()
         {
         }
 
+        public KDTreeCalibrationFunction(Action<OutputHandlerEventArgs> onOutput)
+        {
+            this.onOutput = onOutput;
+        }
+
         public override void Train(List<TrainingPoint> trainingList)
         {
-            kdTree = new KDTree(trainingList);
-            Console.WriteLine("Finished Generating Tree");
+            kdTree = new KDTree(onOutput, trainingList);
+            onOutput(new OutputHandlerEventArgs("Finished Generating Tree"));
         }
         
         public override double Predict(DataPoint t)
