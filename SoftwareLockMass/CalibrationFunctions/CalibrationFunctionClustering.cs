@@ -12,7 +12,7 @@ namespace SoftwareLockMass
         private double[] CentroidTimefinal;
         private double[] errorAtClusterfinal;
         private Action<OutputHandlerEventArgs> onOutput;
-        private int v;
+        //private int v;
 
         private double dist(double v1, double v2, int j, double[] CentroidMZdist, double[] CentroidTimedist)
         {
