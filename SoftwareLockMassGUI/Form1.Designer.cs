@@ -52,7 +52,7 @@
             // 
             this.label1.Location = new System.Drawing.Point(149, 17);
             this.label1.Name = "label1";
-            this.label1.Size = new System.Drawing.Size(583, 18);
+            this.label1.Size = new System.Drawing.Size(910, 18);
             this.label1.TabIndex = 0;
             this.label1.Text = "File to calibrate:";
             // 
@@ -60,7 +60,7 @@
             // 
             this.label2.Location = new System.Drawing.Point(149, 46);
             this.label2.Name = "label2";
-            this.label2.Size = new System.Drawing.Size(583, 18);
+            this.label2.Size = new System.Drawing.Size(910, 18);
             this.label2.TabIndex = 1;
             this.label2.Text = "mzid file:";
             // 
@@ -103,12 +103,12 @@
             // 
             // textBox2
             // 
-            this.textBox2.Location = new System.Drawing.Point(293, 12);
+            this.textBox2.Location = new System.Drawing.Point(293, 99);
             this.textBox2.Multiline = true;
             this.textBox2.Name = "textBox2";
             this.textBox2.ReadOnly = true;
             this.textBox2.ScrollBars = System.Windows.Forms.ScrollBars.Vertical;
-            this.textBox2.Size = new System.Drawing.Size(766, 704);
+            this.textBox2.Size = new System.Drawing.Size(766, 617);
             this.textBox2.TabIndex = 6;
             // 
             // Form1

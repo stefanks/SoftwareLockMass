@@ -12,9 +12,9 @@ namespace SoftwareLockMassGUI
         private string origDataFile;
         private string mzidFile;
 
-        public static string unimodLocation = @"E:\Stefan\data\Unimod\unimod_tables.xml";
-        public static string psimodLocation = @"E:\Stefan\data\PSI-MOD\PSI-MOD.obo.xml";
-        public static string elementsLocation = @"E:\Stefan\data\Elements\elements.dat";
+        public static string unimodLocation = @"unimod_tables.xml";
+        public static string psimodLocation = @"PSI-MOD.obo.xml";
+        public static string elementsLocation = @"elements.dat";
 
         public Form1()
         {
@@ -23,15 +23,15 @@ namespace SoftwareLockMassGUI
             Loaders.psimodLocation = psimodLocation;
             Loaders.elementLocation = elementsLocation;
             Loaders.LoadElements();
-            
-            // THIS IS JUST FOR DEBUGGING   
-            origDataFile = @"E:\Stefan\data\jurkat\120426_Jurkat_highLC_Frac1.raw";
-            mzidFile = @"E:\Stefan\data\4FileExperiments\4FileExperiment10ppmForCalibration\120426_Jurkat_highLC_Frac1.mzid";
 
-            SoftwareLockMassRunner.p = new SoftwareLockMassParams(origDataFile, mzidFile);
-            SoftwareLockMassRunner.p.outputHandler += P_outputHandler;
-            SoftwareLockMassRunner.p.progressHandler += P_progressHandler;
-            SoftwareLockMassRunner.p.watchHandler += P_watchHandler;
+            // THIS IS JUST FOR DEBUGGING   
+            //origDataFile = @"E:\Stefan\data\jurkat\120426_Jurkat_highLC_Frac1.raw";
+            //mzidFile = @"E:\Stefan\data\4FileExperiments\4FileExperiment10ppmForCalibration\120426_Jurkat_highLC_Frac1.mzid";
+
+            //SoftwareLockMassRunner.p = new SoftwareLockMassParams(origDataFile, mzidFile);
+            //SoftwareLockMassRunner.p.outputHandler += P_outputHandler;
+            //SoftwareLockMassRunner.p.progressHandler += P_progressHandler;
+            //SoftwareLockMassRunner.p.watchHandler += P_watchHandler;
 
             //SoftwareLockMassRunner.p.MS1spectraToWatch.Add(11187);
             //SoftwareLockMassRunner.p.MS2spectraToWatch.Add(11188);
@@ -45,9 +45,9 @@ namespace SoftwareLockMassGUI
             //SoftwareLockMassRunner.p.MS2spectraToWatch.Add(5894);
             //SoftwareLockMassRunner.p.mzRange = new Range<double>(948,952);
 
-            Thread thread = new Thread(new ThreadStart(SoftwareLockMassRunner.Run));
-            thread.IsBackground = true;
-            thread.Start();
+            //Thread thread = new Thread(new ThreadStart(SoftwareLockMassRunner.Run));
+            //thread.IsBackground = true;
+            //thread.Start();
 
         }
 
@@ -117,7 +117,7 @@ namespace SoftwareLockMassGUI
             }
             else
             {
-                progressBar1.Value = e.progress;
+                progressBar1.Value = Math.Min(e.progress,100);
             }
         }
 

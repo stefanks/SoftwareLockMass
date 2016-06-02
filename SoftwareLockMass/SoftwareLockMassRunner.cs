@@ -39,8 +39,8 @@ namespace SoftwareLockMass
             p.OnOutput(new OutputHandlerEventArgs("Getting Training Points"));
             List<TrainingPoint> trainingPoints = GetTrainingPoints(myMsDataFile, p.mzidFile);
             
-            p.OnOutput(new OutputHandlerEventArgs("Writing training points to file"));
-            WriteTrainingDataToFiles(trainingPoints);
+            //p.OnOutput(new OutputHandlerEventArgs("Writing training points to file"));
+            //WriteTrainingDataToFiles(trainingPoints);
 
             p.OnOutput(new OutputHandlerEventArgs("Train the calibration model"));
             //CalibrationFunction cf = new IdentityCalibrationFunction(p.OnOutput);
@@ -190,7 +190,7 @@ namespace SoftwareLockMass
                         }
                     }
                     // SEARCH THE MS2 SPECTRUM!!!
-                    SearchMS2Spectrum(myMsDataFile, ms2spectrumIndex, peptide1, trainingPointsToReturn, chargeStateFromMorpheus);
+                    //SearchMS2Spectrum(myMsDataFile, ms2spectrumIndex, peptide1, trainingPointsToReturn, chargeStateFromMorpheus);
                     // Calculate isotopic distribution
                     IsotopicDistribution dist = new IsotopicDistribution(p.fineResolution);
                     double[] masses;
