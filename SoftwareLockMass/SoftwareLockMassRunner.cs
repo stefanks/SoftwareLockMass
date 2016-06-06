@@ -7,6 +7,7 @@ using Proteomics;
 using Spectra;
 using System;
 using System.Collections.Generic;
+using System.ComponentModel;
 using System.IO;
 using System.Linq;
 using System.Text.RegularExpressions;
@@ -21,53 +22,54 @@ namespace SoftwareLockMass
         public static void Run()
         {
             p.OnOutput(new OutputHandlerEventArgs("Welcome to my software lock mass implementation"));
-            IMsDataFile<IMzSpectrum<MzPeak>> myMsDataFile = null;
 
-            if (p.mzML())
+            foreach (AnEntry anEntry in p.myListOfEntries)
             {
-                p.OnOutput(new OutputHandlerEventArgs("Reading uncalibrated mzML file"));
-                myMsDataFile = new Mzml(p.fileToCalibrate);
+                IMsDataFile<IMzSpectrum<MzPeak>> myMsDataFile;
+                if (Path.GetExtension(anEntry.spectraFile).Equals(".mzML"))
+                {
+                    myMsDataFile = new Mzml(anEntry.spectraFile);
+                }
+                else
+                {
+                    myMsDataFile = new ThermoRawFile(anEntry.spectraFile);
+                }
+                
+                myMsDataFile.Open();
+
+                p.OnOutput(new OutputHandlerEventArgs("Getting Training Points"));
+                List<TrainingPoint> trainingPoints = GetTrainingPoints(myMsDataFile, anEntry.mzidFile);
+
+                //p.OnOutput(new OutputHandlerEventArgs("Writing training points to file"));
+                //WriteTrainingDataToFiles(trainingPoints);
+
+                p.OnOutput(new OutputHandlerEventArgs("Train the calibration model"));
+                //CalibrationFunction cf = new IdentityCalibrationFunction(p.OnOutput);
+                //CalibrationFunction cf = new ConstantCalibrationFunction(p.OnOutput);
+                //CalibrationFunction cf = new LinearCalibrationFunction(p.OnOutput);
+                //CalibrationFunction cf = new QuadraticCalibrationFunction(p.OnOutput);
+                //CalibrationFunction cf = new CubicCalibrationFunction(p.OnOutput);
+                CalibrationFunction cf = new QuarticCalibrationFunction(p.OnOutput);
+                //CalibrationFunction cf = new CalibrationFunctionClustering(p.OnOutput, 20);
+                //CalibrationFunction cf = new MedianCalibrationFunction(p.OnOutput);
+                //CalibrationFunction cf = new KDTreeCalibrationFunction(p.OnOutput);
+                cf.Train(trainingPoints);
+
+                p.OnOutput(new OutputHandlerEventArgs("Computing Mean Squared Error"));
+                p.OnOutput(new OutputHandlerEventArgs("The Mean Squared Error for the model is " + cf.getMSE(trainingPoints)));
+
+                p.OnOutput(new OutputHandlerEventArgs("Calibrating Spectra"));
+                List<IMzSpectrum<MzPeak>> calibratedSpectra = CalibrateSpectra(myMsDataFile, cf);
+                p.OnOutput(new OutputHandlerEventArgs("Calibrating Precursor MZs"));
+                List<double> calibratedPrecursorMZs = CalibratePrecursorMZs(myMsDataFile, cf);
+
+                p.OnOutput(new OutputHandlerEventArgs("Creating _indexedmzMLConnection, and putting data in it"));
+                indexedmzML _indexedmzMLConnection = CreateMyIndexedMZmlwithCalibratedSpectra(myMsDataFile, calibratedSpectra, calibratedPrecursorMZs);
+
+                p.OnOutput(new OutputHandlerEventArgs("Writing calibrated mzML file"));
+                Mzml.Write(Path.GetFileNameWithoutExtension(anEntry.spectraFile)+"-Calibrated.mzML", _indexedmzMLConnection);
+
             }
-            else
-            {
-                p.OnOutput(new OutputHandlerEventArgs("Reading uncalibrated raw file"));
-                myMsDataFile = new ThermoRawFile(p.fileToCalibrate);
-            }
-
-            myMsDataFile.Open();
-
-            p.OnOutput(new OutputHandlerEventArgs("Getting Training Points"));
-            List<TrainingPoint> trainingPoints = GetTrainingPoints(myMsDataFile, p.mzidFile);
-            
-            //p.OnOutput(new OutputHandlerEventArgs("Writing training points to file"));
-            //WriteTrainingDataToFiles(trainingPoints);
-
-            p.OnOutput(new OutputHandlerEventArgs("Train the calibration model"));
-            //CalibrationFunction cf = new IdentityCalibrationFunction(p.OnOutput);
-            //CalibrationFunction cf = new ConstantCalibrationFunction(p.OnOutput);
-            //CalibrationFunction cf = new LinearCalibrationFunction(p.OnOutput);
-            //CalibrationFunction cf = new QuadraticCalibrationFunction(p.OnOutput);
-            //CalibrationFunction cf = new CubicCalibrationFunction(p.OnOutput);
-            CalibrationFunction cf = new QuarticCalibrationFunction(p.OnOutput);
-            //CalibrationFunction cf = new CalibrationFunctionClustering(p.OnOutput, 20);
-            //CalibrationFunction cf = new MedianCalibrationFunction(p.OnOutput);
-            //CalibrationFunction cf = new KDTreeCalibrationFunction(p.OnOutput);
-            cf.Train(trainingPoints);
-
-            p.OnOutput(new OutputHandlerEventArgs("Computing Mean Squared Error"));
-            p.OnOutput(new OutputHandlerEventArgs("The Mean Squared Error for the model is " + cf.getMSE(trainingPoints)));
-
-            p.OnOutput(new OutputHandlerEventArgs("Calibrating Spectra"));
-            List<IMzSpectrum<MzPeak>> calibratedSpectra = CalibrateSpectra(myMsDataFile, cf);
-            p.OnOutput(new OutputHandlerEventArgs("Calibrating Precursor MZs"));
-            List<double> calibratedPrecursorMZs = CalibratePrecursorMZs(myMsDataFile, cf);
-
-            p.OnOutput(new OutputHandlerEventArgs("Creating _indexedmzMLConnection, and putting data in it"));
-            indexedmzML _indexedmzMLConnection = CreateMyIndexedMZmlwithCalibratedSpectra(myMsDataFile, calibratedSpectra, calibratedPrecursorMZs);
-
-            p.OnOutput(new OutputHandlerEventArgs("Writing calibrated mzML file"));
-            Mzml.Write(p.outputFile, _indexedmzMLConnection);
-
             p.OnOutput(new OutputHandlerEventArgs("Finished running my software lock mass implementation"));
             Console.Read();
         }
@@ -665,4 +667,20 @@ namespace SoftwareLockMass
         }
 
     }
+
+
+    public class AnEntry
+    {
+        public AnEntry(string spectraFile, string mzidFile)
+        {
+            this.spectraFile = spectraFile;
+            this.mzidFile = mzidFile;
+        }
+
+        [DisplayName("Spectra File")]
+        public string spectraFile { get; set; }
+        [DisplayName("Mzid File")]
+        public string mzidFile { get; set; }
+    }
+
 }

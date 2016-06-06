@@ -6,18 +6,10 @@ MinimumVisualStudioVersion = 10.0.40219.1
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "SoftwareLockMassCommandLine", "SoftwareLockMassCommandLine\SoftwareLockMassCommandLine.csproj", "{8887AC74-29D3-4AB6-81C7-1097F1AFA1B8}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "SoftwareLockMass", "SoftwareLockMass\SoftwareLockMass.csproj", "{475C3B7B-4367-4BC8-8192-2A850C72812B}"
-	ProjectSection(ProjectDependencies) = postProject
-		{012434FB-88A9-4DEC-B887-5F64C0B481D4} = {012434FB-88A9-4DEC-B887-5F64C0B481D4}
-		{24DC85FF-E97B-4140-9614-77DD8FDDD32F} = {24DC85FF-E97B-4140-9614-77DD8FDDD32F}
-	EndProjectSection
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "SoftwareLockMassGUI", "SoftwareLockMassGUI\SoftwareLockMassGUI.csproj", "{25148E66-F736-48D8-AC1F-B2180F3D7BE3}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Test", "Test\Test.csproj", "{289ECDEC-8496-4B04-B483-F86C972B09BC}"
-EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "MzML", "..\MassSpecFiles\MzML\MzML.csproj", "{012434FB-88A9-4DEC-B887-5F64C0B481D4}"
-EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Thermo", "..\MassSpecFiles\Thermo\Thermo.csproj", "{24DC85FF-E97B-4140-9614-77DD8FDDD32F}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -76,30 +68,6 @@ Global
 		{289ECDEC-8496-4B04-B483-F86C972B09BC}.Release|x64.Build.0 = Release|Any CPU
 		{289ECDEC-8496-4B04-B483-F86C972B09BC}.Release|x86.ActiveCfg = Release|Any CPU
 		{289ECDEC-8496-4B04-B483-F86C972B09BC}.Release|x86.Build.0 = Release|Any CPU
-		{012434FB-88A9-4DEC-B887-5F64C0B481D4}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{012434FB-88A9-4DEC-B887-5F64C0B481D4}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{012434FB-88A9-4DEC-B887-5F64C0B481D4}.Debug|x64.ActiveCfg = Debug|x64
-		{012434FB-88A9-4DEC-B887-5F64C0B481D4}.Debug|x64.Build.0 = Debug|x64
-		{012434FB-88A9-4DEC-B887-5F64C0B481D4}.Debug|x86.ActiveCfg = Debug|x86
-		{012434FB-88A9-4DEC-B887-5F64C0B481D4}.Debug|x86.Build.0 = Debug|x86
-		{012434FB-88A9-4DEC-B887-5F64C0B481D4}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{012434FB-88A9-4DEC-B887-5F64C0B481D4}.Release|Any CPU.Build.0 = Release|Any CPU
-		{012434FB-88A9-4DEC-B887-5F64C0B481D4}.Release|x64.ActiveCfg = Release|Any CPU
-		{012434FB-88A9-4DEC-B887-5F64C0B481D4}.Release|x64.Build.0 = Release|Any CPU
-		{012434FB-88A9-4DEC-B887-5F64C0B481D4}.Release|x86.ActiveCfg = Release|Any CPU
-		{012434FB-88A9-4DEC-B887-5F64C0B481D4}.Release|x86.Build.0 = Release|Any CPU
-		{24DC85FF-E97B-4140-9614-77DD8FDDD32F}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{24DC85FF-E97B-4140-9614-77DD8FDDD32F}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{24DC85FF-E97B-4140-9614-77DD8FDDD32F}.Debug|x64.ActiveCfg = Debug|x64
-		{24DC85FF-E97B-4140-9614-77DD8FDDD32F}.Debug|x64.Build.0 = Debug|x64
-		{24DC85FF-E97B-4140-9614-77DD8FDDD32F}.Debug|x86.ActiveCfg = Debug|x86
-		{24DC85FF-E97B-4140-9614-77DD8FDDD32F}.Debug|x86.Build.0 = Debug|x86
-		{24DC85FF-E97B-4140-9614-77DD8FDDD32F}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{24DC85FF-E97B-4140-9614-77DD8FDDD32F}.Release|Any CPU.Build.0 = Release|Any CPU
-		{24DC85FF-E97B-4140-9614-77DD8FDDD32F}.Release|x64.ActiveCfg = Release|Any CPU
-		{24DC85FF-E97B-4140-9614-77DD8FDDD32F}.Release|x64.Build.0 = Release|Any CPU
-		{24DC85FF-E97B-4140-9614-77DD8FDDD32F}.Release|x86.ActiveCfg = Release|Any CPU
-		{24DC85FF-E97B-4140-9614-77DD8FDDD32F}.Release|x86.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

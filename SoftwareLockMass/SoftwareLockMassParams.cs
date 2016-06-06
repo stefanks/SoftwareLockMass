@@ -1,7 +1,6 @@
 ﻿using Spectra;
 using System;
 using System.Collections.Generic;
-using System.IO;
 
 namespace SoftwareLockMass
 {
@@ -39,27 +38,7 @@ namespace SoftwareLockMass
         public int numIsotopologuesNeededToBeConsideredIdentified = 3;
         //public int numIsotopologuesNeededToBeConsideredIdentified = 2;
         #endregion
-
-        public string fileToCalibrate { get; private set; }
-
-        public string mzidFile { get; private set; }
-
-        private string _outputFile;
-        public string outputFile
-        {
-            get
-            {
-                if (_outputFile == null)
-                {
-                    _outputFile = Path.Combine(Path.GetDirectoryName(fileToCalibrate), Path.GetFileNameWithoutExtension(fileToCalibrate) + "-Calibrated.mzML");
-                }
-                return _outputFile;
-            }
-            set
-            {
-                _outputFile = value;
-            }
-        }
+            
         
         public event EventHandler<OutputHandlerEventArgs> outputHandler;
         public event EventHandler<ProgressHandlerEventArgs> progressHandler;
@@ -69,26 +48,19 @@ namespace SoftwareLockMass
         public HashSet<int> MS1spectraToWatch;
         public IRange<double> mzRange;
 
-        #region Methods
-        public bool mzML()
-        {
-            if (Path.GetExtension(fileToCalibrate).Contains("raw"))
-                return false;
-            else
-                return true;
-        }
-        #endregion
+        public List<AnEntry> myListOfEntries;
 
         #region Constructors
-        public SoftwareLockMassParams(string fileToCalibrate, string mzidFile)
+
+        public SoftwareLockMassParams(List<AnEntry> myListOfEntries)
         {
-            this.fileToCalibrate = fileToCalibrate;
-            this.mzidFile = mzidFile;
+            this.myListOfEntries = myListOfEntries;
             MS1spectraToWatch = new HashSet<int>();
             MS2spectraToWatch = new HashSet<int>();
         }
+
         #endregion
-        
+
         public virtual void OnOutput(OutputHandlerEventArgs e)
         {
             outputHandler?.Invoke(this, e);

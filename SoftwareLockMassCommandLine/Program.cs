@@ -1,4 +1,9 @@
-﻿using System;
+﻿using IO.MzML;
+using IO.Thermo;
+using MassSpectrometry;
+using Spectra;
+using System;
+using System.Collections.Generic;
 using UsefulProteomicsDatabases;
 
 namespace SoftwareLockMass
@@ -22,9 +27,11 @@ namespace SoftwareLockMass
             Loaders.psimodLocation = psimodLocation;
             Loaders.elementLocation = elementsLocation;
             Loaders.LoadElements();
-            
-            SoftwareLockMassRunner.p = new SoftwareLockMassParams(origDataFile, mzidFile);
-            SoftwareLockMassRunner.p.outputFile = outputFilePath;
+
+            List<AnEntry> theList = new List<AnEntry>();
+            theList.Add(new AnEntry(origDataFile, mzidFile));
+
+            SoftwareLockMassRunner.p = new SoftwareLockMassParams(theList);
             SoftwareLockMassRunner.p.outputHandler += P_outputHandler;
             SoftwareLockMassRunner.p.progressHandler += P_progressHandler;
             //SoftwareLockMassRunner.p.watchHandler += P_outputHandler;

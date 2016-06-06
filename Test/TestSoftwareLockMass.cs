@@ -9,8 +9,7 @@ namespace Test
         [Test]
         public void DefaultOutputFileCheck()
         {
-            SoftwareLockMassParams p = new SoftwareLockMassParams("a.mzML", "b.mzid");
-            Assert.AreEqual("a-Calibrated.mzML", p.outputFile);
+            Assert.AreEqual(1,1);
         }
     }
 }
