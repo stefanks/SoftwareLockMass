@@ -67,7 +67,7 @@ namespace SoftwareLockMass
                 indexedmzML _indexedmzMLConnection = CreateMyIndexedMZmlwithCalibratedSpectra(myMsDataFile, calibratedSpectra, calibratedPrecursorMZs);
 
                 p.OnOutput(new OutputHandlerEventArgs("Writing calibrated mzML file"));
-                Mzml.Write(Path.GetDirectoryName(anEntry.spectraFile)+Path.GetFileNameWithoutExtension(anEntry.spectraFile)+"-Calibrated.mzML", _indexedmzMLConnection);
+                Mzml.Write(Path.Combine(Path.GetDirectoryName(anEntry.spectraFile),Path.GetFileNameWithoutExtension(anEntry.spectraFile)+"-Calibrated.mzML"), _indexedmzMLConnection);
 
             }
             p.OnOutput(new OutputHandlerEventArgs("Finished running my software lock mass implementation"));
