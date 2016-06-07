@@ -1,6 +1,4 @@
 ﻿using NUnit.Framework;
-using SoftwareLockMass;
-
 namespace Test
 {
     [TestFixture]

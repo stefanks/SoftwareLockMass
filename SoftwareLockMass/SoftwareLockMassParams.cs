@@ -1,6 +1,7 @@
 ﻿using Spectra;
 using System;
 using System.Collections.Generic;
+using MassSpectrometry;
 
 namespace SoftwareLockMass
 {
@@ -39,7 +40,6 @@ namespace SoftwareLockMass
         //public int numIsotopologuesNeededToBeConsideredIdentified = 2;
         #endregion
             
-        
         public event EventHandler<OutputHandlerEventArgs> outputHandler;
         public event EventHandler<ProgressHandlerEventArgs> progressHandler;
         public event EventHandler<OutputHandlerEventArgs> watchHandler;
@@ -47,14 +47,21 @@ namespace SoftwareLockMass
         public HashSet<int> MS2spectraToWatch;
         public HashSet<int> MS1spectraToWatch;
         public IRange<double> mzRange;
+        
+        public IMsDataFile<IMzSpectrum<MzPeak>> myMsDataFile;
+        public Identifications identifications;
 
-        public List<AnEntry> myListOfEntries;
+        public delegate void PostProcessing(SoftwareLockMassParams p, List<IMzSpectrum<MzPeak>> calibratedSpectra, List<double> calibratedPrecursorMZs);
+        public PostProcessing postProcessing;
+
+        public delegate string GetFormulaFromDictionary(string dictionary, string acession);
+        public GetFormulaFromDictionary getFormulaFromDictionary;
 
         #region Constructors
 
-        public SoftwareLockMassParams(List<AnEntry> myListOfEntries)
+        public SoftwareLockMassParams(IMsDataFile<IMzSpectrum<MzPeak>> myMsDataFile)
         {
-            this.myListOfEntries = myListOfEntries;
+            this.myMsDataFile = myMsDataFile;
             MS1spectraToWatch = new HashSet<int>();
             MS2spectraToWatch = new HashSet<int>();
         }
