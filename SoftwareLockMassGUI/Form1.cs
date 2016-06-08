@@ -17,26 +17,14 @@ namespace SoftwareLockMassGUI
 {
     public partial class Form1 : Form
     {
-        public static string unimodLocation = @"C:\Users\stepa\Data\Databases\Elements\unimod_tables.xml";
-        public static string psimodLocation = @"C:\Users\stepa\Data\Databases\PSI-MOD\PSI-MOD.obo.xml";
-        public static string elementsLocation = @"C:\Users\stepa\Data\Databases\Elements\elements.dat";
 
         public static List<AnEntry> myListOfEntries;
 
         private BindingList<AnEntry> binding1;
 
-        UsefulProteomicsDatabases.unimod unimodDeserialized;
-        UsefulProteomicsDatabases.obo psimodDeserialized;
-
         public Form1()
         {
             InitializeComponent();
-            UsefulProteomicsDatabases.Loaders.unimodLocation = unimodLocation;
-            UsefulProteomicsDatabases.Loaders.psimodLocation = psimodLocation;
-            UsefulProteomicsDatabases.Loaders.elementLocation = elementsLocation;
-            UsefulProteomicsDatabases.Loaders.LoadElements();
-            unimodDeserialized = UsefulProteomicsDatabases.Loaders.LoadUnimod();
-            psimodDeserialized = UsefulProteomicsDatabases.Loaders.LoadPsiMod();
 
             myListOfEntries = new List<AnEntry>();
             //myListOfEntries.Add(new AnEntry("some raw file", "some mzid file"));
@@ -92,22 +80,13 @@ namespace SoftwareLockMassGUI
         {
             Parallel.ForEach(myListOfEntries, (anEntry) =>
              {
-                 IMsDataFile<IMzSpectrum<MzPeak>> myMsDataFile;
-                 if (Path.GetExtension(anEntry.spectraFile).Equals(".mzML"))
-                 {
-                     myMsDataFile = new Mzml(anEntry.spectraFile);
-                 }
-                 else
-                 {
-                     myMsDataFile = new ThermoRawFile(anEntry.spectraFile);
-                 }
-                 var a = new SoftwareLockMassParams(myMsDataFile);
+                 IMsDataFile<IMzSpectrum<MzPeak>> myMsDataFile = MassSpecFilesBootstrap.Class1.getFile(anEntry.spectraFile);
+
+                 SoftwareLockMassParams a = MassSpecFilesBootstrap.Class1.GetParams(myMsDataFile, anEntry.mzidFile);
+                 
                  a.outputHandler += P_outputHandler;
                  a.progressHandler += P_progressHandler;
                  a.watchHandler += P_watchHandler;
-                 a.postProcessing = MzmlOutput;
-                 a.getFormulaFromDictionary = getFormulaFromDictionary;
-                 a.identifications = new MzidIdentifications(anEntry.mzidFile);
 
                  var t = new Thread(() => RealStart(a));
                  t.IsBackground = true;
@@ -120,49 +99,6 @@ namespace SoftwareLockMassGUI
             SoftwareLockMassRunner.Run(a);
         }
 
-
-        private static int GetLastNumberFromString(string s)
-        {
-            return Convert.ToInt32(Regex.Match(s, @"\d+$").Value);
-        }
-
-        public string getFormulaFromDictionary(string dictionary, string acession)
-        {
-            if (dictionary == "UNIMOD")
-            {
-                string unimodAcession = acession;
-                var indexToLookFor = GetLastNumberFromString(unimodAcession) - 1;
-                while (unimodDeserialized.modifications[indexToLookFor].record_id != GetLastNumberFromString(unimodAcession))
-                    indexToLookFor--;
-                return unimodDeserialized.modifications[indexToLookFor].composition;
-            }
-            else if (dictionary == "PSI-MOD")
-            {
-                string psimodAcession = acession;
-                UsefulProteomicsDatabases.oboTerm ksadklfj = (UsefulProteomicsDatabases.oboTerm)psimodDeserialized.Items[GetLastNumberFromString(psimodAcession) + 2];
-                if (GetLastNumberFromString(psimodAcession) != GetLastNumberFromString(ksadklfj.id))
-                    throw new Exception("Error in reading psi-mod file!");
-                else
-                {
-                    foreach (var a in ksadklfj.xref_analog)
-                    {
-                        if (a.dbname == "DiffFormula")
-                        {
-                            return a.name;
-                        }
-                    }
-                    throw new Exception("Error in reading psi-mod file!");
-                }
-            }
-            else
-                throw new Exception("Not familiar with modification dictionary " + dictionary);
-        }
-
-        public void MzmlOutput(SoftwareLockMassParams p, List<IMzSpectrum<MzPeak>> calibratedSpectra, List<double> calibratedPrecursorMZs)
-        {
-            p.OnOutput(new OutputHandlerEventArgs("Creating _indexedmzMLConnection, and putting data in it"));
-            MzmlMethods.CreateAndWriteMyIndexedMZmlwithCalibratedSpectra(p.myMsDataFile, calibratedSpectra, calibratedPrecursorMZs, Path.Combine(Path.GetDirectoryName(p.myMsDataFile.FilePath), Path.GetFileNameWithoutExtension(p.myMsDataFile.FilePath) + "-Calibrated.mzML"));
-        }
 
         private void P_watchHandler(object sender, OutputHandlerEventArgs e)
         {

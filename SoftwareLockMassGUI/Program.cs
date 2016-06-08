@@ -17,6 +17,7 @@ namespace SoftwareLockMassGUI
             Application.EnableVisualStyles();
             Application.SetCompatibleTextRenderingDefault(false);
             Application.Run(new Form1());
+            MassSpecFilesBootstrap.Class1.init();
         }
     }
 }
