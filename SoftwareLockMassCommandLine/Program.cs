@@ -5,6 +5,7 @@ using Spectra;
 using System;
 using System.Collections.Generic;
 using System.IO;
+using UsefulProteomicsDatabases;
 
 namespace SoftwareLockMass
 {
@@ -26,7 +27,10 @@ namespace SoftwareLockMass
 
         static void Main(string[] args)
         {
-            MassSpecFilesBootstrap.Class1.init();
+            Loaders.unimodLocation = unimodLocation;
+            Loaders.psimodLocation = psimodLocation;
+            Loaders.elementLocation = elementsLocation;
+            Loaders.LoadElements();
 
             IMsDataFile<IMzSpectrum<MzPeak>> myMsDataFile;
             if (Path.GetExtension(origDataFile).Equals(".mzML"))
@@ -35,18 +39,8 @@ namespace SoftwareLockMass
             }
             else
             {
-                myMsDataFile = new ThermoRawFile(mzidFile);
+                myMsDataFile = new ThermoRawFile(origDataFile);
             }
-            //var a = new SoftwareLockMassParams(myMsDataFile);
-            //a.outputHandler += P_outputHandler;
-            //a.progressHandler += P_progressHandler;
-            //a.postProcessing = MzmlOutput;
-            //a.getFormulaFromDictionary = getFormulaFromDictionary;
-            //a.identifications = new MzidIdentifications(anEntry.mzidFile);
-
-            //var t = new Thread(() => RealStart(a));
-            //t.IsBackground = true;
-            //t.Start();
 
             //SoftwareLockMassRunner.p = new SoftwareLockMassParams(myMsDataFile);
             //SoftwareLockMassRunner.p.outputHandler += P_outputHandler;
@@ -56,7 +50,7 @@ namespace SoftwareLockMass
             //SoftwareLockMassRunner.Run();
 
         }
-        
+
         private static void P_progressHandler(object sender, ProgressHandlerEventArgs e)
         {
             Console.Write(e.progress + "% ");

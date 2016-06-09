@@ -4,7 +4,7 @@ using System.Xml.Serialization;
 using System.IO;
 using System.Linq;
 
-namespace MassSpecFilesBootstrap
+namespace SoftwareLockMassGUI
 {
     internal class MzidIdentifications : Identifications
     {
