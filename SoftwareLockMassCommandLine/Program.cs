@@ -1,6 +1,9 @@
-﻿using MassSpectrometry;
+﻿using IO.MzML;
+using IO.Thermo;
+using MassSpectrometry;
 using Spectra;
 using System;
+using System.Collections.Generic;
 using System.IO;
 
 namespace SoftwareLockMass
@@ -25,15 +28,15 @@ namespace SoftwareLockMass
         {
             MassSpecFilesBootstrap.Class1.init();
 
-            //IMsDataFile<IMzSpectrum<MzPeak>> myMsDataFile;
-            //if (Path.GetExtension(origDataFile).Equals(".mzML"))
-            //{
-            //    myMsDataFile = new Mzml(origDataFile);
-            //}
-            //else
-            //{
-            //    myMsDataFile = new ThermoRawFile(mzidFile);
-            //}
+            IMsDataFile<IMzSpectrum<MzPeak>> myMsDataFile;
+            if (Path.GetExtension(origDataFile).Equals(".mzML"))
+            {
+                myMsDataFile = new Mzml(origDataFile);
+            }
+            else
+            {
+                myMsDataFile = new ThermoRawFile(mzidFile);
+            }
             //var a = new SoftwareLockMassParams(myMsDataFile);
             //a.outputHandler += P_outputHandler;
             //a.progressHandler += P_progressHandler;

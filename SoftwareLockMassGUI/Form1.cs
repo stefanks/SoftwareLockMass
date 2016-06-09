@@ -1,11 +1,14 @@
-﻿using Chemistry;
+﻿using IO.MzML;
+using IO.Thermo;
 using MassSpectrometry;
 using SoftwareLockMass;
 using Spectra;
 using System;
 using System.Collections.Generic;
 using System.ComponentModel;
+using System.Data;
 using System.IO;
+using System.Text.RegularExpressions;
 using System.Threading;
 using System.Threading.Tasks;
 using System.Windows.Forms;
@@ -75,20 +78,12 @@ namespace SoftwareLockMassGUI
 
         private void button3_Click(object sender, EventArgs e)
         {
-            ChemicalFormula DefaultCTerminus = new ChemicalFormula("OH");
-            ChemicalFormula DefaultNTerminus = new ChemicalFormula("H");
-            Console.WriteLine(DefaultCTerminus);
-            Console.WriteLine(DefaultNTerminus);
-            IHasChemicalFormula aa = DefaultCTerminus;
-            IHasChemicalFormula bb = DefaultNTerminus;
-            Console.WriteLine(aa);
-            Console.WriteLine(bb);
             Parallel.ForEach(myListOfEntries, (anEntry) =>
              {
                  IMsDataFile<IMzSpectrum<MzPeak>> myMsDataFile = MassSpecFilesBootstrap.Class1.getFile(anEntry.spectraFile);
 
                  SoftwareLockMassParams a = MassSpecFilesBootstrap.Class1.GetParams(myMsDataFile, anEntry.mzidFile);
-
+                 
                  a.outputHandler += P_outputHandler;
                  a.progressHandler += P_progressHandler;
                  a.watchHandler += P_watchHandler;

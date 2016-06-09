@@ -36,8 +36,8 @@
     <PlatformTarget>x64</PlatformTarget>
   </PropertyGroup>
   <ItemGroup>
-    <Reference Include="Chemistry, Version=1.0.66.0, Culture=neutral, processorArchitecture=AMD64">
-      <HintPath>..\packages\Chemistry.1.0.66\lib\net451\Chemistry.dll</HintPath>
+    <Reference Include="Chemistry, Version=1.0.63.0, Culture=neutral, processorArchitecture=AMD64">
+      <HintPath>..\packages\Chemistry.1.0.63\lib\net451\Chemistry.dll</HintPath>
       <Private>True</Private>
     </Reference>
     <Reference Include="MassSpectrometry, Version=1.0.63.0, Culture=neutral, processorArchitecture=AMD64">
@@ -48,9 +48,9 @@
       <HintPath>..\packages\MathNet.Numerics.3.11.1\lib\net40\MathNet.Numerics.dll</HintPath>
       <Private>True</Private>
     </Reference>
-    <Reference Include="Proteomics, Version=1.0.16.0, Culture=neutral, processorArchitecture=AMD64">
-      <SpecificVersion>False</SpecificVersion>
-      <HintPath>..\packages\Proteomics.1.0.16\lib\net451\Proteomics.dll</HintPath>
+    <Reference Include="Proteomics, Version=1.0.15.0, Culture=neutral, processorArchitecture=AMD64">
+      <HintPath>..\packages\Proteomics.1.0.15\lib\net451\Proteomics.dll</HintPath>
+      <Private>True</Private>
     </Reference>
     <Reference Include="Spectra, Version=1.0.0.0, Culture=neutral, processorArchitecture=AMD64">
       <HintPath>..\packages\MassSpectrometry.1.0.63\lib\net451\Spectra.dll</HintPath>
