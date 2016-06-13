@@ -1,6 +1,8 @@
-﻿using IO.MzML;
+﻿using Chemistry;
+using IO.MzML;
 using IO.Thermo;
 using MassSpectrometry;
+using Proteomics;
 using SoftwareLockMass;
 using Spectra;
 using System;
@@ -17,9 +19,10 @@ namespace SoftwareLockMassGUI
 {
     public partial class Form1 : Form
     {
-        public static string unimodLocation = @"C:\Users\stepa\Data\Databases\Elements\unimod_tables.xml";
-        public static string psimodLocation = @"C:\Users\stepa\Data\Databases\PSI-MOD\PSI-MOD.obo.xml";
-        public static string elementsLocation = @"C:\Users\stepa\Data\Databases\Elements\elements.dat";
+        public static string unimodLocation = @"unimod_tables.xml";
+        public static string psimodLocation = @"PSI-MOD.obo.xml";
+        public static string elementsLocation = @"elements.dat";
+        public static string uniprotLocation = @"ptmlist.txt";
 
         public static List<AnEntry> myListOfEntries;
 
@@ -28,15 +31,21 @@ namespace SoftwareLockMassGUI
         UsefulProteomicsDatabases.unimod unimodDeserialized;
         UsefulProteomicsDatabases.obo psimodDeserialized;
 
+        private Dictionary<int, ChemicalFormulaModification> uniprotDeseralized;
+
         public Form1()
         {
             InitializeComponent();
+
             UsefulProteomicsDatabases.Loaders.unimodLocation = unimodLocation;
             UsefulProteomicsDatabases.Loaders.psimodLocation = psimodLocation;
             UsefulProteomicsDatabases.Loaders.elementLocation = elementsLocation;
+            UsefulProteomicsDatabases.Loaders.uniprotLocation = uniprotLocation;
+
             UsefulProteomicsDatabases.Loaders.LoadElements();
             unimodDeserialized = UsefulProteomicsDatabases.Loaders.LoadUnimod();
             psimodDeserialized = UsefulProteomicsDatabases.Loaders.LoadPsiMod();
+            uniprotDeseralized = UsefulProteomicsDatabases.Loaders.LoadUniprot();
 
             myListOfEntries = new List<AnEntry>();
             //myListOfEntries.Add(new AnEntry("some raw file", "some mzid file"));
@@ -140,8 +149,9 @@ namespace SoftwareLockMassGUI
             {
                 string psimodAcession = acession;
                 UsefulProteomicsDatabases.oboTerm ksadklfj = (UsefulProteomicsDatabases.oboTerm)psimodDeserialized.Items[GetLastNumberFromString(psimodAcession) + 2];
+
                 if (GetLastNumberFromString(psimodAcession) != GetLastNumberFromString(ksadklfj.id))
-                    throw new Exception("Error in reading psi-mod file!");
+                    throw new Exception("Error in reading psi-mod file, acession mismatch!");
                 else
                 {
                     foreach (var a in ksadklfj.xref_analog)
@@ -151,7 +161,10 @@ namespace SoftwareLockMassGUI
                             return a.name;
                         }
                     }
-                    throw new Exception("Error in reading psi-mod file!");
+                    Console.WriteLine("Formula from uniprot: " + uniprotDeseralized[GetLastNumberFromString(psimodAcession)].thisChemicalFormula.Formula);
+                    return uniprotDeseralized[GetLastNumberFromString(psimodAcession)].thisChemicalFormula.Formula;
+
+                    //throw new Exception("Error in reading psi-mod file, could not find formula!");
                 }
             }
             else
@@ -210,7 +223,7 @@ namespace SoftwareLockMassGUI
         {
             foreach (string filepath in filepaths)
             {
-                //Console.WriteLine(filepath);
+                ////Console.WriteLine(filepath);
                 var theExtension = Path.GetExtension(filepath);
                 var pathNoExtension = Path.GetFileNameWithoutExtension(filepath);
                 var foundOne = false;
@@ -229,8 +242,8 @@ namespace SoftwareLockMassGUI
                     }
                     if (theExtension.Equals(".mzid"))
                     {
-                        //Console.WriteLine(Path.GetFileNameWithoutExtension(a.spectraFile));
-                        //Console.WriteLine(pathNoExtension);
+                        ////Console.WriteLine(Path.GetFileNameWithoutExtension(a.spectraFile));
+                        ////Console.WriteLine(pathNoExtension);
                         if (a.spectraFile != null && Path.GetFileNameWithoutExtension(a.spectraFile).Equals(pathNoExtension))
                         {
                             a.mzidFile = filepath;
@@ -243,16 +256,16 @@ namespace SoftwareLockMassGUI
                 }
                 if (!foundOne)
                 {
-                    //Console.WriteLine("Adding " + filepath);
-                    //Console.WriteLine("extension " + theExtension);
+                    ////Console.WriteLine("Adding " + filepath);
+                    ////Console.WriteLine("extension " + theExtension);
                     if (theExtension.Equals(".raw") || theExtension.Equals(".mzml"))
                     {
-                        //Console.WriteLine("raw or mzml ");
+                        ////Console.WriteLine("raw or mzml ");
                         binding1.Add(new AnEntry(filepath, null));
                     }
                     if (theExtension.Equals(".mzid"))
                     {
-                        //Console.WriteLine("mzid ");
+                        ////Console.WriteLine("mzid ");
                         binding1.Add(new AnEntry(null, filepath));
                     }
                 }

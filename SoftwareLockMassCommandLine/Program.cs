@@ -21,9 +21,10 @@ namespace SoftwareLockMass
         private const string mzidFile = @"";
         private const string outputFilePath = @"";
 
-        public static string unimodLocation = @"C:\Users\stepa\Data\Databases\Elements\unimod_tables.xml";
-        public static string psimodLocation = @"C:\Users\stepa\Data\Databases\PSI-MOD\PSI-MOD.obo.xml";
-        public static string elementsLocation = @"C:\Users\stepa\Data\Databases\Elements\elements.dat";
+        public static string unimodLocation = @"unimod_tables.xml";
+        public static string psimodLocation = @"PSI-MOD.obo.xml";
+        public static string elementsLocation = @"elements.dat";
+        public static string uniprotLocation = @"ptmlist.txt";
 
         static void Main(string[] args)
         {
@@ -58,7 +59,7 @@ namespace SoftwareLockMass
 
         private static void P_outputHandler(object sender, OutputHandlerEventArgs e)
         {
-            Console.WriteLine(e.output);
+            //Console.WriteLine(e.output);
         }
     }
 }

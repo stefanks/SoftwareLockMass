@@ -59,7 +59,9 @@ namespace SoftwareLockMass
             for (int matchIndex = 0; matchIndex < numPass; matchIndex++)
             {
                 //p.OnOutput(new OutputHandlerEventArgs((matchIndex);
-                if (matchIndex % (numPass / 100) == 0)
+                if (numPass<100)
+                    p.OnProgress(new ProgressHandlerEventArgs(numPass));
+                else if (matchIndex % (numPass / 100) == 0)
                     p.OnProgress(new ProgressHandlerEventArgs(matchIndex / (numPass / 100)));
                 if (identifications.isDecoy(matchIndex))
                     continue;
@@ -103,7 +105,12 @@ namespace SoftwareLockMass
                     distributionSpectrum = fullSpectrum.FilterByNumberOfMostIntense(Math.Min(p.numIsotopologuesToConsider, fullSpectrum.Count));
 
                 }
+
+                //Console.WriteLine("Before SearchMS1Spectra");
+                //Console.WriteLine("myMsDataFile.FirstSpectrumNumber = " + myMsDataFile.FirstSpectrumNumber);
                 SearchMS1Spectra(myMsDataFile, distributionSpectrum, trainingPointsToReturn, ms2spectrumIndex, -1, peaksAddedHashSet, p);
+
+                //Console.WriteLine("after SearchMS1Spectra");
                 SearchMS1Spectra(myMsDataFile, distributionSpectrum, trainingPointsToReturn, ms2spectrumIndex, 1, peaksAddedHashSet, p);
             }
             p.OnOutput(new OutputHandlerEventArgs());
@@ -115,7 +122,11 @@ namespace SoftwareLockMass
             p.OnOutput(new OutputHandlerEventArgs("Welcome to my software lock mass implementation"));
             p.OnOutput(new OutputHandlerEventArgs("Calibrating " + Path.GetFileName(p.myMsDataFile.FilePath)));
 
+            //Console.WriteLine("Before p.myMsDataFile.Open()");
+            //Console.WriteLine(p.myMsDataFile.IsOpen);
             p.myMsDataFile.Open();
+            //Console.WriteLine("After p.myMsDataFile.Open()");
+            //Console.WriteLine(p.myMsDataFile.IsOpen);
 
             p.OnOutput(new OutputHandlerEventArgs("Getting Training Points"));
             List<TrainingPoint> trainingPoints = GetTrainingPoints(p.myMsDataFile, p.identifications, p);
@@ -245,31 +256,44 @@ namespace SoftwareLockMass
             bool added = true;
 
             // Below should go in a loop!
+            //Console.WriteLine("Before loop start!");
             while (theIndex >= 0 && theIndex <= myMsDataFile.LastSpectrumNumber && added == true)
             {
+                //Console.WriteLine("In loop!");
+                //Console.WriteLine("theIndex = " + theIndex);
                 if (myMsDataFile.GetScan(theIndex).MsnOrder > 1)
                 {
                     theIndex += direction;
                     continue;
                 }
+                //Console.WriteLine("aaaaa");
                 added = false;
                 if (p.MS2spectraToWatch.Contains(ms2spectrumIndex) || p.MS1spectraToWatch.Contains(theIndex))
                 {
                     p.OnWatch(new OutputHandlerEventArgs(" Looking in MS1 spectrum " + theIndex + " because of MS2 spectrum " + ms2spectrumIndex));
                 }
 
+                //Console.WriteLine("bbbbb");
                 var fullMS1spectrum = myMsDataFile.GetScan(theIndex);
+                //Console.WriteLine("ccccc");
                 double ms1RetentionTime = fullMS1spectrum.RetentionTime;
+                //Console.WriteLine("ddddd");
                 var rangeOfSpectrum = fullMS1spectrum.MzRange;
-                var ms1FilteredByHighIntensities = fullMS1spectrum.MassSpectrum.FilterByIntensity(p.intensityCutoff, double.MaxValue);
+                //Console.WriteLine("eeeee");
+                var ok1 = fullMS1spectrum;
+                //Console.WriteLine("fffff");
+                var ok2 = ok1.MassSpectrum;
+                //Console.WriteLine("gggggg");
+                var ms1FilteredByHighIntensities = ok2.FilterByIntensity(p.intensityCutoff, double.MaxValue);
+                //Console.WriteLine("hhhhhh");
                 if (ms1FilteredByHighIntensities.Count == 0)
                 {
                     theIndex += direction;
                     continue;
                 }
-
                 for (int chargeToLookAt = 1; ; chargeToLookAt++)
                 {
+                    //Console.WriteLine("chargeToLookAt = " + chargeToLookAt);
                     IMzSpectrum<MzPeak> chargedDistribution = distributionSpectrum.CorrectMasses(s => (s + chargeToLookAt * Constants.Proton) / chargeToLookAt);
 
                     if ((p.MS2spectraToWatch.Contains(ms2spectrumIndex) || p.MS1spectraToWatch.Contains(theIndex)) && chargedDistribution.GetMzRange().IsOverlapping(p.mzRange))
@@ -327,6 +351,7 @@ namespace SoftwareLockMass
             List<IMzSpectrum<MzPeak>> calibratedSpectra = new List<IMzSpectrum<MzPeak>>();
             for (int i = 0; i < myMsDataFile.LastSpectrumNumber; i++)
             {
+                //Console.WriteLine("Calibrating spectrum number " + i);
                 if (i % (myMsDataFile.LastSpectrumNumber / 100) == 0)
                     p.OnProgress(new ProgressHandlerEventArgs((i / (myMsDataFile.LastSpectrumNumber / 100))));
                 if (p.MS1spectraToWatch.Contains(i + 1))
@@ -335,7 +360,9 @@ namespace SoftwareLockMass
                     var mzs = myMsDataFile.GetSpectrum(i + 1).Extract(p.mzRange);
                     p.OnWatch(new OutputHandlerEventArgs(string.Join(", ", mzs)));
                 }
+                //Console.WriteLine("before");
                 calibratedSpectra.Add(myMsDataFile.GetSpectrum(i + 1).CorrectMasses(s => s - cf.Predict(new DataPoint(s, myMsDataFile.GetScan(i + 1).RetentionTime))));
+                //Console.WriteLine("after");
                 if (p.MS1spectraToWatch.Contains(i + 1))
                 {
                     p.OnWatch(new OutputHandlerEventArgs("After calibration of spectrum " + (i + 1)));
