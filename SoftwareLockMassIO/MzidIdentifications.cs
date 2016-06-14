@@ -8,12 +8,9 @@ namespace SoftwareLockMassIO
 {
     public class MzidIdentifications : Identifications
     {
-        private string mzidFile;
-
         private mzIdentML.MzIdentMLType dd;
         public MzidIdentifications(string mzidFile)
         {
-            this.mzidFile = mzidFile;
             XmlSerializer _indexedSerializer = new XmlSerializer(typeof(mzIdentML.MzIdentMLType));
             Stream stream = new FileStream(mzidFile, FileMode.Open);
             // Read the XML file into the variable
