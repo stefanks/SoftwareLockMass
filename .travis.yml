@@ -4,6 +4,6 @@ install:
   - nuget restore SoftwareLockMass.sln
   - nuget install NUnit.Console -OutputDirectory testrunner
 script:
-  - xbuild /p:Configuration=Debug SoftwareLockMass.sln 
+  - xbuild /p:Configuration=DebugTravis SoftwareLockMass.sln 
   - mono ./testrunner/NUnit.ConsoleRunner.*/tools/nunit3-console.exe ./Test/bin/Debug/Test.dll
   - xbuild /p:Configuration=Release SoftwareLockMass.sln 

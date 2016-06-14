@@ -201,7 +201,6 @@ namespace SoftwareLockMass
                     for (int isotopologueIndex = 0; isotopologueIndex < Math.Min(p.numIsotopologuesToConsider, chargedDistribution.Count); isotopologueIndex++)
                     {
                         var closestPeak = msDataScan.MassSpectrum.GetClosestPeak(chargedDistribution[isotopologueIndex].MZ);
-                        var theTuple = Tuple.Create<double, double>(closestPeak.X, msDataScan.RetentionTime);
                         if ((p.MS2spectraToWatch.Contains(ms2spectrumIndex)) && chargedDistribution.GetMzRange().IsOverlapping(p.mzRange))
                         {
                             p.OnWatch(new OutputHandlerEventArgs("   Looking for " + chargedDistribution[isotopologueIndex].MZ + "   Found       " + closestPeak.X + "   Error is    " + (closestPeak.X - chargedDistribution[isotopologueIndex].MZ)));
