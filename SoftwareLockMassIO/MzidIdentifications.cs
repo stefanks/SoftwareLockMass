@@ -4,9 +4,9 @@ using System.Xml.Serialization;
 using System.IO;
 using System.Linq;
 
-namespace SoftwareLockMassGUI
+namespace SoftwareLockMassIO
 {
-    internal class MzidIdentifications : Identifications
+    public class MzidIdentifications : Identifications
     {
         private string mzidFile;
 
@@ -38,9 +38,7 @@ namespace SoftwareLockMassGUI
 
         public int getNumBelow(double thresholdPassParameter)
         {
-            var aaaaa = dd.DataCollection.AnalysisData.SpectrumIdentificationList[0].SpectrumIdentificationResult.Select(b => Convert.ToDouble(b.SpectrumIdentificationItem[0].cvParam[1].value));
-            var bbbbb = aaaaa.Where(b => b <= thresholdPassParameter);
-            return bbbbb.Count();
+            return dd.DataCollection.AnalysisData.SpectrumIdentificationList[0].SpectrumIdentificationResult.Select(b => Convert.ToDouble(b.SpectrumIdentificationItem[0].cvParam[0].value)).Where(b => b > thresholdPassParameter).Count();
         }
 
         public bool isDecoy(int matchIndex)

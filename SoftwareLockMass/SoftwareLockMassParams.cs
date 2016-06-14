@@ -10,8 +10,11 @@ namespace SoftwareLockMass
 
         // Important for every setting. Realized only 0 and 0.01 give meaningful results when looking at performance
         // 0 IS BEST!!!
-        public double thresholdPassParameter = 0;
+        //public double thresholdPassParameter = 0;
         //private const double thresholdPassParameter = 0.01;
+
+        public double thresholdPassParameter = 10;
+
 
         // DO NOT GO UNDER 0.01!!!!! Maybe even increase.
         public double toleranceInMZforSearch = 0.01;
@@ -56,6 +59,8 @@ namespace SoftwareLockMass
 
         public delegate string GetFormulaFromDictionary(string dictionary, string acession);
         public GetFormulaFromDictionary getFormulaFromDictionary;
+        public string tsvFile = null;
+        public bool calibrateSpectra = true;
 
         #region Constructors
 
