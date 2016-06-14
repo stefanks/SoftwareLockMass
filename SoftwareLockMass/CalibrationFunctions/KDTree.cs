@@ -9,7 +9,6 @@ namespace SoftwareLockMass.CalibrationFunctions
 {
     class KDTree
     {
-        private int depth;
         private List<TrainingPoint> trainingList;
         private double splitValue;
         private KDTree leftChild = null;
@@ -17,13 +16,10 @@ namespace SoftwareLockMass.CalibrationFunctions
         private Func<DataPoint, double> separatingFunction;
         private Func<DataPoint, bool> functionToSeparateLeft;
         private Func<DataPoint, bool> functionToSeparateRight;
-        private Action<OutputHandlerEventArgs> onOutput;
 
         public KDTree(Action<OutputHandlerEventArgs> onOutput, List<TrainingPoint> trainingList, int depth = 0, bool parentHadOneChild = false)
         {
             this.trainingList = trainingList;
-            this.depth = depth;
-            this.onOutput = onOutput;
 
             if (depth % 2 == 0)
                 separatingFunction = b => b.mz;

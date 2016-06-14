@@ -36,6 +36,8 @@ namespace SoftwareLockMass
             a = coeffs[0];
             b = coeffs[1];
             c = coeffs[2];
+            onOutput(new OutputHandlerEventArgs("Sucessfully trained LinearCalibrationFunction"));
+
         }
     }
 }

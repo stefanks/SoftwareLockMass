@@ -42,6 +42,7 @@ namespace SoftwareLockMass
             d = coeffs[3];
             e = coeffs[4];
             f = coeffs[5];
+            onOutput(new OutputHandlerEventArgs("Sucessfully trained QuadraticCalibrationFunction"));
         }
     }
 }

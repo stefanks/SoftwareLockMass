@@ -48,6 +48,7 @@ namespace SoftwareLockMass
                 }
             }
 
+            onOutput(new OutputHandlerEventArgs("Sucessfully trained MedianCalibrationFunction"));
         }
 
         // Gives center of interval

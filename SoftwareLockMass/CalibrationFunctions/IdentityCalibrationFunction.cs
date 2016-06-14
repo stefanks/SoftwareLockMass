@@ -21,6 +21,7 @@ namespace SoftwareLockMass
 
         public override void Train(List<TrainingPoint> trainingList)
         {
+            onOutput(new OutputHandlerEventArgs("Sucessfully trained IdentityCalibrationFunction"));
         }
     }
 }

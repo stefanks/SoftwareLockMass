@@ -46,6 +46,7 @@ namespace SoftwareLockMass
 
             var coeffs = X.Solve(y);
 
+
             a = coeffs[0];
             b = coeffs[1];
             c = coeffs[2];
@@ -56,6 +57,8 @@ namespace SoftwareLockMass
             h = coeffs[7];
             i = coeffs[8];
             j = coeffs[9];
+
+            onOutput(new OutputHandlerEventArgs("Sucessfully trained CubicCalibrationFunction"));
         }
     }
 }

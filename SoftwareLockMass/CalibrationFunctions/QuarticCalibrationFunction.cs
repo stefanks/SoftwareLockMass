@@ -72,6 +72,8 @@ namespace SoftwareLockMass
             m = coeffs[12];
             n = coeffs[13];
             o = coeffs[14];
+
+            onOutput(new OutputHandlerEventArgs("Sucessfully trained QuarticCalibrationFunction"));
         }
     }
 }

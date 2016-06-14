@@ -23,6 +23,7 @@ namespace SoftwareLockMass
         public override void Train(List<TrainingPoint> trainingList)
         {
             a = trainingList.Select(b => b.l).Average();
+            onOutput(new OutputHandlerEventArgs("Sucessfully trained ConstantCalibrationFunction"));
         }
     }
 }
