@@ -30,7 +30,7 @@ namespace SoftwareLockMassIO
         public static SoftwareLockMassParams GetReady(string origDataFile, EventHandler<OutputHandlerEventArgs> p_outputHandler, EventHandler<ProgressHandlerEventArgs> p_progressHandler, EventHandler<OutputHandlerEventArgs> p_watchHandler, string mzidFile, double intensityCutoff, double toleranceInMZforSearch)
         {
             IMsDataFile<IMzSpectrum<MzPeak>> myMsDataFile;
-            Console.WriteLine(Path.GetExtension(origDataFile));
+            // Console.WriteLine(Path.GetExtension(origDataFile));
             if (Path.GetExtension(origDataFile).Equals(".mzML"))
                 myMsDataFile = new Mzml(origDataFile);
             else
@@ -90,7 +90,7 @@ namespace SoftwareLockMassIO
                             return a.name;
                         }
                     }
-                    Console.WriteLine("Formula from uniprot: " + uniprotDeseralized[GetLastNumberFromString(psimodAcession)].thisChemicalFormula.Formula);
+                    // Console.WriteLine("Formula from uniprot: " + uniprotDeseralized[GetLastNumberFromString(psimodAcession)].thisChemicalFormula.Formula);
                     return uniprotDeseralized[GetLastNumberFromString(psimodAcession)].thisChemicalFormula.Formula;
 
                     //throw new Exception("Error in reading psi-mod file, could not find formula!");

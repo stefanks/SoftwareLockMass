@@ -112,7 +112,7 @@ namespace SoftwareLockMassGUI
         {
             foreach (string filepath in filepaths)
             {
-                ////Console.WriteLine(filepath);
+                ////// Console.WriteLine(filepath);
                 var theExtension = Path.GetExtension(filepath);
                 var pathNoExtension = Path.GetFileNameWithoutExtension(filepath);
                 var foundOne = false;
@@ -154,16 +154,16 @@ namespace SoftwareLockMassGUI
                 }
                 if (!foundOne)
                 {
-                    ////Console.WriteLine("Adding " + filepath);
-                    ////Console.WriteLine("extension " + theExtension);
+                    ////// Console.WriteLine("Adding " + filepath);
+                    ////// Console.WriteLine("extension " + theExtension);
                     if (theExtension.Equals(".raw") || theExtension.Equals(".mzML"))
                     {
-                        ////Console.WriteLine("raw or mzml ");
+                        ////// Console.WriteLine("raw or mzml ");
                         binding1.Add(new AnEntry(filepath, null, null));
                     }
                     if (theExtension.Equals(".mzid"))
                     {
-                        ////Console.WriteLine("mzid ");
+                        ////// Console.WriteLine("mzid ");
                         binding1.Add(new AnEntry(null, filepath, null));
                     }
                     if (theExtension.Equals(".tsv"))
