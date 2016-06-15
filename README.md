@@ -36,7 +36,7 @@ The following files must be present in the folder with the executable. If not, t
 * elements.dat: Elements and isotopes masses and abundances 
  
   [http://www.physics.nist.gov/cgi-bin/Compositions/stand_alone.pl?ele=&all=all&ascii=ascii2&isotype=some](http://www.physics.nist.gov/cgi-bin/Compositions/stand_alone.pl?ele=&all=all&ascii=ascii2&isotype=some)
-* PSI-MOD.obo.xml: A PTM library
+* PSI-MOD.obo.xml: A PTM(Post-translational modification) library
 
   [http://psidev.cvs.sourceforge.net/viewvc/psidev/psi/mod/data/PSI-MOD.obo.xml](http://psidev.cvs.sourceforge.net/viewvc/psidev/psi/mod/data/PSI-MOD.obo.xml) 
 * unimod_tables.xml: A PTM library
@@ -45,3 +45,8 @@ The following files must be present in the folder with the executable. If not, t
 * ptmlist.txt: A PTM library
  
   [http://www.uniprot.org/docs/ptmlist.txt](http://www.uniprot.org/docs/ptmlist.txt) 
+
+## License
+
+The software is currently released under the [GNU GPLv3](http://www.gnu.org/licenses/gpl.txt).
+Copyright 2016 Stefan S.
