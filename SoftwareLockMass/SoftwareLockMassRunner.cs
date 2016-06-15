@@ -194,7 +194,6 @@ namespace SoftwareLockMass
             p.postProcessing(p, calibratedSpectra, calibratedPrecursorMZs);
 
             p.OnOutput(new OutputHandlerEventArgs("Finished running my software lock mass implementation"));
-            Console.Read();
         }
 
         private static void SearchMS2Spectrum(IMsDataFile<IMzSpectrum<MzPeak>> myMsDataFile, int ms2spectrumIndex, Peptide peptide, List<TrainingPoint> trainingPointsToReturn, int chargeStateFromMorpheus, SoftwareLockMassParams p)
