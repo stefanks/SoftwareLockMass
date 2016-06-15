@@ -43,11 +43,11 @@ namespace SoftwareLockMassIO
             a.getFormulaFromDictionary = getFormulaFromDictionary;
             a.identifications = new MzidIdentifications(mzidFile);
 
-            a.MS1spectraToWatch = new HashSet<int>();
-            a.MS1spectraToWatch.Add(1);
-            a.MS2spectraToWatch = new HashSet<int>();
-            a.MS2spectraToWatch.Add(2);
-            a.mzRange = new DoubleRange(1030, 1050);
+            //a.MS1spectraToWatch = new HashSet<int>();
+            //a.MS1spectraToWatch.Add(1);
+            //a.MS2spectraToWatch = new HashSet<int>();
+            //a.MS2spectraToWatch.Add(2);
+            //a.mzRange = new DoubleRange(1030, 1050);
 
             a.intensityCutoff = intensityCutoff;
             a.toleranceInMZforSearch = toleranceInMZforSearch;
