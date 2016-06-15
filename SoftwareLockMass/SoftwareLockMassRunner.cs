@@ -124,16 +124,17 @@ namespace SoftwareLockMass
             p.OnOutput(new OutputHandlerEventArgs("Welcome to my software lock mass implementation"));
             p.OnOutput(new OutputHandlerEventArgs("Calibrating " + Path.GetFileName(p.myMsDataFile.FilePath)));
 
-            //Console.WriteLine("Before p.myMsDataFile.Open()");
-            //Console.WriteLine(p.myMsDataFile.IsOpen);
+            Console.WriteLine("Before p.myMsDataFile.Open()");
+            Console.WriteLine(p.myMsDataFile.IsOpen);
             p.myMsDataFile.Open();
-            //Console.WriteLine("After p.myMsDataFile.Open()");
-            //Console.WriteLine(p.myMsDataFile.IsOpen);
+            Console.WriteLine("After p.myMsDataFile.Open()");
+            Console.WriteLine(p.myMsDataFile.IsOpen);
+            Console.WriteLine("p.myMsDataFile.Count() = " + p.myMsDataFile.Count());
 
             p.OnOutput(new OutputHandlerEventArgs("Getting Training Points"));
             List<TrainingPoint> trainingPoints = GetTrainingPoints(p.myMsDataFile, p.identifications, p);
 
-            p.OnWatch(new OutputHandlerEventArgs("Training points: " + string.Join(",",trainingPoints.Take(4)) + "..."));
+            p.OnWatch(new OutputHandlerEventArgs("Training points: " + string.Join(",", trainingPoints.Take(4)) + "..."));
 
             //p.OnOutput(new OutputHandlerEventArgs("Writing training points to file"));
             //WriteTrainingDataToFiles(trainingPoints);
@@ -291,7 +292,8 @@ namespace SoftwareLockMass
             bool added = true;
 
             // Below should go in a loop!
-            Console.WriteLine("Before loop start!");
+            Console.WriteLine("Before loop start! theIndex = " + theIndex);
+            Console.WriteLine("myMsDataFile.FirstSpectrumNumber = " + myMsDataFile.FirstSpectrumNumber + " myMsDataFile.LastSpectrumNumber = " + myMsDataFile.LastSpectrumNumber);
             while (theIndex >= myMsDataFile.FirstSpectrumNumber && theIndex <= myMsDataFile.LastSpectrumNumber && added == true)
             {
                 Console.WriteLine("In loop!");
@@ -336,8 +338,8 @@ namespace SoftwareLockMass
                         p.OnWatch(new OutputHandlerEventArgs("  chargedDistribution: " + string.Join(", ", chargedDistribution.Take(4)) + "..."));
                     }
 
-                    Console.WriteLine("  chargedDistribution.LastMZ = "+chargedDistribution.LastMZ);
-                    Console.WriteLine("  rangeOfSpectrum.Maximum = "+ rangeOfSpectrum.Maximum);
+                    Console.WriteLine("  chargedDistribution.LastMZ = " + chargedDistribution.LastMZ);
+                    Console.WriteLine("  rangeOfSpectrum.Maximum = " + rangeOfSpectrum.Maximum);
                     if (chargedDistribution.FirstMZ > rangeOfSpectrum.Maximum)
                         continue;
                     if (chargedDistribution.LastMZ < rangeOfSpectrum.Minimum)
@@ -345,10 +347,10 @@ namespace SoftwareLockMass
 
                     Console.WriteLine("  Seriously looking at this charge, it's within range");
 
-                    List <TrainingPoint> trainingPointsToAverage = new List<TrainingPoint>();
+                    List<TrainingPoint> trainingPointsToAverage = new List<TrainingPoint>();
                     for (int isotopologueIndex = 0; isotopologueIndex < Math.Min(p.numIsotopologuesToConsider, chargedDistribution.Count); isotopologueIndex++)
                     {
-                        p.OnWatch(new OutputHandlerEventArgs("   Isotopologue "+ isotopologueIndex+ " has mz "+ chargedDistribution[isotopologueIndex].MZ));
+                        p.OnWatch(new OutputHandlerEventArgs("   Isotopologue " + isotopologueIndex + " has mz " + chargedDistribution[isotopologueIndex].MZ));
                         var closestPeak = ms1FilteredByHighIntensities.GetClosestPeak(chargedDistribution[isotopologueIndex].MZ);
                         var theTuple = Tuple.Create<double, double>(closestPeak.X, ms1RetentionTime);
                         p.OnWatch(new OutputHandlerEventArgs("   Closest peak mz and time: " + theTuple));
