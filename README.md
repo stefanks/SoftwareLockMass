@@ -8,11 +8,19 @@ Software for calibrating mass spectra files based on identified peptides. The sp
 
 ### Command Line Version Usage
 
-'''shell
-SoftwareLockMassCommandLine.exe
-'''
+The two required parameters are the paths to spectra and identifications files. 
+```shell
+SoftwareLockMassCommandLine.exe spectra.mzML identifications.mzid
+```
+
+The third (optional) parameter is the intensity cutoff, which limits the considered peaks to having a certain minimum threshold. Higher values speed up the calibration process, but may impact the calibration quality by discarding useful information. Lower values do not necessarily help calibration quality, since low intensity peaks may not be meaningful. The default value is 1e3.
+
+The fourth (optional) parameter is the tolerance in [thomsons](https://en.wikipedia.org/wiki/Thomson_(unit)) for determining if a predicted peak is present in the provided spectra file. The default value is 1e-2.
+
 
 ### GUI Version Usage
+
+Drag and drop is supported for both spectra and identified peptide files. Calibrations on multiple files are done in parallel.
 
 ### Requirements
 
