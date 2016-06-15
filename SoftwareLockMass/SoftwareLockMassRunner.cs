@@ -87,7 +87,10 @@ namespace SoftwareLockMass
                 {
                     // Get the peptide, don't forget to add the modifications!!!!
                     Peptide peptide1 = new Peptide(identifications.PeptideSequence(matchIndex));
-                    p.OnWatch(new OutputHandlerEventArgs("peptide1: " + peptide1.Sequence));
+                    if (p.MS2spectraToWatch.Contains(ms2spectrumIndex))
+                    {
+                        p.OnWatch(new OutputHandlerEventArgs("peptide1: " + peptide1.Sequence));
+                    }
                     for (int i = 0; i < identifications.NumModifications(matchIndex); i++)
                     {
                         int location = identifications.modificationLocation(matchIndex, i);
@@ -105,7 +108,6 @@ namespace SoftwareLockMass
                     var fullSpectrum = new DefaultMzSpectrum(masses, intensities, false);
                     distributionSpectrum = fullSpectrum.FilterByNumberOfMostIntense(Math.Min(p.numIsotopologuesToConsider, fullSpectrum.Count));
 
-                    p.OnWatch(new OutputHandlerEventArgs("distributionSpectrum.count: " + distributionSpectrum.Count));
                 }
 
                 //// Console.WriteLine("Before SearchMS1Spectra");
@@ -133,8 +135,6 @@ namespace SoftwareLockMass
 
             p.OnOutput(new OutputHandlerEventArgs("Getting Training Points"));
             List<TrainingPoint> trainingPoints = GetTrainingPoints(p.myMsDataFile, p.identifications, p);
-
-            p.OnWatch(new OutputHandlerEventArgs("Training points: " + string.Join(",", trainingPoints.Take(4)) + "..."));
 
             //p.OnOutput(new OutputHandlerEventArgs("Writing training points to file"));
             //WriteTrainingDataToFiles(trainingPoints);
@@ -278,7 +278,6 @@ namespace SoftwareLockMass
             {
                 p.OnWatch(new OutputHandlerEventArgs("  countForThisMS2  =   " + countForThisMS2));
             }
-            p.OnWatch(new OutputHandlerEventArgs("  countForThisMS2  =   " + countForThisMS2));
         }
 
         private static void SearchMS1Spectra(IMsDataFile<IMzSpectrum<MzPeak>> myMsDataFile, IMzSpectrum<MzPeak> distributionSpectrum, List<TrainingPoint> trainingPointsToReturn, int ms2spectrumIndex, int direction, HashSet<Tuple<double, double>> peaksAddedHashSet, SoftwareLockMassParams p)
@@ -350,11 +349,8 @@ namespace SoftwareLockMass
                     List<TrainingPoint> trainingPointsToAverage = new List<TrainingPoint>();
                     for (int isotopologueIndex = 0; isotopologueIndex < Math.Min(p.numIsotopologuesToConsider, chargedDistribution.Count); isotopologueIndex++)
                     {
-                        p.OnWatch(new OutputHandlerEventArgs("   Isotopologue " + isotopologueIndex + " has mz " + chargedDistribution[isotopologueIndex].MZ));
                         var closestPeak = ms1FilteredByHighIntensities.GetClosestPeak(chargedDistribution[isotopologueIndex].MZ);
                         var theTuple = Tuple.Create<double, double>(closestPeak.X, ms1RetentionTime);
-                        p.OnWatch(new OutputHandlerEventArgs("   Closest peak mz and time: " + theTuple));
-                        p.OnWatch(new OutputHandlerEventArgs("   p.toleranceInMZforSearch: " + p.toleranceInMZforSearch));
                         if (Math.Abs(chargedDistribution[isotopologueIndex].MZ - closestPeak.X) < p.toleranceInMZforSearch && !peaksAddedHashSet.Contains(theTuple))
                         {
                             // Console.WriteLine("  Added!");
