@@ -19,6 +19,9 @@ The third (optional) parameter is the intensity cutoff, which limits the conside
 
 The fourth (optional) parameter is the tolerance in [thomsons](https://en.wikipedia.org/wiki/Thomson_(unit)) for determining if a predicted peak is present in the provided spectra file. The default value is 1e-2.
 
+```shell
+SoftwareLockMassCommandLine.exe spectra.mzML identifications.mzid 0 0.032
+```
 
 ### GUI Version Usage
 
