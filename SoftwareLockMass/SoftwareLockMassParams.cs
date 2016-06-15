@@ -14,8 +14,7 @@ namespace SoftwareLockMass
         //private const double thresholdPassParameter = 0.01;
 
         public double thresholdPassParameter = 10;
-
-
+        
         // DO NOT GO UNDER 0.01!!!!! Maybe even increase.
         public double toleranceInMZforSearch;
         //public double toleranceInMZforSearch = 0.01;
@@ -112,5 +111,4 @@ namespace SoftwareLockMass
             this.progress = progress;
         }
     }
-
 }

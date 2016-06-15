@@ -17,7 +17,7 @@ namespace SoftwareLockMass
             origDataFile = args[0];
             mzidFile = args[1];
             double intensityCutoff = 1e3;
-            double toleranceInMZforSearch = 0.01;
+            double toleranceInMZforSearch = 1e-2;
             if (args.Length > 2)
                 intensityCutoff = Convert.ToDouble(args[2]);
             if (args.Length > 3)
