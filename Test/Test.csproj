@@ -70,6 +70,10 @@
     </None>
   </ItemGroup>
   <ItemGroup>
+    <ProjectReference Include="..\SoftwareLockMassIO\SoftwareLockMassIO.csproj">
+      <Project>{06ad5939-8437-4f2a-bf3c-2b181d6f0308}</Project>
+      <Name>SoftwareLockMassIO</Name>
+    </ProjectReference>
     <ProjectReference Include="..\SoftwareLockMass\SoftwareLockMass.csproj">
       <Project>{475C3B7B-4367-4BC8-8192-2A850C72812B}</Project>
       <Name>SoftwareLockMass</Name>

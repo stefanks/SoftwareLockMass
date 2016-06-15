@@ -28,7 +28,6 @@ namespace SoftwareLockMass
             SoftwareLockMassParams a = SoftwareLockMassIO.IO.GetReady(origDataFile, P_outputHandler, P_progressHandler, P_watchHandler, mzidFile, intensityCutoff, toleranceInMZforSearch);
 
             SoftwareLockMassRunner.Run(a);
-
         }
 
         private static void P_progressHandler(object sender, ProgressHandlerEventArgs e)
@@ -40,7 +39,7 @@ namespace SoftwareLockMass
         {
             Console.WriteLine(e.output);
         }
-        
+
         private static void P_watchHandler(object sender, OutputHandlerEventArgs e)
         {
             Console.WriteLine(e.output);
