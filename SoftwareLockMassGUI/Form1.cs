@@ -14,6 +14,8 @@ namespace SoftwareLockMassGUI
         private static List<AnEntry> myListOfEntries = new List<AnEntry>();
         private BindingList<AnEntry> binding1 = new BindingList<AnEntry>(myListOfEntries);
 
+        readonly double intensityCutoff = 1e3;
+        readonly double toleranceInMZforSearch = 0.01;
         public Form1()
         {
             InitializeComponent();
@@ -45,7 +47,7 @@ namespace SoftwareLockMassGUI
              {
 
 
-                 SoftwareLockMassParams a = SoftwareLockMassIO.IO.GetReady(anEntry.spectraFile, P_outputHandler, P_progressHandler, anEntry.mzidFile);
+                 SoftwareLockMassParams a = SoftwareLockMassIO.IO.GetReady(anEntry.spectraFile, P_outputHandler, P_progressHandler, P_watchHandler, anEntry.mzidFile, intensityCutoff, toleranceInMZforSearch);
 
                  if (checkBox1.Checked)
                      a.tsvFile = anEntry.tsvFile;

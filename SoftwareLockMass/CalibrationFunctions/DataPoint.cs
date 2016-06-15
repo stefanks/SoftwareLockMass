@@ -14,7 +14,7 @@ namespace SoftwareLockMass
 
         internal double[] ToDoubleArrayWithIntercept()
         {
-            return  new double[3] { 1, mz , rt};
+            return new double[3] { 1, mz, rt };
         }
 
         internal double[] ToDoubleArrayWithInterceptAndSquares()
@@ -29,7 +29,11 @@ namespace SoftwareLockMass
 
         internal double[] ToDoubleArrayWithInterceptAndSquaresAndCubesAndQuarts()
         {
-            return new double[15] { 1, mz, rt, Math.Pow(mz, 2), Math.Pow(rt, 2), mz * rt, Math.Pow(mz, 3), Math.Pow(mz, 2) * rt, mz * Math.Pow(rt, 2), Math.Pow(rt, 3), Math.Pow(mz, 4) , Math.Pow(mz, 3) * rt  , Math.Pow(mz, 2) * Math.Pow(rt, 2) , mz * Math.Pow(rt, 3) , Math.Pow(rt, 4) };
+            return new double[15] { 1, mz, rt, Math.Pow(mz, 2), Math.Pow(rt, 2), mz * rt, Math.Pow(mz, 3), Math.Pow(mz, 2) * rt, mz * Math.Pow(rt, 2), Math.Pow(rt, 3), Math.Pow(mz, 4), Math.Pow(mz, 3) * rt, Math.Pow(mz, 2) * Math.Pow(rt, 2), mz * Math.Pow(rt, 3), Math.Pow(rt, 4) };
+        }
+        public override string ToString()
+        {
+            return "(" + mz + "," + rt + ")";
         }
     }
 }

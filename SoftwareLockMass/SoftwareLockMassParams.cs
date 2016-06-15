@@ -17,11 +17,12 @@ namespace SoftwareLockMass
 
 
         // DO NOT GO UNDER 0.01!!!!! Maybe even increase.
-        public double toleranceInMZforSearch = 0.01;
+        public double toleranceInMZforSearch;
+        //public double toleranceInMZforSearch = 0.01;
         //public double toleranceInMZforSearch = 0.032;
 
         // 1e5 is too sparse. 1e4 is nice, but misses one I like So using 5e3. 1e3 is nice. Try 0!
-        public double intensityCutoff = 1e3;
+        public double intensityCutoff;
         //public double intensityCutoff = 1e2;
 
         // My parameters!

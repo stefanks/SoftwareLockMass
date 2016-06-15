@@ -7,4 +7,4 @@ script:
   - xbuild /p:Configuration=DebugTravis SoftwareLockMass.sln 
   - mono ./testrunner/NUnit.ConsoleRunner.*/tools/nunit3-console.exe ./Test/bin/Debug/Test.dll
   - xbuild /p:Configuration=Release SoftwareLockMass.sln 
-  - mono ./SoftwareLockMassCommandLine/bin/Release/SoftwareLockMassCommandLine.exe
+  - mono ./SoftwareLockMassCommandLine/bin/Release/SoftwareLockMassCommandLine.exe myFile.mzML myIdentifications.mzid 0 0.032

@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="utf-8"?>
+<MzIdentML xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns="http://psidev.info/psi/pi/mzIdentML/1.1.1">
+  <SequenceCollection>
+    <Peptide>
+      <PeptideSequence>KQEEQMETEQQNKDEGK</PeptideSequence>
+    </Peptide>
+    <PeptideEvidence />
+  </SequenceCollection>
+  <DataCollection>
+    <AnalysisData>
+      <SpectrumIdentificationList>
+        <SpectrumIdentificationResult spectrumID="spectrum 2">
+          <SpectrumIdentificationItem chargeState="2" experimentalMassToCharge="1039.97880968" calculatedMassToCharge="1039.9684" rank="0" passThreshold="false">
+            <cvParam value="100" />
+          </SpectrumIdentificationItem>
+        </SpectrumIdentificationResult>
+      </SpectrumIdentificationList>
+    </AnalysisData>
+  </DataCollection>
+</MzIdentML>

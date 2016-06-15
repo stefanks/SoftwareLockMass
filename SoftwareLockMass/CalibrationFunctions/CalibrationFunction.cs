@@ -3,7 +3,7 @@ using System.Collections.Generic;
 
 namespace SoftwareLockMass
 {
-    abstract class CalibrationFunction
+    public abstract class CalibrationFunction
     {
         public abstract void Train(List<TrainingPoint> trainingList);
         public abstract double Predict(DataPoint t);

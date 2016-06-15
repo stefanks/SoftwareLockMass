@@ -38,8 +38,9 @@
     <Reference Include="Chemistry">
       <HintPath>..\packages\Chemistry.1.0.73\lib\net451\Chemistry.dll</HintPath>
     </Reference>
-    <Reference Include="MassSpectrometry">
-      <HintPath>..\packages\MassSpectrometry.1.0.70\lib\net451\MassSpectrometry.dll</HintPath>
+    <Reference Include="MassSpectrometry, Version=1.0.71.0, Culture=neutral, processorArchitecture=AMD64">
+      <HintPath>..\packages\MassSpectrometry.1.0.71\lib\net451\MassSpectrometry.dll</HintPath>
+      <Private>True</Private>
     </Reference>
     <Reference Include="MathNet.Numerics, Version=3.11.1.0, Culture=neutral, processorArchitecture=MSIL">
       <HintPath>..\packages\MathNet.Numerics.3.11.1\lib\net40\MathNet.Numerics.dll</HintPath>
@@ -49,8 +50,9 @@
       <HintPath>..\packages\Proteomics.1.0.21\lib\net451\Proteomics.dll</HintPath>
       <Private>True</Private>
     </Reference>
-    <Reference Include="Spectra">
-      <HintPath>..\packages\MassSpectrometry.1.0.70\lib\net451\Spectra.dll</HintPath>
+    <Reference Include="Spectra, Version=1.0.0.0, Culture=neutral, processorArchitecture=AMD64">
+      <HintPath>..\packages\MassSpectrometry.1.0.71\lib\net451\Spectra.dll</HintPath>
+      <Private>True</Private>
     </Reference>
     <Reference Include="System" />
     <Reference Include="System.Core" />

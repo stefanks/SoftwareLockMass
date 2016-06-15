@@ -9,5 +9,10 @@
             dp = t;
             l = label;
         }
+
+        public override string ToString()
+        {
+            return "("+dp + l+")";
+        }
     }
 }

@@ -5,7 +5,7 @@ using System.Linq;
 
 namespace SoftwareLockMass
 {
-    internal class QuadraticCalibrationFunction : CalibrationFunction
+    public class QuadraticCalibrationFunction : CalibrationFunction
     {
         private double a;
         private double b;
@@ -22,7 +22,7 @@ namespace SoftwareLockMass
 
         public override double Predict(DataPoint t)
         {
-            return a + b * t.mz + c * t.rt + d*Math.Pow(t.mz,2) +e * Math.Pow(t.rt, 2) + f * t.mz*t.rt;
+            return a + b * t.mz + c * t.rt + d * Math.Pow(t.mz, 2) + e * Math.Pow(t.rt, 2) + f * t.mz * t.rt;
         }
 
         public override void Train(List<TrainingPoint> trainingList)
@@ -30,11 +30,21 @@ namespace SoftwareLockMass
 
             var M = Matrix<double>.Build;
             var V = Vector<double>.Build;
-            
+
             var X = M.DenseOfRowArrays(trainingList.Select(b => b.dp.ToDoubleArrayWithInterceptAndSquares()));
             var y = V.DenseOfEnumerable(trainingList.Select(b => b.l));
 
-            var coeffs = X.Solve(y);
+            Vector<double> coeffs;
+            try
+            {
+                coeffs = X.Solve(y);
+            }
+            catch (ArgumentException)
+            {
+                throw new ArgumentException("Not enough training points for Quadratic calibration function. Need at least 6, but have " + trainingList.Count);
+            }
+            if (double.IsNaN(coeffs[0]))
+                throw new ArgumentException("Could not train QuadraticCalibrationFunction, data might be low rank");
 
             a = coeffs[0];
             b = coeffs[1];

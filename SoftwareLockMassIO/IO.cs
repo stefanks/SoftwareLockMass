@@ -27,7 +27,7 @@ namespace SoftwareLockMassIO
             return Convert.ToInt32(Regex.Match(s, @"\d+$").Value);
         }
 
-        public static SoftwareLockMassParams GetReady(string origDataFile, EventHandler<OutputHandlerEventArgs> p_outputHandler, EventHandler<ProgressHandlerEventArgs> p_progressHandler, string mzidFile)
+        public static SoftwareLockMassParams GetReady(string origDataFile, EventHandler<OutputHandlerEventArgs> p_outputHandler, EventHandler<ProgressHandlerEventArgs> p_progressHandler, EventHandler<OutputHandlerEventArgs> p_watchHandler, string mzidFile, double intensityCutoff, double toleranceInMZforSearch)
         {
             IMsDataFile<IMzSpectrum<MzPeak>> myMsDataFile;
             if (Path.GetExtension(origDataFile).Equals(".mzML"))
@@ -37,23 +37,30 @@ namespace SoftwareLockMassIO
             var a = new SoftwareLockMassParams(myMsDataFile);
             a.outputHandler += p_outputHandler;
             a.progressHandler += p_progressHandler;
+            a.watchHandler += p_watchHandler;
             a.postProcessing = MzmlOutput;
             a.getFormulaFromDictionary = getFormulaFromDictionary;
             a.identifications = new MzidIdentifications(mzidFile);
+
+            a.MS1spectraToWatch = new HashSet<int>();
+            a.MS1spectraToWatch.Add(1);
+            a.MS2spectraToWatch = new HashSet<int>();
+            a.MS2spectraToWatch.Add(2);
+            a.mzRange = new DoubleRange(1030, 1050);
+
+            a.intensityCutoff = intensityCutoff;
+            a.toleranceInMZforSearch = toleranceInMZforSearch;
+
             return a;
         }
 
         public static void Load()
         {
-            UsefulProteomicsDatabases.Loaders.unimodLocation = unimodLocation;
-            UsefulProteomicsDatabases.Loaders.psimodLocation = psimodLocation;
-            UsefulProteomicsDatabases.Loaders.elementLocation = elementsLocation;
-            UsefulProteomicsDatabases.Loaders.uniprotLocation = uniprotLocation;
 
-            UsefulProteomicsDatabases.Loaders.LoadElements();
-            unimodDeserialized = UsefulProteomicsDatabases.Loaders.LoadUnimod();
-            psimodDeserialized = UsefulProteomicsDatabases.Loaders.LoadPsiMod();
-            uniprotDeseralized = UsefulProteomicsDatabases.Loaders.LoadUniprot();
+            UsefulProteomicsDatabases.Loaders.LoadElements(elementsLocation);
+            unimodDeserialized = UsefulProteomicsDatabases.Loaders.LoadUnimod(unimodLocation);
+            psimodDeserialized = UsefulProteomicsDatabases.Loaders.LoadPsiMod(psimodLocation);
+            uniprotDeseralized = UsefulProteomicsDatabases.Loaders.LoadUniprot(uniprotLocation);
         }
 
         public static string getFormulaFromDictionary(string dictionary, string acession)

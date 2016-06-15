@@ -45,6 +45,8 @@ namespace SoftwareLockMass
             var y = V.DenseOfEnumerable(trainingList.Select(b => b.l));
 
             var coeffs = X.Solve(y);
+            if (double.IsNaN(coeffs[0]))
+                throw new ArgumentException("Could not train CubicCalibrationFunction, data might be low rank");
 
 
             a = coeffs[0];

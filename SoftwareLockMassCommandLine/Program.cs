@@ -16,10 +16,16 @@ namespace SoftwareLockMass
         {
             origDataFile = args[0];
             mzidFile = args[1];
+            double intensityCutoff = 1e3;
+            double toleranceInMZforSearch = 0.01;
+            if (args.Length > 2)
+                intensityCutoff = Convert.ToDouble(args[2]);
+            if (args.Length > 3)
+                toleranceInMZforSearch = Convert.ToDouble(args[3]);
 
             SoftwareLockMassIO.IO.Load();
 
-            SoftwareLockMassParams a = SoftwareLockMassIO.IO.GetReady(origDataFile, P_outputHandler, P_progressHandler, mzidFile);
+            SoftwareLockMassParams a = SoftwareLockMassIO.IO.GetReady(origDataFile, P_outputHandler, P_progressHandler, P_watchHandler, mzidFile, intensityCutoff, toleranceInMZforSearch);
 
             SoftwareLockMassRunner.Run(a);
 
@@ -31,6 +37,11 @@ namespace SoftwareLockMass
         }
 
         private static void P_outputHandler(object sender, OutputHandlerEventArgs e)
+        {
+            Console.WriteLine(e.output);
+        }
+        
+        private static void P_watchHandler(object sender, OutputHandlerEventArgs e)
         {
             Console.WriteLine(e.output);
         }
