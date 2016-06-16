@@ -1,10 +1,20 @@
 language: csharp
 solution: SoftwareLockMass.sln
 install:
-  - nuget restore SoftwareLockMass.sln
-  - nuget install NUnit.Console -OutputDirectory testrunner
+- nuget restore SoftwareLockMass.sln
+- nuget install NUnit.Console -OutputDirectory testrunner
 script:
-  - xbuild /p:Configuration=DebugTravis SoftwareLockMass.sln 
-  - mono ./testrunner/NUnit.ConsoleRunner.*/tools/nunit3-console.exe ./Test/bin/Debug/Test.dll
-  - xbuild /p:Configuration=Release SoftwareLockMass.sln 
-  - mono ./SoftwareLockMassCommandLine/bin/Release/SoftwareLockMassCommandLine.exe Test/myFile.mzML Test/myIdentifications.mzid 0 0.032
+- xbuild /p:Configuration=TestAndRelease SoftwareLockMass.sln
+- mono ./testrunner/NUnit.ConsoleRunner.*/tools/nunit3-console.exe ./Test/bin/Release/Test.dll
+- tar -zcvf MonoCommandLine.tar.gz SoftwareLockMassCommandLine/bin/Release 
+- mono ./SoftwareLockMassCommandLine/bin/Release/SoftwareLockMassCommandLine.exe Test/myFile.mzML
+  Test/myIdentifications.mzid 0 0.032
+deploy:
+  provider: releases
+  user: "stefanks"
+  file: "MonoCommandLine.tar.gz"
+  password:
+    secure: AAZnL6MGPk3yr5HsENYp5DgLuk50rJ7FN+OB2vAlDnXyGUIGjdYIZO5/+55zNHttamZQj80JkgHY5w3demHES2djVFICzn9VJYtHKOXvQGT2ZsyneaKMJPg5vl20X6dG5NuTQnkCghF8HOegipzjQrLBgUHJCVjhObJcMuWKSEuuEVPYcpimulYQvIifr7OftjY1KWhzdOTr0fmKfFoYSPHXUMwM1MJQCU3KDdLGux6HyP0FpVjlCdL8eW0hk4E5i++/lS4Kq0BlHPuIqJc+BvL7l3rcm4OeG983Qf5TTaUEeTNc9ft10/P/KO1UYABsrTwK7cZe1PxY7XTAmZgfi60p45Q4mQIFbbbU/4BxvDgoyCMPZHjPXxAFzxte99Q4DdKWlGdpkksdGBkd5KkZA40fP+t+9RQnGED0uy6MB2gcnq/kqIzN/7hTANwJj5qLPvTOd5wnDM9+I8UQLBhEF9g0SRl/iaWX7YA9ILvc2x1dNrqRM2PpkCVB4/db3jvq1Z3j9pddGM73dLwRYraF258T9CRDQwT14NEQmPY7mpyXP+nau52X9qxxKovvsxmWbbZlFHfUjOrnWC7xCDhZUpomMTyrJ0loG6YCpzEQhT/BwO4hNuz4AFXE3ODDoFewgMD5KLrm8zdbJcYVE03rd43lWgbJyGWV1K1fh6s8NWE=
+  skip_cleanup: true
+  on:
+    tags: true

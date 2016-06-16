@@ -27,8 +27,8 @@
           <cvParam accession="MS:1000128" />
           <cvParam accession="MS:1000130" name="positive scan" />
           <cvParam accession="MS:1000796" value="spectrum 1" name="spectrum title" />
-          <cvParam accession="MS:1000528" value="347.327647623238" name="lowest observed m/z" />
-          <cvParam accession="MS:1000527" value="1041.9725334933" name="highest observed m/z" />
+          <cvParam accession="MS:1000528" value="1041.9725334933" name="lowest observed m/z" />
+          <cvParam accession="MS:1000527" name="highest observed m/z" />
           <scanList count="1">
             <scan>
               <cvParam accession="MS:1000016" value="1" name="scan start time" unitAccession="UO:0000031" unitName="minute" unitCvRef="UO" />
@@ -53,8 +53,8 @@
           <cvParam accession="MS:1000128" />
           <cvParam accession="MS:1000130" name="positive scan" />
           <cvParam accession="MS:1000796" value="spectrum 2" name="spectrum title" />
-          <cvParam accession="MS:1000528" value="-190.068231233026" name="lowest observed m/z" />
-          <cvParam accession="MS:1000527" value="687.664590892745" name="highest observed m/z" />
+          <cvParam accession="MS:1000528" value="687.664590892745" name="lowest observed m/z" />
+          <cvParam accession="MS:1000527" name="highest observed m/z" />
           <scanList count="1">
             <scan>
               <cvParam accession="MS:1000016" value="2" name="scan start time" unitAccession="UO:0000031" unitName="minute" unitCvRef="UO" />
