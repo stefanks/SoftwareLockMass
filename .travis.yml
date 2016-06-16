@@ -6,7 +6,7 @@ install:
 script:
 - xbuild /p:Configuration=TestAndRelease SoftwareLockMass.sln
 - mono ./testrunner/NUnit.ConsoleRunner.*/tools/nunit3-console.exe ./Test/bin/Release/Test.dll
-- tar -zcvf MonoCommandLine.tar.gz SoftwareLockMassCommandLine/bin/Release
+- tar -zcvf MonoCommandLine.tar.gz -C SoftwareLockMassCommandLine/bin/Release .
 - mono ./SoftwareLockMassCommandLine/bin/Release/SoftwareLockMassCommandLine.exe Test/myFile.mzML
   Test/myIdentifications.mzid 0 0.032
 deploy:
