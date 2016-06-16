@@ -8,7 +8,7 @@ Software for calibrating mass spectra files based on identified peptides. The sp
 
 ### Command Line Version Usage
 
-The two required parameters are the paths to spectra and identifications files. 
+The two required parameters are the paths to spectra and identifications files:
 ```shell
 SoftwareLockMassCommandLine.exe spectra.mzML identifications.mzid
 ```
