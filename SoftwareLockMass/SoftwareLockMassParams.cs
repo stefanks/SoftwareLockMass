@@ -1,7 +1,7 @@
-﻿using Spectra;
+﻿using MassSpectrometry;
+using Spectra;
 using System;
 using System.Collections.Generic;
-using MassSpectrometry;
 
 namespace SoftwareLockMass
 {
@@ -14,7 +14,7 @@ namespace SoftwareLockMass
         //private const double thresholdPassParameter = 0.01;
 
         public double thresholdPassParameter = 10;
-        
+
         // DO NOT GO UNDER 0.01!!!!! Maybe even increase.
         public double toleranceInMZforSearch;
         //public double toleranceInMZforSearch = 0.01;
@@ -42,7 +42,7 @@ namespace SoftwareLockMass
         public int numIsotopologuesNeededToBeConsideredIdentified = 3;
         //public int numIsotopologuesNeededToBeConsideredIdentified = 2;
         #endregion
-            
+
         public event EventHandler<OutputHandlerEventArgs> outputHandler;
         public event EventHandler<ProgressHandlerEventArgs> progressHandler;
         public event EventHandler<OutputHandlerEventArgs> watchHandler;
@@ -50,7 +50,7 @@ namespace SoftwareLockMass
         public HashSet<int> MS2spectraToWatch;
         public HashSet<int> MS1spectraToWatch;
         public IRange<double> mzRange;
-        
+
         public IMsDataFile<IMzSpectrum<MzPeak>> myMsDataFile;
         public Identifications identifications;
 
