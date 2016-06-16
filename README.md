@@ -30,7 +30,7 @@ Drag and drop is supported for both spectra and identified peptide files. Calibr
 
 In order to use Thermo raw files as inputs, please download and install the MSFileReader by creating an account at [https://thermo.flexnetoperations.com/control/thmo/login](https://thermo.flexnetoperations.com/control/thmo/login).
 
-The following files must be present in the folder with the executable. If not, they are automatically downloaded (to update a file to a newer version, delete it an the application will download a new version). This is the only network usage by the application. 
+The following files must be present in the folder with the executable. If not, they are automatically downloaded (to update a file to a newer version, delete it, and the application will download a new version). This is the only network usage by the application. 
 
 * elements.dat: Elements and isotopes masses and abundances 
  
