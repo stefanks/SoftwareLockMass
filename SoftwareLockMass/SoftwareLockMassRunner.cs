@@ -182,9 +182,6 @@ namespace SoftwareLockMass
                 }
             }
 
-            p.OnOutput(new OutputHandlerEventArgs("Computing Mean Squared Error"));
-            p.OnOutput(new OutputHandlerEventArgs("The Mean Squared Error for the model is " + cf.getMSE(trainingPoints)));
-
             p.OnOutput(new OutputHandlerEventArgs("Calibrating Spectra"));
             List<IMzSpectrum<MzPeak>> calibratedSpectra = CalibrateSpectra(p.myMsDataFile, cf, p);
             p.OnOutput(new OutputHandlerEventArgs("Calibrating Precursor MZs"));
