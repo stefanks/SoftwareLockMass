@@ -6,15 +6,14 @@ install:
 script:
 - xbuild /p:Configuration=TestAndRelease SoftwareLockMass.sln
 - mono ./testrunner/NUnit.ConsoleRunner.*/tools/nunit3-console.exe ./Test/bin/Release/Test.dll
-- tar -zcvf MonoCommandLine.tar.gz SoftwareLockMassCommandLine/bin/Release 
+- tar -zcvf MonoCommandLine.tar.gz SoftwareLockMassCommandLine/bin/Release
 - mono ./SoftwareLockMassCommandLine/bin/Release/SoftwareLockMassCommandLine.exe Test/myFile.mzML
   Test/myIdentifications.mzid 0 0.032
 deploy:
   provider: releases
-  user: "stefanks"
-  file: "MonoCommandLine.tar.gz"
-  password:
-    secure: AAZnL6MGPk3yr5HsENYp5DgLuk50rJ7FN+OB2vAlDnXyGUIGjdYIZO5/+55zNHttamZQj80JkgHY5w3demHES2djVFICzn9VJYtHKOXvQGT2ZsyneaKMJPg5vl20X6dG5NuTQnkCghF8HOegipzjQrLBgUHJCVjhObJcMuWKSEuuEVPYcpimulYQvIifr7OftjY1KWhzdOTr0fmKfFoYSPHXUMwM1MJQCU3KDdLGux6HyP0FpVjlCdL8eW0hk4E5i++/lS4Kq0BlHPuIqJc+BvL7l3rcm4OeG983Qf5TTaUEeTNc9ft10/P/KO1UYABsrTwK7cZe1PxY7XTAmZgfi60p45Q4mQIFbbbU/4BxvDgoyCMPZHjPXxAFzxte99Q4DdKWlGdpkksdGBkd5KkZA40fP+t+9RQnGED0uy6MB2gcnq/kqIzN/7hTANwJj5qLPvTOd5wnDM9+I8UQLBhEF9g0SRl/iaWX7YA9ILvc2x1dNrqRM2PpkCVB4/db3jvq1Z3j9pddGM73dLwRYraF258T9CRDQwT14NEQmPY7mpyXP+nau52X9qxxKovvsxmWbbZlFHfUjOrnWC7xCDhZUpomMTyrJ0loG6YCpzEQhT/BwO4hNuz4AFXE3ODDoFewgMD5KLrm8zdbJcYVE03rd43lWgbJyGWV1K1fh6s8NWE=
+  file: MonoCommandLine.tar.gz
   skip_cleanup: true
   on:
     tags: true
+  api_key:
+    secure: kIDdcC1qpS+9598jwL+h3CRTsTnMDIfd52MC/6V/XfRg8wnUgkYvKi8LKh2lmO3bm80HYdYbocMQmydum7B64/0YloHb4p+wyKpHZhiIOpzKfy56zZVKr3J8DZtjb/X5x+o3xfXVopewg2q7Ae4tfGl1Jswgepx7mMu2ICQ3H11mgytQRmpy06MEUi+zfAiw/hnGKHlTNb8r8/D0bft7QybT3PdPidB0EpHqwl9zcHguSAeKv+Eg/sPj2nUIYmBlJ6n1ACK/S/uMnJKW52InIaGjY8NF/LA00OYyZtgWL8GGCXh7YYWPpSuO70mSAoJfA2kTHT6s+OWmcGmGqEicmsivefN7GvIHvFoSHNlv9QWnMz9y4khQ+8CChwaUwyKWPlnW4dbAFCezxYmnsH/qyCAFW7itRoVVlJ+iyDmcRdaB4TIHyEBL2q8Qa6ICm9BVnMx5pR2JKaA1rbBjLtmAXfFuFvr8p/ezhrunV81fg3/md3CJUUL4KztS05Oky1c1G7QDY7IZGAVvo8xNbOgNXdPN2j41sF154NObWqx27n6774Fjquo+2iWGDV0gKQtEXgWEeVR0q23QhIXWzVkc2CkP1wfM10IogIYZBAJ9unf69zZl9ddmybcoSk8sSz7ayUocCbsU0guN0lYCGaw7j45FwjVme7CAxCTYhKv3JF0=
