@@ -13,123 +13,12 @@ namespace SoftwareLockMass
 {
     public static class SoftwareLockMassRunner
     {
-
-        private static void WriteTrainingDataToFiles(List<TrainingPoint> trainingPoints)
-        {
-            using (StreamWriter file =
-                new StreamWriter(@"E:\Stefan\data\CalibratedOutput\trainingData1.dat"))
-            {
-                foreach (TrainingPoint d in trainingPoints)
-                {
-                    file.WriteLine(d.dp.mz);
-                }
-            }
-
-            using (StreamWriter file =
-                new StreamWriter(@"E:\Stefan\data\CalibratedOutput\trainingData2.dat"))
-            {
-                foreach (TrainingPoint d in trainingPoints)
-                {
-                    file.WriteLine(d.dp.rt);
-                }
-            }
-
-            using (StreamWriter file =
-                new StreamWriter(@"E:\Stefan\data\CalibratedOutput\labelData.dat"))
-            {
-                foreach (TrainingPoint d in trainingPoints)
-                {
-                    file.WriteLine(d.l);
-                }
-            }
-        }
-
-        private static List<TrainingPoint> GetTrainingPoints(IMsDataFile<IMzSpectrum<MzPeak>> myMsDataFile, Identifications identifications, SoftwareLockMassParams p)
-        {
-            // Get the training data out of xml
-            List<TrainingPoint> trainingPointsToReturn = new List<TrainingPoint>();
-
-            HashSet<Tuple<double, double>> peaksAddedHashSet = new HashSet<Tuple<double, double>>();
-
-
-            int numPass = identifications.getNumBelow(p.thresholdPassParameter);
-            // Loop over all results from the mzIdentML file
-            for (int matchIndex = 0; matchIndex < numPass; matchIndex++)
-            {
-                //p.OnOutput(new OutputHandlerEventArgs((matchIndex);
-                if (numPass < 100)
-                    p.OnProgress(new ProgressHandlerEventArgs(numPass));
-                else if (matchIndex % (numPass / 100) == 0)
-                    p.OnProgress(new ProgressHandlerEventArgs(matchIndex / (numPass / 100)));
-                if (identifications.isDecoy(matchIndex))
-                    continue;
-
-                string ms2spectrumID = identifications.spectrumID(matchIndex);
-                int ms2spectrumIndex = GetLastNumberFromString(ms2spectrumID);
-                if (p.MS2spectraToWatch.Contains(ms2spectrumIndex))
-                {
-                    p.OnWatch(new OutputHandlerEventArgs("ms2spectrumIndex: " + ms2spectrumIndex));
-                    p.OnWatch(new OutputHandlerEventArgs(" calculatedMassToCharge: " + identifications.calculatedMassToCharge(matchIndex)));
-                    p.OnWatch(new OutputHandlerEventArgs(" experimentalMassToCharge: " + identifications.experimentalMassToCharge(matchIndex)));
-                    p.OnWatch(new OutputHandlerEventArgs(" Error according to single morpheus point: " + ((identifications.experimentalMassToCharge(matchIndex)) - (identifications.calculatedMassToCharge(matchIndex)))));
-                }
-                IMzSpectrum<MzPeak> distributionSpectrum;
-                int chargeStateFromMorpheus = identifications.chargeState(matchIndex);
-
-                if (p.MZID_MASS_DATA)
-                {
-                    double calculatedMassToCharge = identifications.calculatedMassToCharge(matchIndex);
-                    distributionSpectrum = new DefaultMzSpectrum(new double[1] { calculatedMassToCharge * chargeStateFromMorpheus - chargeStateFromMorpheus * Constants.Proton }, new double[1] { 1 });
-                }
-                else
-                {
-                    // Get the peptide, don't forget to add the modifications!!!!
-                    Peptide peptide1 = new Peptide(identifications.PeptideSequence(matchIndex));
-                    if (p.MS2spectraToWatch.Contains(ms2spectrumIndex))
-                    {
-                        p.OnWatch(new OutputHandlerEventArgs("peptide1: " + peptide1.Sequence));
-                    }
-                    for (int i = 0; i < identifications.NumModifications(matchIndex); i++)
-                    {
-                        int location = identifications.modificationLocation(matchIndex, i);
-                        string theFormula = p.getFormulaFromDictionary(identifications.modificationDictionary(matchIndex, i), identifications.modificationAcession(matchIndex, i));
-                        ChemicalFormulaModification modification = new ChemicalFormulaModification(ConvertToCSMSLFormula(theFormula));
-                        peptide1.AddModification(modification, location);
-                    }
-                    // SEARCH THE MS2 SPECTRUM!!!
-                    //SearchMS2Spectrum(myMsDataFile, ms2spectrumIndex, peptide1, trainingPointsToReturn, chargeStateFromMorpheus);
-                    // Calculate isotopic distribution
-                    IsotopicDistribution dist = new IsotopicDistribution(p.fineResolution);
-                    double[] masses;
-                    double[] intensities;
-                    dist.CalculateDistribuition(peptide1.GetChemicalFormula(), out masses, out intensities);
-                    var fullSpectrum = new DefaultMzSpectrum(masses, intensities, false);
-                    distributionSpectrum = fullSpectrum.FilterByNumberOfMostIntense(Math.Min(p.numIsotopologuesToConsider, fullSpectrum.Count));
-
-                }
-
-                //// Console.WriteLine("Before SearchMS1Spectra");
-                //// Console.WriteLine("myMsDataFile.FirstSpectrumNumber = " + myMsDataFile.FirstSpectrumNumber);
-                SearchMS1Spectra(myMsDataFile, distributionSpectrum, trainingPointsToReturn, ms2spectrumIndex, -1, peaksAddedHashSet, p);
-
-                //// Console.WriteLine("after SearchMS1Spectra");
-                SearchMS1Spectra(myMsDataFile, distributionSpectrum, trainingPointsToReturn, ms2spectrumIndex, 1, peaksAddedHashSet, p);
-            }
-            p.OnOutput(new OutputHandlerEventArgs());
-            return trainingPointsToReturn;
-        }
-
         public static void Run(SoftwareLockMassParams p)
         {
             p.OnOutput(new OutputHandlerEventArgs("Welcome to my software lock mass implementation"));
             p.OnOutput(new OutputHandlerEventArgs("Calibrating " + Path.GetFileName(p.myMsDataFile.FilePath)));
 
-            // Console.WriteLine("Before p.myMsDataFile.Open()");
-            // Console.WriteLine(p.myMsDataFile.IsOpen);
             p.myMsDataFile.Open();
-            // Console.WriteLine("After p.myMsDataFile.Open()");
-            // Console.WriteLine(p.myMsDataFile.IsOpen);
-            // Console.WriteLine("p.myMsDataFile.Count() = " + p.myMsDataFile.Count());
 
             p.OnOutput(new OutputHandlerEventArgs("Getting Training Points"));
             List<TrainingPoint> trainingPoints = GetTrainingPoints(p.myMsDataFile, p.identifications, p);
@@ -182,14 +71,153 @@ namespace SoftwareLockMass
                 }
             }
 
+            if (p.tsvFile != null)
+            {
+                p.OnOutput(new OutputHandlerEventArgs("Calibrating TSV file"));
+                CalibrateTSV(cf, p);
+            }
             p.OnOutput(new OutputHandlerEventArgs("Calibrating Spectra"));
-            List<IMzSpectrum<MzPeak>> calibratedSpectra = CalibrateSpectra(p.myMsDataFile, cf, p);
+            List<IMzSpectrum<MzPeak>> calibratedSpectra = CalibrateSpectra(cf, p);
             p.OnOutput(new OutputHandlerEventArgs("Calibrating Precursor MZs"));
-            List<double> calibratedPrecursorMZs = CalibratePrecursorMZs(p.myMsDataFile, cf, p);
+            List<double> calibratedPrecursorMZs = CalibratePrecursorMZs(cf, p);
 
             p.postProcessing(p, calibratedSpectra, calibratedPrecursorMZs);
 
             p.OnOutput(new OutputHandlerEventArgs("Finished running my software lock mass implementation"));
+        }
+
+        private static void CalibrateTSV(CalibrationFunction cf, SoftwareLockMassParams p)
+        {
+            using (StreamReader reader = new StreamReader(p.tsvFile))
+            using (StreamWriter file = new StreamWriter(p.tsvFile+".calibrated"))
+            {
+                string line;
+                int lines = 0;
+                while ((line = reader.ReadLine()) != null)
+                {
+                    if (lines > 0)
+                    {
+                        // Do something with the line.
+                        string[] parts = line.Split('\t');
+
+                        // Needed for getting RT for precursor
+                        int MS2spectrumNumber = Convert.ToInt32(parts[1]);
+                        var precursorID = p.myMsDataFile.GetScan(MS2spectrumNumber).PrecursorID;
+                        int MS1spectrumNumber = MS2spectrumNumber - 1;
+                        while (!precursorID.Equals(p.myMsDataFile.GetScan(MS1spectrumNumber).id))
+                            MS1spectrumNumber--;
+
+                        double precursorRT = p.myMsDataFile.GetScan(MS1spectrumNumber).RetentionTime;
+
+                        // To Calibrate
+                        double precursorMZ = Convert.ToDouble(parts[5]);
+
+                        // To Recompute
+                        double precursorMass = Convert.ToDouble(parts[8]);
+                        double precursorMassErrorDA = Convert.ToDouble(parts[18]);
+                        double precursorMassErrorppm = Convert.ToDouble(parts[19]);
+
+                        // Other needed info
+                        int precursorCharge = Convert.ToInt32(parts[7]);
+                        double theoreticalMass = Convert.ToDouble(parts[17]);
+
+
+                        precursorMZ -= cf.Predict(new DataPoint(precursorMZ, precursorRT));
+                        precursorMass = precursorMZ.ToMass(precursorCharge);
+                        precursorMassErrorDA = precursorMass - theoreticalMass;
+                        precursorMassErrorppm = precursorMassErrorDA / theoreticalMass * 1e6;
+
+                        parts[5] = precursorMZ.ToString();
+                        parts[8] = precursorMass.ToString();
+                        parts[18] = precursorMassErrorDA.ToString();
+                        parts[19] = precursorMassErrorppm.ToString();
+
+                        file.WriteLine(string.Join("\t", parts));
+                    }
+                    else
+                        file.WriteLine(line);
+                    lines++;
+                }
+            }
+        }
+
+        private static void WriteTrainingDataToFiles(List<TrainingPoint> trainingPoints)
+        {
+            using (StreamWriter file = new StreamWriter(@"E:\Stefan\data\CalibratedOutput\trainingData1.dat"))
+                foreach (TrainingPoint d in trainingPoints)
+                    file.WriteLine(d.dp.mz);
+            using (StreamWriter file = new StreamWriter(@"E:\Stefan\data\CalibratedOutput\trainingData2.dat"))
+                foreach (TrainingPoint d in trainingPoints)
+                    file.WriteLine(d.dp.rt);
+            using (StreamWriter file = new StreamWriter(@"E:\Stefan\data\CalibratedOutput\labelData.dat"))
+                foreach (TrainingPoint d in trainingPoints)
+                    file.WriteLine(d.l);
+        }
+
+        private static List<TrainingPoint> GetTrainingPoints(IMsDataFile<IMzSpectrum<MzPeak>> myMsDataFile, Identifications identifications, SoftwareLockMassParams p)
+        {
+            // Get the training data out of xml
+            List<TrainingPoint> trainingPointsToReturn = new List<TrainingPoint>();
+
+            HashSet<Tuple<double, double>> peaksAddedHashSet = new HashSet<Tuple<double, double>>();
+
+            int numPass = identifications.getNumBelow(p.thresholdPassParameter);
+            // Loop over all results from the mzIdentML file
+            for (int matchIndex = 0; matchIndex < numPass; matchIndex++)
+            {
+                //p.OnOutput(new OutputHandlerEventArgs((matchIndex);
+                if (numPass < 100)
+                    p.OnProgress(new ProgressHandlerEventArgs(numPass));
+                else if (matchIndex % (numPass / 100) == 0)
+                    p.OnProgress(new ProgressHandlerEventArgs(matchIndex / (numPass / 100)));
+                if (identifications.isDecoy(matchIndex))
+                    continue;
+
+                string ms2spectrumID = identifications.spectrumID(matchIndex);
+                int ms2spectrumIndex = GetLastNumberFromString(ms2spectrumID);
+                if (p.MS2spectraToWatch.Contains(ms2spectrumIndex))
+                {
+                    p.OnWatch(new OutputHandlerEventArgs("ms2spectrumIndex: " + ms2spectrumIndex));
+                    p.OnWatch(new OutputHandlerEventArgs(" calculatedMassToCharge: " + identifications.calculatedMassToCharge(matchIndex)));
+                    p.OnWatch(new OutputHandlerEventArgs(" experimentalMassToCharge: " + identifications.experimentalMassToCharge(matchIndex)));
+                    p.OnWatch(new OutputHandlerEventArgs(" Error according to single morpheus point: " + ((identifications.experimentalMassToCharge(matchIndex)) - (identifications.calculatedMassToCharge(matchIndex)))));
+                }
+                IMzSpectrum<MzPeak> distributionSpectrum;
+                int chargeStateFromMorpheus = identifications.chargeState(matchIndex);
+
+                if (p.MZID_MASS_DATA)
+                {
+                    double calculatedMassToCharge = identifications.calculatedMassToCharge(matchIndex);
+                    distributionSpectrum = new DefaultMzSpectrum(new double[1] { calculatedMassToCharge * chargeStateFromMorpheus - chargeStateFromMorpheus * Constants.Proton }, new double[1] { 1 });
+                }
+                else
+                {
+                    // Get the peptide, don't forget to add the modifications!!!!
+                    Peptide peptide1 = new Peptide(identifications.PeptideSequence(matchIndex));
+                    for (int i = 0; i < identifications.NumModifications(matchIndex); i++)
+                    {
+                        var ok = p.getFormulaFromDictionary(identifications.modificationDictionary(matchIndex, i), identifications.modificationAcession(matchIndex, i));
+                        peptide1.AddModification(new ChemicalFormulaModification(ok), identifications.modificationLocation(matchIndex, i));
+                    }
+                    if (p.MS2spectraToWatch.Contains(ms2spectrumIndex))
+                        p.OnWatch(new OutputHandlerEventArgs("peptide1: " + peptide1.Sequence));
+
+                    // SEARCH THE MS2 SPECTRUM!!!
+                    //SearchMS2Spectrum(myMsDataFile, ms2spectrumIndex, peptide1, trainingPointsToReturn, chargeStateFromMorpheus);
+                    // Calculate isotopic distribution
+                    IsotopicDistribution dist = new IsotopicDistribution(p.fineResolution);
+                    double[] masses;
+                    double[] intensities;
+                    dist.CalculateDistribuition(peptide1.GetChemicalFormula(), out masses, out intensities);
+                    var fullSpectrum = new DefaultMzSpectrum(masses, intensities, false);
+                    distributionSpectrum = fullSpectrum.FilterByNumberOfMostIntense(Math.Min(p.numIsotopologuesToConsider, fullSpectrum.Count));
+
+                }
+                SearchMS1Spectra(myMsDataFile, distributionSpectrum, trainingPointsToReturn, ms2spectrumIndex, -1, peaksAddedHashSet, p);
+                SearchMS1Spectra(myMsDataFile, distributionSpectrum, trainingPointsToReturn, ms2spectrumIndex, 1, peaksAddedHashSet, p);
+            }
+            p.OnOutput(new OutputHandlerEventArgs());
+            return trainingPointsToReturn;
         }
 
         private static void SearchMS2Spectrum(IMsDataFile<IMzSpectrum<MzPeak>> myMsDataFile, int ms2spectrumIndex, Peptide peptide, List<TrainingPoint> trainingPointsToReturn, int chargeStateFromMorpheus, SoftwareLockMassParams p)
@@ -382,25 +410,22 @@ namespace SoftwareLockMass
             }
         }
 
-        private static List<IMzSpectrum<MzPeak>> CalibrateSpectra(IMsDataFile<IMzSpectrum<MzPeak>> myMsDataFile, CalibrationFunction cf, SoftwareLockMassParams p)
+        private static List<IMzSpectrum<MzPeak>> CalibrateSpectra(CalibrationFunction cf, SoftwareLockMassParams p)
         {
             List<IMzSpectrum<MzPeak>> calibratedSpectra = new List<IMzSpectrum<MzPeak>>();
-            for (int i = 0; i < myMsDataFile.LastSpectrumNumber; i++)
+            for (int i = 0; i < p.myMsDataFile.LastSpectrumNumber; i++)
             {
-                //// Console.WriteLine("Calibrating spectrum number " + i);
-                if (myMsDataFile.LastSpectrumNumber < 100)
+                if (p.myMsDataFile.LastSpectrumNumber < 100)
                     p.OnProgress(new ProgressHandlerEventArgs(i));
-                else if (i % (myMsDataFile.LastSpectrumNumber / 100) == 0)
-                    p.OnProgress(new ProgressHandlerEventArgs((i / (myMsDataFile.LastSpectrumNumber / 100))));
+                else if (i % (p.myMsDataFile.LastSpectrumNumber / 100) == 0)
+                    p.OnProgress(new ProgressHandlerEventArgs((i / (p.myMsDataFile.LastSpectrumNumber / 100))));
                 if (p.MS1spectraToWatch.Contains(i + 1))
                 {
                     p.OnWatch(new OutputHandlerEventArgs("Before calibration of spectrum " + (i + 1)));
-                    var mzs = myMsDataFile.GetSpectrum(i + 1).Extract(p.mzRange);
+                    var mzs = p.myMsDataFile.GetSpectrum(i + 1).Extract(p.mzRange);
                     p.OnWatch(new OutputHandlerEventArgs(string.Join(", ", mzs)));
                 }
-                //// Console.WriteLine("before");
-                calibratedSpectra.Add(myMsDataFile.GetSpectrum(i + 1).CorrectMasses(s => s - cf.Predict(new DataPoint(s, myMsDataFile.GetScan(i + 1).RetentionTime))));
-                //// Console.WriteLine("after");
+                calibratedSpectra.Add(p.myMsDataFile.GetSpectrum(i + 1).CorrectMasses(s => s - cf.Predict(new DataPoint(s, p.myMsDataFile.GetScan(i + 1).RetentionTime))));
                 if (p.MS1spectraToWatch.Contains(i + 1))
                 {
                     p.OnWatch(new OutputHandlerEventArgs("After calibration of spectrum " + (i + 1)));
@@ -413,35 +438,29 @@ namespace SoftwareLockMass
             return calibratedSpectra;
         }
 
-        private static List<double> CalibratePrecursorMZs(IMsDataFile<IMzSpectrum<MzPeak>> myMsDataFile, CalibrationFunction cf, SoftwareLockMassParams p)
+        private static List<double> CalibratePrecursorMZs(CalibrationFunction cf, SoftwareLockMassParams p)
         {
             List<double> calibratedPrecursorMZs = new List<double>();
             double precursorTime = -1;
-            for (int i = 0; i < myMsDataFile.LastSpectrumNumber; i++)
+            for (int i = 0; i < p.myMsDataFile.LastSpectrumNumber; i++)
             {
-                if (myMsDataFile.LastSpectrumNumber < 100)
+                if (p.myMsDataFile.LastSpectrumNumber < 100)
                     p.OnProgress(new ProgressHandlerEventArgs(i));
-                else if (i % (myMsDataFile.LastSpectrumNumber / 100) == 0)
-                    p.OnProgress(new ProgressHandlerEventArgs((i / (myMsDataFile.LastSpectrumNumber / 100))));
+                else if (i % (p.myMsDataFile.LastSpectrumNumber / 100) == 0)
+                    p.OnProgress(new ProgressHandlerEventArgs((i / (p.myMsDataFile.LastSpectrumNumber / 100))));
                 double newMZ = -1;
-                if (myMsDataFile.GetScan(i + 1).MsnOrder == 1)
+                if (p.myMsDataFile.GetScan(i + 1).MsnOrder == 1)
                 {
-                    precursorTime = myMsDataFile.GetScan(i + 1).RetentionTime;
+                    precursorTime = p.myMsDataFile.GetScan(i + 1).RetentionTime;
                 }
                 else
                 {
-                    newMZ = myMsDataFile.GetScan(i + 1).SelectedIonMonoisotopicMZ - cf.Predict(new DataPoint(myMsDataFile.GetScan(i + 1).SelectedIonMonoisotopicMZ, precursorTime));
+                    newMZ = p.myMsDataFile.GetScan(i + 1).SelectedIonMonoisotopicMZ - cf.Predict(new DataPoint(p.myMsDataFile.GetScan(i + 1).SelectedIonMonoisotopicMZ, precursorTime));
                 }
                 calibratedPrecursorMZs.Add(newMZ);
             }
             p.OnOutput(new OutputHandlerEventArgs());
             return calibratedPrecursorMZs;
-        }
-
-        private static string ConvertToCSMSLFormula(string theFormula)
-        {
-            theFormula = Regex.Replace(theFormula, @"[\s()]", "");
-            return theFormula;
         }
 
         private static int GetLastNumberFromString(string s)

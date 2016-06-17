@@ -72,7 +72,7 @@ namespace SoftwareLockMassIO
                 var indexToLookFor = GetLastNumberFromString(unimodAcession) - 1;
                 while (unimodDeserialized.modifications[indexToLookFor].record_id != GetLastNumberFromString(unimodAcession))
                     indexToLookFor--;
-                return unimodDeserialized.modifications[indexToLookFor].composition;
+                return Regex.Replace(unimodDeserialized.modifications[indexToLookFor].composition, @"[\s()]", ""); ;
             }
             else if (dictionary == "PSI-MOD")
             {
@@ -87,19 +87,16 @@ namespace SoftwareLockMassIO
                     {
                         if (a.dbname == "DiffFormula")
                         {
-                            return a.name;
+                            return Regex.Replace(a.name, @"[\s()]", "");
                         }
                     }
-                    // Console.WriteLine("Formula from uniprot: " + uniprotDeseralized[GetLastNumberFromString(psimodAcession)].thisChemicalFormula.Formula);
                     return uniprotDeseralized[GetLastNumberFromString(psimodAcession)].thisChemicalFormula.Formula;
-
-                    //throw new Exception("Error in reading psi-mod file, could not find formula!");
                 }
             }
             else
                 throw new Exception("Not familiar with modification dictionary " + dictionary);
         }
-
+        
         public static void MzmlOutput(SoftwareLockMassParams p, List<IMzSpectrum<MzPeak>> calibratedSpectra, List<double> calibratedPrecursorMZs)
         {
             p.OnOutput(new OutputHandlerEventArgs("Creating _indexedmzMLConnection, and putting data in it"));
