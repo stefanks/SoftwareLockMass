@@ -3,28 +3,29 @@ using System;
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.IO;
+using System.Runtime.CompilerServices;
 using System.Threading;
 using System.Threading.Tasks;
 using System.Windows.Forms;
 
 namespace SoftwareLockMassGUI
 {
-    public partial class Form1 : Form
+    public partial class MyGUI : Form
     {
-        private static List<AnEntry> myListOfEntries = new List<AnEntry>();
-        private BindingList<AnEntry> binding1 = new BindingList<AnEntry>(myListOfEntries);
+        private BindingList<AnEntry> myListOfEntries = new BindingList<AnEntry>(new List<AnEntry>());
 
         readonly double intensityCutoff = 1e3;
         readonly double toleranceInMZforSearch = 0.01;
-        public Form1()
+
+        public MyGUI()
         {
             InitializeComponent();
 
             SoftwareLockMassIO.IO.Load();
 
-            dataGridView1.DataSource = binding1;
+            dataGridView1.DataSource = myListOfEntries;
 
-            dataGridView1.Columns[2].Visible = false;
+            dataGridView1.Columns[3].Visible = false;
 
         }
 
@@ -45,8 +46,6 @@ namespace SoftwareLockMassGUI
         {
             Parallel.ForEach(myListOfEntries, (anEntry) =>
              {
-
-
                  SoftwareLockMassParams a = SoftwareLockMassIO.IO.GetReady(anEntry.spectraFile, P_outputHandler, P_progressHandler, P_watchHandler, anEntry.mzidFile, intensityCutoff, toleranceInMZforSearch);
 
                  if (checkBox1.Checked)
@@ -54,16 +53,10 @@ namespace SoftwareLockMassGUI
                  if (!checkBox2.Checked)
                      a.calibrateSpectra = false;
 
-
-                 var t = new Thread(() => RealStart(a));
+                 var t = new Thread(() => SoftwareLockMassRunner.Run(a));
                  t.IsBackground = true;
                  t.Start();
              });
-        }
-
-        private static void RealStart(SoftwareLockMassParams a)
-        {
-            SoftwareLockMassRunner.Run(a);
         }
 
         private void P_watchHandler(object sender, OutputHandlerEventArgs e)
@@ -120,55 +113,45 @@ namespace SoftwareLockMassGUI
                 {
                     if (theExtension.Equals(".raw") || theExtension.Equals(".mzML"))
                     {
-                        if (a.filename().Equals(pathNoExtension))
+                        if (a.Filename.Equals(pathNoExtension))
                         {
                             a.spectraFile = filepath;
                             foundOne = true;
-                            dataGridView1.Refresh();
-                            dataGridView1.Update();
                             break;
                         }
                     }
                     if (theExtension.Equals(".mzid"))
                     {
-                        if (a.filename().Equals(pathNoExtension))
+                        if (a.Filename.Equals(pathNoExtension))
                         {
                             a.mzidFile = filepath;
                             foundOne = true;
-                            dataGridView1.Refresh();
-                            dataGridView1.Update();
                             break;
                         }
                     }
                     if (theExtension.Equals(".tsv"))
                     {
-                        if ((a.filename() + ".PSMs").Equals(pathNoExtension))
+                        if ((a.Filename + ".PSMs").Equals(pathNoExtension))
                         {
                             a.tsvFile = filepath;
                             foundOne = true;
-                            dataGridView1.Refresh();
-                            dataGridView1.Update();
                             break;
                         }
                     }
                 }
                 if (!foundOne)
                 {
-                    ////// Console.WriteLine("Adding " + filepath);
-                    ////// Console.WriteLine("extension " + theExtension);
                     if (theExtension.Equals(".raw") || theExtension.Equals(".mzML"))
                     {
-                        ////// Console.WriteLine("raw or mzml ");
-                        binding1.Add(new AnEntry(filepath, null, null));
+                        myListOfEntries.Add(new AnEntry(filepath, null, null));
                     }
                     if (theExtension.Equals(".mzid"))
                     {
-                        ////// Console.WriteLine("mzid ");
-                        binding1.Add(new AnEntry(null, filepath, null));
+                        myListOfEntries.Add(new AnEntry(null, filepath, null));
                     }
                     if (theExtension.Equals(".tsv"))
                     {
-                        binding1.Add(new AnEntry(null, null, filepath));
+                        myListOfEntries.Add(new AnEntry(null, null, filepath));
                     }
                 }
             }
@@ -187,20 +170,20 @@ namespace SoftwareLockMassGUI
 
         private void button2_Click(object sender, EventArgs e)
         {
-            binding1.Clear();
+            myListOfEntries.Clear();
         }
 
         private void checkBox1_CheckedChanged(object sender, EventArgs e)
         {
             if (checkBox1.Checked)
-                dataGridView1.Columns[2].Visible = true;
+                dataGridView1.Columns[3].Visible = true;
             else
-                dataGridView1.Columns[2].Visible = false;
+                dataGridView1.Columns[3].Visible = false;
         }
     }
 
 
-    public class AnEntry
+    public class AnEntry : INotifyPropertyChanged
     {
         public AnEntry(string spectraFile, string mzidFile, string tsvFile)
         {
@@ -209,22 +192,75 @@ namespace SoftwareLockMassGUI
             this.tsvFile = tsvFile;
         }
 
-        [DisplayName("Spectra File")]
-        public string spectraFile { get; set; }
-        [DisplayName("Mzid File")]
-        public string mzidFile { get; set; }
-        [DisplayName("TSV File")]
-        public string tsvFile { get; set; }
 
-        public string filename()
+        string _spectraFile;
+        [Browsable(false)]
+        public string spectraFile
         {
-            if (spectraFile != null)
-                return Path.GetFileNameWithoutExtension(spectraFile);
-            if (mzidFile != null)
-                return Path.GetFileNameWithoutExtension(mzidFile);
-            if (tsvFile != null)
-                return Path.GetFileNameWithoutExtension(tsvFile).Remove(Path.GetFileNameWithoutExtension(tsvFile).Length - 5);
-            return null;
+            get { return _spectraFile; }
+            set { SetField(ref _spectraFile, value); }
+        }
+
+        string _mzidFile;
+        [Browsable(false)]
+        public string mzidFile
+        {
+            get { return _mzidFile; }
+            set { SetField(ref _mzidFile, value); }
+        }
+
+
+        string _tsvFile;
+        [Browsable(false)]
+        public string tsvFile
+        {
+            get { return _tsvFile; }
+            set { SetField(ref _tsvFile, value); }
+        }
+
+        protected bool SetField<T>(ref T field, T value, [CallerMemberName] string propertyName = null)
+        {
+            if (EqualityComparer<T>.Default.Equals(field, value)) return false;
+            field = value;
+            OnPropertyChanged(propertyName);
+            return true;
+        }
+
+        protected void OnPropertyChanged([CallerMemberName] string propertyName = null)
+        {
+            PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
+        }
+
+        public event PropertyChangedEventHandler PropertyChanged;
+
+        public string Filename
+        {
+            get
+            {
+                if (spectraFile != null)
+                    return Path.GetFileNameWithoutExtension(spectraFile);
+                if (mzidFile != null)
+                    return Path.GetFileNameWithoutExtension(mzidFile);
+                if (tsvFile != null)
+                    return Path.GetFileNameWithoutExtension(tsvFile).Remove(Path.GetFileNameWithoutExtension(tsvFile).Length - 5);
+                return null;
+            }
+        }
+
+        [DisplayName("Spectra File")]
+        public bool spectraFileExists
+        {
+            get { return _spectraFile != null; }
+        }
+        [DisplayName("Mzid File")]
+        public bool mzidFileExists
+        {
+            get { return _mzidFile != null; }
+        }
+        [DisplayName("TSV File")]
+        public bool tsvFileExists
+        {
+            get { return _tsvFile != null; }
         }
     }
 }

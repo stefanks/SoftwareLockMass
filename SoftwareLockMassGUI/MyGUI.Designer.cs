@@ -3,7 +3,7 @@ using System.Windows.Forms;
 
 namespace SoftwareLockMassGUI
 {
-    partial class Form1
+    partial class MyGUI
     {
         /// <summary>
         /// Required designer variable.
@@ -45,7 +45,7 @@ namespace SoftwareLockMassGUI
             // 
             // button1
             // 
-            this.button1.Location = new System.Drawing.Point(346, 214);
+            this.button1.Location = new System.Drawing.Point(267, 219);
             this.button1.Name = "button1";
             this.button1.Size = new System.Drawing.Size(75, 23);
             this.button1.TabIndex = 0;
@@ -55,7 +55,7 @@ namespace SoftwareLockMassGUI
             // 
             // button3
             // 
-            this.button3.Location = new System.Drawing.Point(346, 243);
+            this.button3.Location = new System.Drawing.Point(267, 248);
             this.button3.Name = "button3";
             this.button3.Size = new System.Drawing.Size(156, 32);
             this.button3.TabIndex = 3;
@@ -70,12 +70,12 @@ namespace SoftwareLockMassGUI
             this.textBox1.Name = "textBox1";
             this.textBox1.ReadOnly = true;
             this.textBox1.ScrollBars = System.Windows.Forms.ScrollBars.Vertical;
-            this.textBox1.Size = new System.Drawing.Size(275, 151);
+            this.textBox1.Size = new System.Drawing.Size(275, 234);
             this.textBox1.TabIndex = 4;
             // 
             // progressBar1
             // 
-            this.progressBar1.Location = new System.Drawing.Point(12, 460);
+            this.progressBar1.Location = new System.Drawing.Point(12, 543);
             this.progressBar1.Name = "progressBar1";
             this.progressBar1.Size = new System.Drawing.Size(275, 27);
             this.progressBar1.TabIndex = 5;
@@ -87,23 +87,24 @@ namespace SoftwareLockMassGUI
             this.textBox2.Name = "textBox2";
             this.textBox2.ReadOnly = true;
             this.textBox2.ScrollBars = System.Windows.Forms.ScrollBars.Vertical;
-            this.textBox2.Size = new System.Drawing.Size(766, 245);
+            this.textBox2.Size = new System.Drawing.Size(415, 267);
             this.textBox2.TabIndex = 6;
             // 
             // dataGridView1
             // 
-            this.dataGridView1.AutoSizeColumnsMode = System.Windows.Forms.DataGridViewAutoSizeColumnsMode.Fill;
-            this.dataGridView1.ColumnHeadersHeightSizeMode = System.Windows.Forms.DataGridViewColumnHeadersHeightSizeMode.AutoSize;
-            this.dataGridView1.Dock = System.Windows.Forms.DockStyle.Top;
-            this.dataGridView1.Location = new System.Drawing.Point(0, 0);
+            this.dataGridView1.AllowUserToResizeColumns = false;
+            this.dataGridView1.AllowUserToResizeRows = false;
+            this.dataGridView1.AutoSizeColumnsMode = System.Windows.Forms.DataGridViewAutoSizeColumnsMode.AllCells;
+            this.dataGridView1.AutoSizeRowsMode = System.Windows.Forms.DataGridViewAutoSizeRowsMode.AllCells;
+            this.dataGridView1.Location = new System.Drawing.Point(12, 12);
             this.dataGridView1.Name = "dataGridView1";
             this.dataGridView1.ReadOnly = true;
-            this.dataGridView1.Size = new System.Drawing.Size(1071, 196);
+            this.dataGridView1.Size = new System.Drawing.Size(696, 187);
             this.dataGridView1.TabIndex = 7;
             // 
             // button2
             // 
-            this.button2.Location = new System.Drawing.Point(427, 214);
+            this.button2.Location = new System.Drawing.Point(348, 219);
             this.button2.Name = "button2";
             this.button2.Size = new System.Drawing.Size(75, 23);
             this.button2.TabIndex = 8;
@@ -114,7 +115,7 @@ namespace SoftwareLockMassGUI
             // checkBox1
             // 
             this.checkBox1.AutoSize = true;
-            this.checkBox1.Location = new System.Drawing.Point(537, 243);
+            this.checkBox1.Location = new System.Drawing.Point(429, 248);
             this.checkBox1.Name = "checkBox1";
             this.checkBox1.Size = new System.Drawing.Size(91, 17);
             this.checkBox1.TabIndex = 9;
@@ -127,19 +128,19 @@ namespace SoftwareLockMassGUI
             this.checkBox2.AutoSize = true;
             this.checkBox2.Checked = true;
             this.checkBox2.CheckState = System.Windows.Forms.CheckState.Checked;
-            this.checkBox2.Location = new System.Drawing.Point(537, 220);
+            this.checkBox2.Location = new System.Drawing.Point(429, 225);
             this.checkBox2.Name = "checkBox2";
             this.checkBox2.Size = new System.Drawing.Size(105, 17);
             this.checkBox2.TabIndex = 10;
             this.checkBox2.Text = "Calibrate spectra";
             this.checkBox2.UseVisualStyleBackColor = true;
             // 
-            // Form1
+            // MyGUI
             // 
             this.AllowDrop = true;
             this.AutoScaleDimensions = new System.Drawing.SizeF(96F, 96F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Dpi;
-            this.ClientSize = new System.Drawing.Size(1071, 560);
+            this.ClientSize = new System.Drawing.Size(723, 582);
             this.Controls.Add(this.checkBox2);
             this.Controls.Add(this.checkBox1);
             this.Controls.Add(this.button2);
@@ -149,7 +150,7 @@ namespace SoftwareLockMassGUI
             this.Controls.Add(this.textBox1);
             this.Controls.Add(this.button3);
             this.Controls.Add(this.button1);
-            this.Name = "Form1";
+            this.Name = "MyGUI";
             this.Text = "Software Lock Mass";
             this.DragDrop += new System.Windows.Forms.DragEventHandler(this.Form1_DragDrop);
             this.DragEnter += new System.Windows.Forms.DragEventHandler(this.Form1_DragEnter);
