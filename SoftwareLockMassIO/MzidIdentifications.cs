@@ -3,6 +3,7 @@ using MassSpectrometry;
 using System.Xml.Serialization;
 using System.IO;
 using System.Linq;
+using System.Text.RegularExpressions;
 
 namespace SoftwareLockMassIO
 {
@@ -70,9 +71,16 @@ namespace SoftwareLockMassIO
             return dd.SequenceCollection.Peptide[matchIndex].PeptideSequence;
         }
 
-        public string spectrumID(int matchIndex)
+        public int ms2spectrumIndex(int matchIndex)
         {
-            return dd.DataCollection.AnalysisData.SpectrumIdentificationList[0].SpectrumIdentificationResult[matchIndex].spectrumID;
+            string ms2spectrumID = dd.DataCollection.AnalysisData.SpectrumIdentificationList[0].SpectrumIdentificationResult[matchIndex].spectrumID;
+            return GetLastNumberFromString(ms2spectrumID);
         }
+
+        private static int GetLastNumberFromString(string s)
+        {
+            return Convert.ToInt32(Regex.Match(s, @"\d+$").Value);
+        }
+
     }
 }

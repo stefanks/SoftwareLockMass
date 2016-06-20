@@ -64,7 +64,7 @@ namespace Test
         [Test]
         public void TesLinearCalibration()
         {
-           
+
             List<TrainingPoint> trainingList = new List<TrainingPoint>();
             trainingList.Add(new TrainingPoint(new DataPoint(600, 1), 0));
             trainingList.Add(new TrainingPoint(new DataPoint(500, 1), 0));
@@ -77,7 +77,7 @@ namespace Test
 
         event EventHandler<OutputHandlerEventArgs> outputHandler;
         event EventHandler<ProgressHandlerEventArgs> progressHandler;
-        
+
         public void OnOutput(OutputHandlerEventArgs e)
         {
             outputHandler?.Invoke(this, e);
