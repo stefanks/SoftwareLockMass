@@ -2,6 +2,7 @@
 using Spectra;
 using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 
 namespace SoftwareLockMass
 {
@@ -13,8 +14,6 @@ namespace SoftwareLockMass
         //public double thresholdPassParameter = 0;
         //private const double thresholdPassParameter = 0.01;
 
-        public double thresholdPassParameter = 10;
-
         // DO NOT GO UNDER 0.01!!!!! Maybe even increase.
         public double toleranceInMZforSearch;
         //public double toleranceInMZforSearch = 0.01;
@@ -24,9 +23,6 @@ namespace SoftwareLockMass
         public double intensityCutoff;
         //public double intensityCutoff = 1e2;
 
-        // My parameters!
-        public bool MZID_MASS_DATA = false;
-
         #region isotopologue parameters
         // THIS PARAMETER IS FRAGILE!!!
         // TUNED TO CORRESPOND TO SPECTROMETER OUTPUT
@@ -34,9 +30,8 @@ namespace SoftwareLockMass
         // Parameter for isotopolouge distribution searching
         public double fineResolution = 0.1;
 
-        // Good number
+        // 10 is a good number. Lower would be faster!
         public int numIsotopologuesToConsider = 10;
-        //public int numIsotopologuesToConsider = 15;
 
         // Higher means more discriminating at selecting training points. 
         public int numIsotopologuesNeededToBeConsideredIdentified = 3;
@@ -51,10 +46,10 @@ namespace SoftwareLockMass
         public HashSet<int> MS1spectraToWatch;
         public IRange<double> mzRange;
 
-        public IMsDataFile<IMzSpectrum<MzPeak>> myMsDataFile;
+        public IMsDataFile<IMzSpectrum<MzPeak, MzRange>> myMsDataFile;
         public Identifications identifications;
 
-        public delegate void PostProcessing(SoftwareLockMassParams p, List<IMzSpectrum<MzPeak>> calibratedSpectra, List<double> calibratedPrecursorMZs);
+        public delegate void PostProcessing(SoftwareLockMassParams p, List<IMzSpectrum<MzPeak, MzRange>> calibratedSpectra, List<double> calibratedPrecursorMZs);
         public PostProcessing postProcessing;
 
         public delegate string GetFormulaFromDictionary(string dictionary, string acession);
@@ -64,7 +59,7 @@ namespace SoftwareLockMass
 
         #region Constructors
 
-        public SoftwareLockMassParams(IMsDataFile<IMzSpectrum<MzPeak>> myMsDataFile)
+        public SoftwareLockMassParams(IMsDataFile<IMzSpectrum<MzPeak, MzRange>> myMsDataFile)
         {
             this.myMsDataFile = myMsDataFile;
             MS1spectraToWatch = new HashSet<int>();
@@ -108,6 +103,7 @@ namespace SoftwareLockMass
         public int progress { get; private set; }
         public ProgressHandlerEventArgs(int progress)
         {
+            Debug.Assert(progress >= 0 && progress <= 100);
             this.progress = progress;
         }
     }

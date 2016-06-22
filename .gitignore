@@ -245,3 +245,5 @@ ModelManifest.xml
 
 # FAKE - F# Make
 .fake/
+/SoftwareLockMassIO/SoftwareLockMassIO.previous.nugetreferenceswitcher
+/SoftwareLockMass/SoftwareLockMass.previous.nugetreferenceswitcher

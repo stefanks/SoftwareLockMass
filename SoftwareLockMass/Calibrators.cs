@@ -4,8 +4,6 @@ using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace SoftwareLockMass
 {
@@ -66,9 +64,9 @@ namespace SoftwareLockMass
             }
         }
 
-        public static List<IMzSpectrum<MzPeak>> CalibrateSpectra(CalibrationFunction cf, SoftwareLockMassParams p)
+        public static List<IMzSpectrum<MzPeak, MzRange>> CalibrateSpectra(CalibrationFunction cf, SoftwareLockMassParams p)
         {
-            List<IMzSpectrum<MzPeak>> calibratedSpectra = new List<IMzSpectrum<MzPeak>>();
+            List<IMzSpectrum<MzPeak, MzRange>> calibratedSpectra = new List<IMzSpectrum<MzPeak, MzRange>>();
             for (int i = 0; i < p.myMsDataFile.LastSpectrumNumber; i++)
             {
                 if (p.myMsDataFile.LastSpectrumNumber < 100)
@@ -78,14 +76,14 @@ namespace SoftwareLockMass
                 if (p.MS1spectraToWatch.Contains(i + 1))
                 {
                     p.OnWatch(new OutputHandlerEventArgs("Before calibration of spectrum " + (i + 1)));
-                    var mzs = p.myMsDataFile.GetSpectrum(i + 1).Extract(p.mzRange);
+                    var mzs = p.myMsDataFile.GetSpectrum(i + 1).newSpectrumExtract(p.mzRange);
                     p.OnWatch(new OutputHandlerEventArgs(string.Join(", ", mzs)));
                 }
-                calibratedSpectra.Add(p.myMsDataFile.GetSpectrum(i + 1).CorrectMasses(s => s - cf.Predict(new DataPoint(s, p.myMsDataFile.GetScan(i + 1).RetentionTime))));
+                calibratedSpectra.Add(p.myMsDataFile.GetSpectrum(i + 1).newSpectrumApplyFunctionToX(s => s - cf.Predict(new DataPoint(s, p.myMsDataFile.GetScan(i + 1).RetentionTime))));
                 if (p.MS1spectraToWatch.Contains(i + 1))
                 {
                     p.OnWatch(new OutputHandlerEventArgs("After calibration of spectrum " + (i + 1)));
-                    var mzs = calibratedSpectra.Last().Extract(p.mzRange);
+                    var mzs = calibratedSpectra.Last().newSpectrumExtract(p.mzRange);
                     p.OnWatch(new OutputHandlerEventArgs(string.Join(", ", mzs)));
                 }
 

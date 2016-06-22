@@ -71,7 +71,7 @@ namespace SoftwareLockMass
                 Calibrators.CalibrateTSV(cf, p);
             }
             p.OnOutput(new OutputHandlerEventArgs("Calibrating Spectra"));
-            List<IMzSpectrum<MzPeak>> calibratedSpectra = Calibrators.CalibrateSpectra(cf, p);
+            List<IMzSpectrum<MzPeak, MzRange>> calibratedSpectra = Calibrators.CalibrateSpectra(cf, p);
             p.OnOutput(new OutputHandlerEventArgs("Calibrating Precursor MZs"));
             List<double> calibratedPrecursorMZs = Calibrators.CalibratePrecursorMZs(cf, p);
 

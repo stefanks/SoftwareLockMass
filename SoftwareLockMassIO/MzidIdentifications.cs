@@ -1,9 +1,9 @@
-﻿using System;
-using MassSpectrometry;
-using System.Xml.Serialization;
+﻿using MassSpectrometry;
+using System;
 using System.IO;
 using System.Linq;
 using System.Text.RegularExpressions;
+using System.Xml.Serialization;
 
 namespace SoftwareLockMassIO
 {
@@ -36,7 +36,7 @@ namespace SoftwareLockMassIO
 
         public int getNumBelow(double thresholdPassParameter)
         {
-            return dd.DataCollection.AnalysisData.SpectrumIdentificationList[0].SpectrumIdentificationResult.Select(b => Convert.ToDouble(b.SpectrumIdentificationItem[0].cvParam[0].value)).Where(b => b > thresholdPassParameter).Count();
+            return dd.DataCollection.AnalysisData.SpectrumIdentificationList[0].SpectrumIdentificationResult.Count();
         }
 
         public bool isDecoy(int matchIndex)
@@ -66,7 +66,7 @@ namespace SoftwareLockMassIO
             return dd.SequenceCollection.Peptide[matchIndex].Modification.Length;
         }
 
-        public string PeptideSequence(int matchIndex)
+        public string PeptideSequenceWithoutModifications(int matchIndex)
         {
             return dd.SequenceCollection.Peptide[matchIndex].PeptideSequence;
         }

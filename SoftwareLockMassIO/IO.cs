@@ -29,7 +29,7 @@ namespace SoftwareLockMassIO
 
         public static SoftwareLockMassParams GetReady(string origDataFile, EventHandler<OutputHandlerEventArgs> p_outputHandler, EventHandler<ProgressHandlerEventArgs> p_progressHandler, EventHandler<OutputHandlerEventArgs> p_watchHandler, string mzidFile, double intensityCutoff, double toleranceInMZforSearch)
         {
-            IMsDataFile<IMzSpectrum<MzPeak>> myMsDataFile;
+            IMsDataFile<IMzSpectrum<MzPeak, MzRange>> myMsDataFile;
             // Console.WriteLine(Path.GetExtension(origDataFile));
             if (Path.GetExtension(origDataFile).Equals(".mzML"))
                 myMsDataFile = new Mzml(origDataFile);
@@ -96,8 +96,8 @@ namespace SoftwareLockMassIO
             else
                 throw new Exception("Not familiar with modification dictionary " + dictionary);
         }
-        
-        public static void MzmlOutput(SoftwareLockMassParams p, List<IMzSpectrum<MzPeak>> calibratedSpectra, List<double> calibratedPrecursorMZs)
+
+        public static void MzmlOutput(SoftwareLockMassParams p, List<IMzSpectrum<MzPeak, MzRange>> calibratedSpectra, List<double> calibratedPrecursorMZs)
         {
             p.OnOutput(new OutputHandlerEventArgs("Creating _indexedmzMLConnection, and putting data in it"));
             MzmlMethods.CreateAndWriteMyIndexedMZmlwithCalibratedSpectra(p.myMsDataFile, calibratedSpectra, calibratedPrecursorMZs, Path.Combine(Path.GetDirectoryName(p.myMsDataFile.FilePath), Path.GetFileNameWithoutExtension(p.myMsDataFile.FilePath) + "-Calibrated.mzML"));
