@@ -73,14 +73,14 @@ namespace SoftwareLockMass
                     p.OnProgress(new ProgressHandlerEventArgs(i));
                 else if (i % (p.myMsDataFile.LastSpectrumNumber / 100) == 0)
                     p.OnProgress(new ProgressHandlerEventArgs((i / (p.myMsDataFile.LastSpectrumNumber / 100))));
-                if (p.MS1spectraToWatch.Contains(i + 1))
+                if (p.MS1spectraToWatch.Contains(i + 1) || p.MS2spectraToWatch.Contains(i + 1))
                 {
                     p.OnWatch(new OutputHandlerEventArgs("Before calibration of spectrum " + (i + 1)));
                     var mzs = p.myMsDataFile.GetSpectrum(i + 1).newSpectrumExtract(p.mzRange);
                     p.OnWatch(new OutputHandlerEventArgs(string.Join(", ", mzs)));
                 }
                 calibratedSpectra.Add(p.myMsDataFile.GetSpectrum(i + 1).newSpectrumApplyFunctionToX(s => s - cf.Predict(new DataPoint(s, p.myMsDataFile.GetScan(i + 1).RetentionTime))));
-                if (p.MS1spectraToWatch.Contains(i + 1))
+                if (p.MS1spectraToWatch.Contains(i + 1) || p.MS2spectraToWatch.Contains(i + 1))
                 {
                     p.OnWatch(new OutputHandlerEventArgs("After calibration of spectrum " + (i + 1)));
                     var mzs = calibratedSpectra.Last().newSpectrumExtract(p.mzRange);
