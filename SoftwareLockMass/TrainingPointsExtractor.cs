@@ -38,11 +38,13 @@ namespace SoftwareLockMass
 
                 #region watch
                 if (p.MS2spectraToWatch.Contains(ms2spectrumIndex))
+                {
                     p.OnWatch(new OutputHandlerEventArgs("ms2spectrumIndex: " + ms2spectrumIndex));
-                p.OnWatch(new OutputHandlerEventArgs(" calculatedMassToCharge: " + identifications.calculatedMassToCharge(matchIndex)));
-                p.OnWatch(new OutputHandlerEventArgs(" experimentalMassToCharge: " + identifications.experimentalMassToCharge(matchIndex)));
-                p.OnWatch(new OutputHandlerEventArgs(" Error according to single morpheus point: " + ((identifications.experimentalMassToCharge(matchIndex)) - (identifications.calculatedMassToCharge(matchIndex)))));
-                p.OnWatch(new OutputHandlerEventArgs("peptide: " + peptide.Sequence));
+                    p.OnWatch(new OutputHandlerEventArgs(" calculatedMassToCharge: " + identifications.calculatedMassToCharge(matchIndex)));
+                    p.OnWatch(new OutputHandlerEventArgs(" experimentalMassToCharge: " + identifications.experimentalMassToCharge(matchIndex)));
+                    p.OnWatch(new OutputHandlerEventArgs(" Error according to single morpheus point: " + ((identifications.experimentalMassToCharge(matchIndex)) - (identifications.calculatedMassToCharge(matchIndex)))));
+                    p.OnWatch(new OutputHandlerEventArgs("peptide: " + peptide.Sequence));
+                }
                 #endregion
 
                 List<TrainingPoint> candidateTrainingPointsForPeptide = new List<TrainingPoint>();
@@ -93,12 +95,12 @@ namespace SoftwareLockMass
 
             List<Peak> peaks = new List<Peak>();
 
-            foreach (ChemicalFormulaFragment fragment in products)
+            foreach (IHasChemicalFormula fragment in products)
             {
                 #region watch
                 if (p.MS2spectraToWatch.Contains(ms2spectrumIndex))
                 {
-                    p.OnWatch(new OutputHandlerEventArgs("  Looking for fragment " + fragment.GetSequence() + " with mass " + fragment.MonoisotopicMass));
+                    p.OnWatch(new OutputHandlerEventArgs("  Looking for fragment with formula " + fragment.thisChemicalFormula.Formula + " with mass " + fragment.MonoisotopicMass));
                 }
                 #endregion
 
