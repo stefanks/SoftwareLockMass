@@ -8,21 +8,6 @@ namespace SoftwareLockMass
 {
     public class SoftwareLockMassParams
     {
-
-        // Important for every setting. Realized only 0 and 0.01 give meaningful results when looking at performance
-        // 0 IS BEST!!!
-        //public double thresholdPassParameter = 0;
-        //private const double thresholdPassParameter = 0.01;
-
-        // DO NOT GO UNDER 0.01!!!!! Maybe even increase.
-        public double toleranceInMZforSearch;
-        //public double toleranceInMZforSearch = 0.01;
-        //public double toleranceInMZforSearch = 0.032;
-
-        // 1e5 is too sparse. 1e4 is nice, but misses one I like So using 5e3. 1e3 is nice. Try 0!
-        public double intensityCutoff;
-        //public double intensityCutoff = 1e2;
-
         #region isotopologue parameters
         // THIS PARAMETER IS FRAGILE!!!
         // TUNED TO CORRESPOND TO SPECTROMETER OUTPUT

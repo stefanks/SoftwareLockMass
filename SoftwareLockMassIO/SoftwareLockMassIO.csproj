@@ -42,28 +42,28 @@
       <HintPath>..\packages\Chemistry.1.0.101\lib\net451\Chemistry.dll</HintPath>
       <Private>True</Private>
     </Reference>
-    <Reference Include="MassSpectrometry, Version=1.0.86.0, Culture=neutral, processorArchitecture=AMD64">
-      <HintPath>..\packages\MassSpectrometry.1.0.86\lib\net451\MassSpectrometry.dll</HintPath>
+    <Reference Include="MassSpectrometry, Version=1.0.87.0, Culture=neutral, processorArchitecture=AMD64">
+      <HintPath>..\packages\MassSpectrometry.1.0.87\lib\net451\MassSpectrometry.dll</HintPath>
       <Private>True</Private>
     </Reference>
     <Reference Include="MathNet.Numerics, Version=3.11.1.0, Culture=neutral, processorArchitecture=MSIL">
       <HintPath>..\packages\MathNet.Numerics.3.11.1\lib\net40\MathNet.Numerics.dll</HintPath>
       <Private>True</Private>
     </Reference>
-    <Reference Include="mzIdentML, Version=1.0.57.0, Culture=neutral, processorArchitecture=AMD64">
-      <HintPath>..\packages\MassSpecFiles.1.0.57\lib\mzIdentML.dll</HintPath>
+    <Reference Include="mzIdentML, Version=1.0.59.0, Culture=neutral, processorArchitecture=AMD64">
+      <HintPath>..\packages\MassSpecFiles.1.0.59\lib\mzIdentML.dll</HintPath>
       <Private>True</Private>
     </Reference>
-    <Reference Include="MzML, Version=1.0.57.0, Culture=neutral, processorArchitecture=AMD64">
-      <HintPath>..\packages\MassSpecFiles.1.0.57\lib\MzML.dll</HintPath>
+    <Reference Include="MzML, Version=1.0.59.0, Culture=neutral, processorArchitecture=AMD64">
+      <HintPath>..\packages\MassSpecFiles.1.0.59\lib\MzML.dll</HintPath>
       <Private>True</Private>
     </Reference>
-    <Reference Include="Proteomics, Version=1.0.26.0, Culture=neutral, processorArchitecture=AMD64">
-      <HintPath>..\packages\Proteomics.1.0.26\lib\net451\Proteomics.dll</HintPath>
+    <Reference Include="Proteomics, Version=1.0.27.0, Culture=neutral, processorArchitecture=AMD64">
+      <HintPath>..\packages\Proteomics.1.0.27\lib\net451\Proteomics.dll</HintPath>
       <Private>True</Private>
     </Reference>
     <Reference Include="Spectra, Version=1.0.0.0, Culture=neutral, processorArchitecture=AMD64">
-      <HintPath>..\packages\MassSpectrometry.1.0.86\lib\net451\Spectra.dll</HintPath>
+      <HintPath>..\packages\MassSpectrometry.1.0.87\lib\net451\Spectra.dll</HintPath>
       <Private>True</Private>
     </Reference>
     <Reference Include="System" />
@@ -75,8 +75,8 @@
     <Reference Include="System.Data" />
     <Reference Include="System.Net.Http" />
     <Reference Include="System.Xml" />
-    <Reference Include="Thermo, Version=1.0.57.0, Culture=neutral, processorArchitecture=AMD64">
-      <HintPath>..\packages\MassSpecFiles.1.0.57\lib\Thermo.dll</HintPath>
+    <Reference Include="Thermo, Version=1.0.59.0, Culture=neutral, processorArchitecture=AMD64">
+      <HintPath>..\packages\MassSpecFiles.1.0.59\lib\Thermo.dll</HintPath>
       <Private>True</Private>
     </Reference>
     <Reference Include="UsefulProteomicsDatabases, Version=1.0.18.0, Culture=neutral, processorArchitecture=AMD64">

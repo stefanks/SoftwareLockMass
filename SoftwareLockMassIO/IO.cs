@@ -46,11 +46,11 @@ namespace SoftwareLockMassIO
             //a.MS1spectraToWatch = new HashSet<int>();
             //a.MS1spectraToWatch.Add(1);
             //a.MS2spectraToWatch = new HashSet<int>();
-            //a.MS2spectraToWatch.Add(2);
+            //a.MS2spectraToWatch.Add(11279);
+            //a.MS2spectraToWatch.Add(2813);
+            //a.MS2spectraToWatch.Add(5894);
             //a.mzRange = new DoubleRange(1030, 1050);
 
-            a.intensityCutoff = intensityCutoff;
-            a.toleranceInMZforSearch = toleranceInMZforSearch;
 
             return a;
         }
