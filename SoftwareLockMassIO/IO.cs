@@ -109,7 +109,7 @@ namespace SoftwareLockMassIO
                             return Regex.Replace(a.name, @"[\s()]", "");
                         }
                     }
-                    return uniprotDeseralized[GetLastNumberFromString(psimodAcession)].thisChemicalFormula.Formula;
+                    return uniprotDeseralized[GetLastNumberFromString(psimodAcession)].ThisChemicalFormula.Formula;
                 }
             }
             else

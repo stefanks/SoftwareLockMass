@@ -48,7 +48,7 @@ namespace SoftwareLockMass
                     p.OnWatch(new OutputHandlerEventArgs(" calculatedMassToCharge: " + identifications.calculatedMassToCharge(matchIndex)));
                     p.OnWatch(new OutputHandlerEventArgs(" experimentalMassToCharge: " + identifications.experimentalMassToCharge(matchIndex)));
                     p.OnWatch(new OutputHandlerEventArgs(" Error according to single morpheus point: " + ((identifications.experimentalMassToCharge(matchIndex)) - (identifications.calculatedMassToCharge(matchIndex)))));
-                    p.OnWatch(new OutputHandlerEventArgs(" peptide: " + peptide.SequenceWithModifications));
+                    p.OnWatch(new OutputHandlerEventArgs(" peptide: " + peptide.GetSequenceWithModifications()));
                 }
                 #endregion
 
@@ -62,12 +62,24 @@ namespace SoftwareLockMass
                     continue;
 
                 // Calculate isotopic distribution of the full peptide
-                IsotopicDistribution dist = new IsotopicDistribution(p.fineResolution);
-                double[] masses;
-                double[] intensities;
-                dist.CalculateDistribuition(peptideBuilder.GetChemicalFormula(), out masses, out intensities);
-                var fullSpectrum = new DefaultMzSpectrum(masses, intensities, false);
-                IMzSpectrum<MzPeak, MzRange> distributionSpectrum = fullSpectrum.newSpectrumFilterByNumberOfMostIntense(Math.Min(p.numIsotopologuesToConsider, fullSpectrum.Count));
+                IsotopicDistribution dist = new IsotopicDistribution(peptideBuilder.GetChemicalFormula(), p.fineResolution);
+
+                double[] masses = new double[dist.Masses.Count];
+                double[] intensities = new double[dist.Intensities.Count];
+                for (int i = 0; i < dist.Masses.Count; i++)
+                {
+                    masses[i] = dist.Masses[i];
+                    intensities[i] = dist.Intensities[i];
+                }
+                Array.Sort(dist.Intensities.ToArray(), dist.Masses.ToArray());
+                int length = Math.Min(p.numIsotopologuesToConsider, dist.Masses.Count());
+                double[] prunedMasses = new double[length];
+                double[] prunedIntensities = new double[length];
+                Array.Copy(masses, 0, prunedMasses, 0, length);
+                Array.Copy(intensities, 0, prunedIntensities, 0, length);
+                Array.Sort(prunedMasses, prunedIntensities);
+
+                var distributionSpectrum = new DefaultMzSpectrum(prunedMasses, prunedIntensities, false);
 
                 List<double> myMS1downScores = SearchMS1Spectra(myMsDataFile, distributionSpectrum, candidateTrainingPointsForPeptide, ms2spectrumIndex, -1, peaksAddedHashSet, p);
                 List<double> myMS1upScores = SearchMS1Spectra(myMsDataFile, distributionSpectrum, candidateTrainingPointsForPeptide, ms2spectrumIndex, 1, peaksAddedHashSet, p);
@@ -95,7 +107,7 @@ namespace SoftwareLockMass
             int ms2spectrumIndex = ms2DataScan.SpectrumNumber;
 
             var countForThisMS2 = 0;
-            var countForThisMS2a= 0;
+            var countForThisMS2a = 0;
             var numFragmentsIdentified = 0;
 
             var rangeOfSpectrum = ms2DataScan.MzRange;
@@ -103,7 +115,7 @@ namespace SoftwareLockMass
             var ms2mzArray = ms2DataScan.MassSpectrum.xArray;
 
             Fragment[] fragmentList = peptide.Fragment(FragmentTypes.b | FragmentTypes.y, true).ToArray();
-            
+
             #region One time tolerance calculation
 
             if (toleranceInMZforSearch == 0)
@@ -118,7 +130,7 @@ namespace SoftwareLockMass
                     // First look for monoisotopic masses, do not compute distribution spectrum!
                     for (int chargeToLookAt = 1; ; chargeToLookAt++)
                     {
-                        var monoisotopicMZ = fragment.MonoisotopicMass.ToMz(chargeToLookAt);
+                        var monoisotopicMZ = fragment.MonoisotopicMass.ToMassToChargeRatio(chargeToLookAt);
                         if (monoisotopicMZ > rangeOfSpectrum.Maximum)
                             continue;
                         if (monoisotopicMZ < rangeOfSpectrum.Minimum)
@@ -158,7 +170,7 @@ namespace SoftwareLockMass
                 }
                 for (int chargeToLookAt = 1; ; chargeToLookAt++)
                 {
-                    var monoisotopicMZ = fragment.MonoisotopicMass.ToMz(chargeToLookAt);
+                    var monoisotopicMZ = fragment.MonoisotopicMass.ToMassToChargeRatio(chargeToLookAt);
                     if (monoisotopicMZ > rangeOfSpectrum.Maximum)
                         continue;
                     if (monoisotopicMZ < rangeOfSpectrum.Minimum)
@@ -173,12 +185,17 @@ namespace SoftwareLockMass
                                 Console.WriteLine("  Computing isotopologues because error " + (closestPeakMZ - monoisotopicMZ) + " is smaller than tolerance " + toleranceInMZforSearch);
                             }
 
-                            IsotopicDistribution dist = new IsotopicDistribution(p.fineResolution);
-                            double[] masses;
-                            double[] intensities;
-                            dist.CalculateDistribuition(fragment.thisChemicalFormula, out masses, out intensities);
-                            Array.Sort(intensities, masses);
-                            int length = Math.Min(p.numIsotopologuesToConsider, masses.Count());
+                            IsotopicDistribution dist = new IsotopicDistribution(fragment.ThisChemicalFormula, p.fineResolution);
+
+                            double[] masses = new double[dist.Masses.Count];
+                            double[] intensities = new double[dist.Intensities.Count];
+                            for (int i = 0; i < dist.Masses.Count; i++)
+                            {
+                                masses[i] = dist.Masses[i];
+                                intensities[i] = dist.Intensities[i];
+                            }
+                            Array.Sort(dist.Intensities.ToArray(), dist.Masses.ToArray());
+                            int length = Math.Min(p.numIsotopologuesToConsider, dist.Masses.Count());
                             prunedMasses = new double[length];
                             prunedIntensities = new double[length];
                             Array.Copy(masses, 0, prunedMasses, 0, length);
@@ -198,14 +215,14 @@ namespace SoftwareLockMass
                     }
                     for (int chargeToLookAt = 1; ; chargeToLookAt++)
                     {
-                        if (prunedMasses.First().ToMz(chargeToLookAt) > rangeOfSpectrum.Maximum)
+                        if (prunedMasses.First().ToMassToChargeRatio(chargeToLookAt) > rangeOfSpectrum.Maximum)
                             continue;
-                        if (prunedMasses.Last().ToMz(chargeToLookAt) < rangeOfSpectrum.Minimum)
+                        if (prunedMasses.Last().ToMassToChargeRatio(chargeToLookAt) < rangeOfSpectrum.Minimum)
                             break;
                         List<TrainingPoint> trainingPointsToAverage = new List<TrainingPoint>();
                         foreach (double a in prunedMasses)
                         {
-                            double theMZ = a.ToMz(chargeToLookAt);
+                            double theMZ = a.ToMassToChargeRatio(chargeToLookAt);
                             var closestPeakMZ = ms2DataScan.MassSpectrum.GetClosestPeakXvalue(theMZ);
                             if (Math.Abs(closestPeakMZ - theMZ) < toleranceInMZforSearch)
                             {
@@ -217,16 +234,16 @@ namespace SoftwareLockMass
                                 trainingPointsToAverage.Add(new TrainingPoint(new DataPoint(closestPeakMZ, ms2DataScan.RetentionTime), closestPeakMZ - theMZ));
                             }
                         }
-                        if (trainingPointsToAverage.Count >0)
+                        if (trainingPointsToAverage.Count > 0)
                         {
                             if (!fragmentIdentified)
                             {
                                 fragmentIdentified = true;
                                 numFragmentsIdentified += 1;
                             }
-                                
+
                             countForThisMS2 += trainingPointsToAverage.Count;
-                            countForThisMS2a +=1;
+                            countForThisMS2a += 1;
                             // Hack! Last isotopologue seems to be troublesome, often has error
                             var a = new TrainingPoint(new DataPoint(trainingPointsToAverage.Select(b => b.dp.mz).Average(), trainingPointsToAverage.Select(b => b.dp.rt).Average()), trainingPointsToAverage.Select(b => b.l).Median());
 
@@ -243,7 +260,7 @@ namespace SoftwareLockMass
                 }
             }
 
-            p.OnWatch(new OutputHandlerEventArgs("ind = "+ ms2spectrumIndex+" count = " +countForThisMS2));
+            p.OnWatch(new OutputHandlerEventArgs("ind = " + ms2spectrumIndex + " count = " + countForThisMS2));
             if (p.MS2spectraToWatch.Contains(ms2spectrumIndex))
             {
                 p.OnWatch(new OutputHandlerEventArgs("countForThisMS2 = " + countForThisMS2));
@@ -303,7 +320,7 @@ namespace SoftwareLockMass
             }
             return tolerance * 2;
         }
-        
+
 
         private static List<double> SearchMS1Spectra(IMsDataFile<IMzSpectrum<MzPeak, MzRange>> myMsDataFile, IMzSpectrum<MzPeak, MzRange> distributionSpectrum, List<TrainingPoint> myCandidatePoints, int ms2spectrumIndex, int direction, HashSet<Tuple<double, double>> peaksAddedHashSet, SoftwareLockMassParams p)
         {
@@ -353,7 +370,7 @@ namespace SoftwareLockMass
                 for (int chargeToLookAt = 1; ; chargeToLookAt++)
                 {
                     // Console.WriteLine("chargeToLookAt = " + chargeToLookAt);
-                    ISpectrum<MzPeak, MzRange> chargedDistribution = distributionSpectrum.newSpectrumApplyFunctionToX(s => (s + chargeToLookAt * Constants.Proton) / chargeToLookAt);
+                    ISpectrum<MzPeak, MzRange> chargedDistribution = distributionSpectrum.newSpectrumApplyFunctionToX(s => s.ToMassToChargeRatio(chargeToLookAt));
 
                     if ((p.MS2spectraToWatch.Contains(ms2spectrumIndex) || p.MS1spectraToWatch.Contains(theIndex)) && chargedDistribution.GetRange().IsOverlapping(p.mzRange))
                     {
