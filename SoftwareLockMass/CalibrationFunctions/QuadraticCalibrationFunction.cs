@@ -15,9 +15,10 @@ namespace SoftwareLockMass
         private double f;
         private Action<OutputHandlerEventArgs> onOutput;
 
-        public QuadraticCalibrationFunction(Action<OutputHandlerEventArgs> onOutput)
+        public QuadraticCalibrationFunction(Action<OutputHandlerEventArgs> onOutput, List<TrainingPoint> trainingList)
         {
             this.onOutput = onOutput;
+            Train(trainingList);
         }
 
         public override double Predict(DataPoint t)
@@ -25,7 +26,7 @@ namespace SoftwareLockMass
             return a + b * t.mz + c * t.rt + d * Math.Pow(t.mz, 2) + e * Math.Pow(t.rt, 2) + f * t.mz * t.rt;
         }
 
-        public override void Train(List<TrainingPoint> trainingList)
+        public void Train(List<TrainingPoint> trainingList)
         {
 
             var M = Matrix<double>.Build;

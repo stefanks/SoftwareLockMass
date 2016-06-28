@@ -81,7 +81,7 @@ namespace SoftwareLockMassGUI
             }
             else
             {
-                progressBar1.Value = Math.Min(e.progress, 100);
+                progressBar1.Value = e.progress;
             }
         }
 

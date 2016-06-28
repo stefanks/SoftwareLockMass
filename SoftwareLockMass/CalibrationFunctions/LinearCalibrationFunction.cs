@@ -12,9 +12,10 @@ namespace SoftwareLockMass
         private double c;
         private Action<OutputHandlerEventArgs> onOutput;
 
-        public LinearCalibrationFunction(Action<OutputHandlerEventArgs> onOutput)
+        public LinearCalibrationFunction(Action<OutputHandlerEventArgs> onOutput, List<TrainingPoint> trainingList)
         {
             this.onOutput = onOutput;
+            Train(trainingList);
         }
 
         public override double Predict(DataPoint t)
@@ -22,7 +23,7 @@ namespace SoftwareLockMass
             return a + b * t.mz + c * t.rt;
         }
 
-        public override void Train(List<TrainingPoint> trainingList)
+        public void Train(IEnumerable<TrainingPoint> trainingList)
         {
 
             var M = Matrix<double>.Build;
@@ -40,7 +41,6 @@ namespace SoftwareLockMass
             b = coeffs[1];
             c = coeffs[2];
             onOutput(new OutputHandlerEventArgs("Sucessfully trained LinearCalibrationFunction:"));
-            onOutput(new OutputHandlerEventArgs("a =" + a + " b =" + b + " c =" + c));
 
         }
     }

@@ -76,11 +76,7 @@ namespace SoftwareLockMass
             else
                 throw new Exception();
         }
-
-        public override void Train(List<TrainingPoint> trainingList)
-        {
-            throw new NotImplementedException();
-        }
+        
 
         public override double Predict(DataPoint t)
         {
