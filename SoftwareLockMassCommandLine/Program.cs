@@ -14,6 +14,7 @@ namespace SoftwareLockMass
 
         static void Main(string[] args)
         {
+            //Console.Read();
             origDataFile = args[0];
             mzidFile = args[1];
             double intensityCutoff = 1e3;
@@ -28,6 +29,7 @@ namespace SoftwareLockMass
             SoftwareLockMassParams a = SoftwareLockMassIO.IO.GetReady(origDataFile, P_outputHandler, P_progressHandler, P_watchHandler, mzidFile, intensityCutoff, toleranceInMZforSearch);
 
             SoftwareLockMassRunner.Run(a);
+            //Console.Read();
         }
 
         private static void P_progressHandler(object sender, ProgressHandlerEventArgs e)

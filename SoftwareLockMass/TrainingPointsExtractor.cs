@@ -20,7 +20,7 @@ namespace SoftwareLockMass
             // Set of peaks, identified by m/z and retention time. If a peak is in here, it means it has been a part of an accepted identification, and should be rejected
             HashSet<Tuple<double, double>> peaksAddedHashSet = new HashSet<Tuple<double, double>>();
 
-            int numIdentifications = identifications.getNumBelow(0);
+            int numIdentifications = identifications.Count();
             // Loop over all identifications
             for (int matchIndex = 0; matchIndex < numIdentifications; matchIndex++)
             {
@@ -28,7 +28,7 @@ namespace SoftwareLockMass
                 if (numIdentifications < 100 || matchIndex % (numIdentifications / 100) == 0)
                     p.OnProgress(new ProgressHandlerEventArgs(100 * matchIndex / numIdentifications));
 
-                // Skip decoys, they are not there!
+                // Skip decoys, they are for sure not there!
                 if (identifications.isDecoy(matchIndex))
                     continue;
 
@@ -95,13 +95,15 @@ namespace SoftwareLockMass
             int ms2spectrumIndex = ms2DataScan.SpectrumNumber;
 
             var countForThisMS2 = 0;
+            var countForThisMS2a= 0;
+            var numFragmentsIdentified = 0;
 
             var rangeOfSpectrum = ms2DataScan.MzRange;
 
             var ms2mzArray = ms2DataScan.MassSpectrum.xArray;
 
             Fragment[] fragmentList = peptide.Fragment(FragmentTypes.b | FragmentTypes.y, true).ToArray();
-
+            
             #region One time tolerance calculation
 
             if (toleranceInMZforSearch == 0)
@@ -145,6 +147,7 @@ namespace SoftwareLockMass
             }
             foreach (IHasChemicalFormula fragment in fragmentList)
             {
+                bool fragmentIdentified = false;
                 bool computedIsotopologues = false;
                 double[] prunedMasses = new double[0];
                 double[] prunedIntensities = new double[0];
@@ -206,14 +209,25 @@ namespace SoftwareLockMass
                             var closestPeakMZ = ms2DataScan.MassSpectrum.GetClosestPeakXvalue(theMZ);
                             if (Math.Abs(closestPeakMZ - theMZ) < toleranceInMZforSearch)
                             {
+                                if (p.MS2spectraToWatch.Contains(ms2spectrumIndex))
+                                {
+                                    p.OnWatch(new OutputHandlerEventArgs("   Looking for " + theMZ + "   Found       " + closestPeakMZ + "   Error is    " + (closestPeakMZ - theMZ)));
+
+                                }
                                 trainingPointsToAverage.Add(new TrainingPoint(new DataPoint(closestPeakMZ, ms2DataScan.RetentionTime), closestPeakMZ - theMZ));
                             }
                         }
-                        if (trainingPointsToAverage.Count >= p.numIsotopologuesNeededToBeConsideredIdentified)
+                        if (trainingPointsToAverage.Count >0)
                         {
-                            countForThisMS2 += trainingPointsToAverage.Count - 1;
+                            if (!fragmentIdentified)
+                            {
+                                fragmentIdentified = true;
+                                numFragmentsIdentified += 1;
+                            }
+                                
+                            countForThisMS2 += trainingPointsToAverage.Count;
+                            countForThisMS2a +=1;
                             // Hack! Last isotopologue seems to be troublesome, often has error
-                            trainingPointsToAverage.RemoveAt(trainingPointsToAverage.Count - 1);
                             var a = new TrainingPoint(new DataPoint(trainingPointsToAverage.Select(b => b.dp.mz).Average(), trainingPointsToAverage.Select(b => b.dp.rt).Average()), trainingPointsToAverage.Select(b => b.l).Median());
 
                             if (p.MS2spectraToWatch.Contains(ms2spectrumIndex))
@@ -229,9 +243,12 @@ namespace SoftwareLockMass
                 }
             }
 
+            p.OnWatch(new OutputHandlerEventArgs("ind = "+ ms2spectrumIndex+" count = " +countForThisMS2));
             if (p.MS2spectraToWatch.Contains(ms2spectrumIndex))
             {
                 p.OnWatch(new OutputHandlerEventArgs("countForThisMS2 = " + countForThisMS2));
+                p.OnWatch(new OutputHandlerEventArgs("countForThisMS2a = " + countForThisMS2a));
+                p.OnWatch(new OutputHandlerEventArgs("numFragmentsIdentified = " + numFragmentsIdentified));
             }
             return countForThisMS2;
         }
@@ -371,7 +388,7 @@ namespace SoftwareLockMass
                         else
                             break;
                     }
-                    if (trainingPointsToAverage.Count >= p.numIsotopologuesNeededToBeConsideredIdentified)
+                    if (trainingPointsToAverage.Count >= 3)
                     {
                         added = true;
                         // Hack! Last isotopologue seems to be troublesome, often has error

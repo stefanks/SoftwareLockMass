@@ -34,7 +34,7 @@ namespace SoftwareLockMassIO
             return dd.DataCollection.AnalysisData.SpectrumIdentificationList[0].SpectrumIdentificationResult[matchIndex].SpectrumIdentificationItem[0].experimentalMassToCharge;
         }
 
-        public int getNumBelow(double thresholdPassParameter)
+        public int Count()
         {
             return dd.DataCollection.AnalysisData.SpectrumIdentificationList[0].SpectrumIdentificationResult.Count();
         }

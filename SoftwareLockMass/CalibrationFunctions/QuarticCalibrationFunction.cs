@@ -27,9 +27,10 @@ namespace SoftwareLockMass
         private double o;
         private Action<OutputHandlerEventArgs> onOutput;
 
-        public QuarticCalibrationFunction(Action<OutputHandlerEventArgs> onOutput)
+        public QuarticCalibrationFunction(Action<OutputHandlerEventArgs> onOutput, List<TrainingPoint> trainingList)
         {
             this.onOutput = onOutput;
+            Train(trainingList);
         }
 
         public override double Predict(DataPoint t)
@@ -46,7 +47,7 @@ namespace SoftwareLockMass
                 o * Math.Pow(t.rt, 4);
         }
 
-        public override void Train(List<TrainingPoint> trainingList)
+        public void Train(List<TrainingPoint> trainingList)
         {
 
             var M = Matrix<double>.Build;

@@ -17,10 +17,7 @@ namespace SoftwareLockMass
 
         // 10 is a good number. Lower would be faster!
         public int numIsotopologuesToConsider = 10;
-
-        // Higher means more discriminating at selecting training points. 
-        public int numIsotopologuesNeededToBeConsideredIdentified = 3;
-        //public int numIsotopologuesNeededToBeConsideredIdentified = 2;
+        
         #endregion
 
         public event EventHandler<OutputHandlerEventArgs> outputHandler;

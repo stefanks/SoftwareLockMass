@@ -31,7 +31,7 @@ namespace SoftwareLockMass
             this.onOutput = onOutput;
         }
         
-        public override void Train(List<TrainingPoint> trainingList)
+        public void Train(List<TrainingPoint> trainingList)
         {
             theErrors = new double[mzCount, rtCount];
             

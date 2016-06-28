@@ -5,16 +5,17 @@ namespace SoftwareLockMass
 {
     public abstract class CalibrationFunction
     {
-        public abstract void Train(List<TrainingPoint> trainingList);
         public abstract double Predict(DataPoint t);
-        public double getMSE(List<TrainingPoint> trainingList)
+        public double getMSE(IEnumerable<TrainingPoint> pointList)
         {
             double mse = 0;
-            for (int i = 0; i < trainingList.Count; i++)
+            int count = 0;
+            foreach(TrainingPoint p in pointList)
             {
-                mse += Math.Pow(Predict(trainingList[i].dp) - trainingList[i].l, 2);
+                mse += Math.Pow(Predict(p.dp) - p.l, 2);
+                count++;
             }
-            return mse;
+            return mse / count;
         }
     }
 }

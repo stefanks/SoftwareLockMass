@@ -26,7 +26,7 @@ namespace SoftwareLockMass
             this.numClusters = numClusters;
         }
 
-        public override void Train(List<TrainingPoint> trainingList)
+        public void Train(List<TrainingPoint> trainingList)
         {
             int numTp = trainingList.Count;
             Random randNum = new Random();

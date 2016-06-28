@@ -67,7 +67,7 @@ namespace SoftwareLockMass
             throw new NotImplementedException();
         }
 
-        public override void Train(List<TrainingPoint> trainingList)
+        public void Train(List<TrainingPoint> trainingList)
         {
             throw new NotImplementedException();
         }

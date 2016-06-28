@@ -21,7 +21,7 @@ namespace SoftwareLockMass
             this.onOutput = onOutput;
         }
 
-        public override void Train(List<TrainingPoint> trainingList)
+        public void Train(List<TrainingPoint> trainingList)
         {
             kdTree = new KDTree(onOutput, trainingList);
             onOutput(new OutputHandlerEventArgs("Finished Generating Tree"));

@@ -10,9 +10,10 @@ namespace SoftwareLockMass
         private double a;
         private Action<OutputHandlerEventArgs> onOutput;
 
-        public ConstantCalibrationFunction(Action<OutputHandlerEventArgs> onOutput)
+        public ConstantCalibrationFunction(Action<OutputHandlerEventArgs> onOutput, List<TrainingPoint> trainingList)
         {
             this.onOutput = onOutput;
+            Train(trainingList);
         }
 
         public override double Predict(DataPoint t)
@@ -20,7 +21,7 @@ namespace SoftwareLockMass
             return a;
         }
 
-        public override void Train(List<TrainingPoint> trainingList)
+        public void Train(List<TrainingPoint> trainingList)
         {
             a = trainingList.Select(b => b.l).Average();
             onOutput(new OutputHandlerEventArgs("Sucessfully trained ConstantCalibrationFunction"));

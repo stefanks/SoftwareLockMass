@@ -2,6 +2,7 @@
 using System;
 using System.Collections.Generic;
 using System.IO;
+using System.Linq;
 
 namespace SoftwareLockMass
 {
@@ -20,49 +21,31 @@ namespace SoftwareLockMass
             //p.OnOutput(new OutputHandlerEventArgs("Writing training points to file"));
             //WriteTrainingDataToFiles(trainingPoints);
 
+            var rnd = new Random();
+            var shuffledTrainingPoints = trainingPoints.OrderBy(item => rnd.Next());
+
+            var trainList = shuffledTrainingPoints.Take(trainingPoints.Count * 3 / 4);
+            var testList = shuffledTrainingPoints.Skip(trainingPoints.Count * 3 / 4);
+
             p.OnOutput(new OutputHandlerEventArgs("Train the calibration model"));
-            CalibrationFunction cf;
-            //CalibrationFunction cf = new IdentityCalibrationFunction(p.OnOutput);
-            //CalibrationFunction cf = new ConstantCalibrationFunction(p.OnOutput);
-            //CalibrationFunction cf = new LinearCalibrationFunction(p.OnOutput);
-            //CalibrationFunction cf = new CubicCalibrationFunction(p.OnOutput);
-            //CalibrationFunction cf = new QuarticCalibrationFunction(p.OnOutput);
-            //CalibrationFunction cf = new CalibrationFunctionClustering(p.OnOutput, 20);
-            //CalibrationFunction cf = new MedianCalibrationFunction(p.OnOutput);
-            //CalibrationFunction cf = new KDTreeCalibrationFunction(p.OnOutput);
+            CalibrationFunction cf = new IdentityCalibrationFunction(p.OnOutput);
+            p.OnOutput(new OutputHandlerEventArgs("MSE: " + cf.getMSE(testList)));
             try
             {
-                cf = new QuarticCalibrationFunction(p.OnOutput);
-                cf.Train(trainingPoints);
+                cf = new ConstantCalibrationFunction(p.OnOutput, trainingPoints);
+                p.OnOutput(new OutputHandlerEventArgs("MSE: " + cf.getMSE(testList)));
+                cf = new LinearCalibrationFunction(p.OnOutput, trainingPoints);
+                p.OnOutput(new OutputHandlerEventArgs("MSE: " + cf.getMSE(testList)));
+                cf = new QuadraticCalibrationFunction(p.OnOutput, trainingPoints);
+                p.OnOutput(new OutputHandlerEventArgs("MSE: " + cf.getMSE(testList)));
+                cf = new CubicCalibrationFunction(p.OnOutput, trainingPoints);
+                p.OnOutput(new OutputHandlerEventArgs("MSE: " + cf.getMSE(testList)));
+                cf = new QuarticCalibrationFunction(p.OnOutput, trainingPoints);
+                p.OnOutput(new OutputHandlerEventArgs("MSE: " + cf.getMSE(testList)));
             }
             catch (ArgumentException)
             {
-                try
-                {
-                    cf = new CubicCalibrationFunction(p.OnOutput);
-                    cf.Train(trainingPoints);
-                }
-                catch (ArgumentException)
-                {
-                    try
-                    {
-                        cf = new QuadraticCalibrationFunction(p.OnOutput);
-                        cf.Train(trainingPoints);
-                    }
-                    catch (ArgumentException)
-                    {
-                        try
-                        {
-                            cf = new LinearCalibrationFunction(p.OnOutput);
-                            cf.Train(trainingPoints);
-                        }
-                        catch (ArgumentException)
-                        {
-                            cf = new ConstantCalibrationFunction(p.OnOutput);
-                            cf.Train(trainingPoints);
-                        }
-                    }
-                }
+
             }
 
             if (p.tsvFile != null)

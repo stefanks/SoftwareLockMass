@@ -25,6 +25,7 @@
     <WarningLevel>4</WarningLevel>
     <PlatformTarget>x64</PlatformTarget>
     <TreatWarningsAsErrors>false</TreatWarningsAsErrors>
+    <CodeAnalysisRuleSet>AllRules.ruleset</CodeAnalysisRuleSet>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
     <DebugType>pdbonly</DebugType>
@@ -41,8 +42,8 @@
       <HintPath>..\packages\Chemistry.1.0.101\lib\net451\Chemistry.dll</HintPath>
       <Private>True</Private>
     </Reference>
-    <Reference Include="MassSpectrometry, Version=1.0.87.0, Culture=neutral, processorArchitecture=AMD64">
-      <HintPath>..\packages\MassSpectrometry.1.0.87\lib\net451\MassSpectrometry.dll</HintPath>
+    <Reference Include="MassSpectrometry, Version=1.0.88.0, Culture=neutral, processorArchitecture=AMD64">
+      <HintPath>..\packages\MassSpectrometry.1.0.88\lib\net451\MassSpectrometry.dll</HintPath>
       <Private>True</Private>
     </Reference>
     <Reference Include="MathNet.Numerics, Version=3.11.1.0, Culture=neutral, processorArchitecture=MSIL">
@@ -54,7 +55,7 @@
       <Private>True</Private>
     </Reference>
     <Reference Include="Spectra, Version=1.0.0.0, Culture=neutral, processorArchitecture=AMD64">
-      <HintPath>..\packages\MassSpectrometry.1.0.87\lib\net451\Spectra.dll</HintPath>
+      <HintPath>..\packages\MassSpectrometry.1.0.88\lib\net451\Spectra.dll</HintPath>
       <Private>True</Private>
     </Reference>
     <Reference Include="System" />
