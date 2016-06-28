@@ -58,7 +58,6 @@ namespace SoftwareLockMass
                 // Look in the MS2 spectrum for evidence of peptide
                 int numFragmentsIdentified = SearchMS2Spectrum(myMsDataFile.GetScan(ms2spectrumIndex), peptide, peptideCharge, candidateTrainingPointsForPeptide, p);
 
-                Console.WriteLine("ms2spectrumIndex = " + ms2spectrumIndex + " numFragmentsIdentified = " + numFragmentsIdentified);
                 // If MS2 has low evidence for peptide, skip and go to next one
                 if (numFragmentsIdentified < 9)
                     continue;
@@ -73,11 +72,10 @@ namespace SoftwareLockMass
                     masses[i] = dist.Masses[i];
                     intensities[i] = dist.Intensities[i];
                 }
+                Array.Sort(intensities, masses, Comparer<double>.Create((x, y) => y.CompareTo(x)));
 
-                var distributionSpectrum = new DefaultMzSpectrum(masses, intensities, false);
-
-                List<double> myMS1downScores = SearchMS1Spectra(myMsDataFile, distributionSpectrum, candidateTrainingPointsForPeptide, ms2spectrumIndex, -1, peaksAddedHashSet, p);
-                List<double> myMS1upScores = SearchMS1Spectra(myMsDataFile, distributionSpectrum, candidateTrainingPointsForPeptide, ms2spectrumIndex, 1, peaksAddedHashSet, p);
+                List<double> myMS1downScores = SearchMS1Spectra(myMsDataFile, masses, intensities, candidateTrainingPointsForPeptide, ms2spectrumIndex, -1, peaksAddedHashSet, p);
+                List<double> myMS1upScores = SearchMS1Spectra(myMsDataFile, masses, intensities, candidateTrainingPointsForPeptide, ms2spectrumIndex, 1, peaksAddedHashSet, p);
 
                 if (scoresPassed(numFragmentsIdentified, myMS1downScores, myMS1upScores))
                 {
@@ -154,8 +152,6 @@ namespace SoftwareLockMass
             }
             foreach (IHasChemicalFormula fragment in fragmentList)
             {
-                if ((fragment as Fragment).Sequence.Equals("LDNLQQEIDFLTALYQAELS"))
-                    Console.WriteLine("okay");
                 bool fragmentIdentified = false;
                 bool computedIsotopologues = false;
                 double[] masses = new double[0];
@@ -194,8 +190,7 @@ namespace SoftwareLockMass
                                 masses[i] = dist.Masses[i];
                                 intensities[i] = dist.Intensities[i];
                             }
-                            IComparer<double> ye = Comparer<double>.Create((x, y) => y.CompareTo(x));
-                            Array.Sort(intensities, masses, ye);
+                            Array.Sort(intensities, masses, Comparer<double>.Create((x, y) => y.CompareTo(x)));
                             computedIsotopologues = true;
                             if (p.MS2spectraToWatch.Contains(ms2spectrumIndex))
                             {
@@ -295,16 +290,12 @@ namespace SoftwareLockMass
 
         private static double getTolerance(double[] sortedList)
         {
-            Console.WriteLine("sortedList.Count(): " + sortedList.Count());
             var tolerance = 1.0 / 3;
             var trialIndex = Array.BinarySearch(sortedList, 0);
             int indexOfZero = trialIndex >= 0 ? trialIndex : ~trialIndex;
-            Console.WriteLine("indexOfZero: " + indexOfZero);
-            Console.WriteLine("sortedList[indexOfZero]: " + sortedList[indexOfZero]);
             double oldRatio = 1;
             while (true)
             {
-                Console.WriteLine("Considering tolerance: " + tolerance);
                 int countGood = 0;
                 int countBadUp = 0;
                 int countBadDown = 0;
@@ -323,29 +314,21 @@ namespace SoftwareLockMass
                     else if (sortedList[i] >= -tolerance * 3)
                         countBadDown++;
                 }
-                Console.WriteLine("countGood: " + countGood);
-                Console.WriteLine("countBadUp: " + countBadUp);
-                Console.WriteLine("countBadDown: " + countBadDown);
                 double newRatio = Math.Max(countBadDown / (double)countGood, countBadUp / (double)countGood);
-                Console.WriteLine("newRatio: " + newRatio);
                 if (newRatio < oldRatio || newRatio < 0.1)
                 {
-                    Console.WriteLine("tolerance " + tolerance + " was good " + tolerance);
                     oldRatio = newRatio * 1.5;
                     tolerance /= 2;
-                    Console.WriteLine("will try tolerance: " + tolerance);
                 }
                 else
                 {
-                    Console.WriteLine("tolerance " + tolerance + " was too much");
                     break;
                 }
             }
             return tolerance * 2;
         }
 
-
-        private static List<double> SearchMS1Spectra(IMsDataFile<IMzSpectrum<MzPeak, MzRange>> myMsDataFile, IMzSpectrum<MzPeak, MzRange> distributionSpectrum, List<TrainingPoint> myCandidatePoints, int ms2spectrumIndex, int direction, HashSet<Tuple<double, double>> peaksAddedHashSet, SoftwareLockMassParams p)
+        private static List<double> SearchMS1Spectra(IMsDataFile<IMzSpectrum<MzPeak, MzRange>> myMsDataFile, double[] originalMasses, double[] originalIntensities, List<TrainingPoint> myCandidatePoints, int ms2spectrumIndex, int direction, HashSet<Tuple<double, double>> peaksAddedHashSet, SoftwareLockMassParams p)
         {
             var theIndex = -1;
             if (direction == 1)
@@ -358,72 +341,43 @@ namespace SoftwareLockMass
             List<double> scores = new List<double>();
             while (theIndex >= myMsDataFile.FirstSpectrumNumber && theIndex <= myMsDataFile.LastSpectrumNumber && added == true)
             {
-                // Console.WriteLine("In loop!");
-                // Console.WriteLine("theIndex = " + theIndex);
                 if (myMsDataFile.GetScan(theIndex).MsnOrder > 1)
                 {
                     theIndex += direction;
                     continue;
                 }
-                //// Console.WriteLine("aaaaa");
                 added = false;
                 if (p.MS2spectraToWatch.Contains(ms2spectrumIndex) || p.MS1spectraToWatch.Contains(theIndex))
                 {
                     p.OnWatch(new OutputHandlerEventArgs(" Looking in MS1 spectrum " + theIndex + " because of MS2 spectrum " + ms2spectrumIndex));
                 }
-
-                //// Console.WriteLine("bbbbb");
-                var fullMS1spectrum = myMsDataFile.GetScan(theIndex);
-                //// Console.WriteLine("ccccc");
-                double ms1RetentionTime = fullMS1spectrum.RetentionTime;
-                //// Console.WriteLine("ddddd");
-                var rangeOfSpectrum = fullMS1spectrum.MzRange;
-                //// Console.WriteLine("eeeee");
-                var ok1 = fullMS1spectrum;
-                //// Console.WriteLine("fffff");
-                var ok2 = ok1.MassSpectrum;
-                //// Console.WriteLine("gggggg");
-                var ms1FilteredByHighIntensities = ok2;
-                //// Console.WriteLine("hhhhhh");
-                if (ms1FilteredByHighIntensities.Count() == 0)
-                {
-                    theIndex += direction;
-                    continue;
-                }
+                var fullMS1scan = myMsDataFile.GetScan(theIndex);
+                double ms1RetentionTime = fullMS1scan.RetentionTime;
+                var rangeOfSpectrum = fullMS1scan.MzRange;
+                var fullMS1spectrum = fullMS1scan.MassSpectrum;
+                if (fullMS1spectrum.Count == 0)
+                    break;
                 for (int chargeToLookAt = 1; ; chargeToLookAt++)
                 {
-                    // Console.WriteLine("chargeToLookAt = " + chargeToLookAt);
-                    ISpectrum<MzPeak, MzRange> chargedDistribution = distributionSpectrum.newSpectrumApplyFunctionToX(s => s.ToMassToChargeRatio(chargeToLookAt));
-
-                    if ((p.MS2spectraToWatch.Contains(ms2spectrumIndex) || p.MS1spectraToWatch.Contains(theIndex)) && chargedDistribution.GetRange().IsOverlapping(p.mzRange))
-                    {
-                        p.OnWatch(new OutputHandlerEventArgs("  chargedDistribution: " + string.Join(", ", chargedDistribution.Take(4)) + "..."));
-                    }
-
-                    // Console.WriteLine("  chargedDistribution.LastMZ = " + chargedDistribution.LastMZ);
-                    // Console.WriteLine("  rangeOfSpectrum.Maximum = " + rangeOfSpectrum.Maximum);
-                    if (chargedDistribution.FirstX > rangeOfSpectrum.Maximum)
+                    if (originalMasses[0] > rangeOfSpectrum.Maximum)
                         continue;
-                    if (chargedDistribution.LastX < rangeOfSpectrum.Minimum)
+                    if (originalMasses[0] < rangeOfSpectrum.Minimum)
                         break;
-
-                    // Console.WriteLine("  Seriously looking at this charge, it's within range");
-
                     List<TrainingPoint> trainingPointsToAverage = new List<TrainingPoint>();
-                    for (int isotopologueIndex = 0; isotopologueIndex < Math.Min(p.numIsotopologuesToConsider, chargedDistribution.Count); isotopologueIndex++)
+                    for (int isotopologueIndex = 0; isotopologueIndex < originalMasses.Count(); isotopologueIndex++)
                     {
-                        var closestPeak = ms1FilteredByHighIntensities.GetClosestPeak(chargedDistribution[isotopologueIndex].MZ);
+                        var closestPeak = fullMS1spectrum.GetClosestPeak(originalMasses[isotopologueIndex].ToMassToChargeRatio(chargeToLookAt));
                         var theTuple = Tuple.Create<double, double>(closestPeak.X, ms1RetentionTime);
-                        if (Math.Abs(chargedDistribution[isotopologueIndex].MZ - closestPeak.X) < toleranceInMZforSearch && !peaksAddedHashSet.Contains(theTuple))
+                        if (Math.Abs(originalMasses[isotopologueIndex].ToMassToChargeRatio(chargeToLookAt) - closestPeak.X) < toleranceInMZforSearch && !peaksAddedHashSet.Contains(theTuple))
                         {
                             // Console.WriteLine("  Added!");
                             peaksAddedHashSet.Add(theTuple);
 
-                            if ((p.MS2spectraToWatch.Contains(ms2spectrumIndex) || p.MS1spectraToWatch.Contains(theIndex)) && chargedDistribution.GetRange().IsOverlapping(p.mzRange))
+                            if ((p.MS2spectraToWatch.Contains(ms2spectrumIndex) || p.MS1spectraToWatch.Contains(theIndex)) && p.mzRange.Contains(originalMasses[isotopologueIndex].ToMassToChargeRatio(chargeToLookAt)))
                             {
-                                p.OnWatch(new OutputHandlerEventArgs("   Looking for " + chargedDistribution[isotopologueIndex].MZ + "   Found       " + closestPeak.X + "   Error is    " + (closestPeak.X - chargedDistribution[isotopologueIndex].MZ)));
+                                p.OnWatch(new OutputHandlerEventArgs("   Looking for " + originalMasses[isotopologueIndex].ToMassToChargeRatio(chargeToLookAt) + "   Found       " + closestPeak.X + "   Error is    " + (closestPeak.X - originalMasses[isotopologueIndex].ToMassToChargeRatio(chargeToLookAt))));
                             }
-                            trainingPointsToAverage.Add(new TrainingPoint(new DataPoint(closestPeak.X, ms1RetentionTime), closestPeak.X - chargedDistribution[isotopologueIndex].MZ));
+                            trainingPointsToAverage.Add(new TrainingPoint(new DataPoint(closestPeak.X, ms1RetentionTime), closestPeak.X - originalMasses[isotopologueIndex].ToMassToChargeRatio(chargeToLookAt)));
                         }
                         else
                             break;
@@ -435,7 +389,7 @@ namespace SoftwareLockMass
                         trainingPointsToAverage.RemoveAt(trainingPointsToAverage.Count - 1);
                         var a = new TrainingPoint(new DataPoint(trainingPointsToAverage.Select(b => b.dp.mz).Average(), trainingPointsToAverage.Select(b => b.dp.rt).Average()), trainingPointsToAverage.Select(b => b.l).Median());
 
-                        if ((p.MS2spectraToWatch.Contains(ms2spectrumIndex) || p.MS1spectraToWatch.Contains(theIndex)) && chargedDistribution.GetRange().IsOverlapping(p.mzRange))
+                        if ((p.MS2spectraToWatch.Contains(ms2spectrumIndex) || p.MS1spectraToWatch.Contains(theIndex)) && p.mzRange.Contains(originalMasses[0].ToMassToChargeRatio(chargeToLookAt)))
                         {
                             p.OnWatch(new OutputHandlerEventArgs("  Adding aggregate of " + trainingPointsToAverage.Count + " points"));
                             p.OnWatch(new OutputHandlerEventArgs("  a.dp.mz " + a.dp.mz));

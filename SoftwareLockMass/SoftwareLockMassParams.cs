@@ -15,9 +15,6 @@ namespace SoftwareLockMass
         // Parameter for isotopolouge distribution searching
         public double fineResolution = 0.1;
 
-        // 10 is a good number. Lower would be faster!
-        public int numIsotopologuesToConsider = 10;
-        
         #endregion
 
         public event EventHandler<OutputHandlerEventArgs> outputHandler;
