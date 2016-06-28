@@ -27,7 +27,7 @@ namespace SoftwareLockMass
         private double o;
         private Action<OutputHandlerEventArgs> onOutput;
 
-        public QuarticCalibrationFunction(Action<OutputHandlerEventArgs> onOutput, List<TrainingPoint> trainingList)
+        public QuarticCalibrationFunction(Action<OutputHandlerEventArgs> onOutput, IEnumerable<TrainingPoint> trainingList)
         {
             this.onOutput = onOutput;
             Train(trainingList);
@@ -47,12 +47,12 @@ namespace SoftwareLockMass
                 o * Math.Pow(t.rt, 4);
         }
 
-        public void Train(List<TrainingPoint> trainingList)
+        public void Train(IEnumerable<TrainingPoint> trainingList)
         {
 
             var M = Matrix<double>.Build;
             var V = Vector<double>.Build;
-            
+
             var X = M.DenseOfRowArrays(trainingList.Select(b => b.dp.ToDoubleArrayWithInterceptAndSquaresAndCubesAndQuarts()));
             var y = V.DenseOfEnumerable(trainingList.Select(b => b.l));
 

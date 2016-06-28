@@ -1,5 +1,4 @@
-﻿using MathNet.Numerics.LinearAlgebra;
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.Linq;
 
@@ -10,7 +9,7 @@ namespace SoftwareLockMass
         private double a;
         private Action<OutputHandlerEventArgs> onOutput;
 
-        public ConstantCalibrationFunction(Action<OutputHandlerEventArgs> onOutput, List<TrainingPoint> trainingList)
+        public ConstantCalibrationFunction(Action<OutputHandlerEventArgs> onOutput, IEnumerable<TrainingPoint> trainingList)
         {
             this.onOutput = onOutput;
             Train(trainingList);
@@ -21,11 +20,11 @@ namespace SoftwareLockMass
             return a;
         }
 
-        public void Train(List<TrainingPoint> trainingList)
+        public void Train(IEnumerable<TrainingPoint> trainingList)
         {
             a = trainingList.Select(b => b.l).Average();
             onOutput(new OutputHandlerEventArgs("Sucessfully trained ConstantCalibrationFunction"));
-            onOutput(new OutputHandlerEventArgs("a = "+ a));
+            onOutput(new OutputHandlerEventArgs("a = " + a));
         }
     }
 }

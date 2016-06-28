@@ -46,11 +46,9 @@ namespace SoftwareLockMassIO
             //a.MS1spectraToWatch.Add(1);
             a.mzRange = new DoubleRange(-2, -1);
 
+            //a.MS2spectraToWatch.Add(2);
 
-            a.MS2spectraToWatch.Add(2);
-
-
-            //a.MS2spectraToWatch.Add(11279);
+            a.MS2spectraToWatch.Add(11279);
             //a.MS2spectraToWatch.Add(2813);
             //a.MS2spectraToWatch.Add(11277);
             //a.MS2spectraToWatch.Add(11290);

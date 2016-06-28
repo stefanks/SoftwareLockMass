@@ -359,9 +359,13 @@ namespace SoftwareLockMass
                     break;
                 for (int chargeToLookAt = 1; ; chargeToLookAt++)
                 {
-                    if (originalMasses[0] > rangeOfSpectrum.Maximum)
+                    if (p.MS2spectraToWatch.Contains(ms2spectrumIndex) || p.MS1spectraToWatch.Contains(theIndex))
+                    {
+                        p.OnWatch(new OutputHandlerEventArgs(" Looking at charge " + chargeToLookAt));
+                    }
+                    if (originalMasses[0].ToMassToChargeRatio(chargeToLookAt) > rangeOfSpectrum.Maximum)
                         continue;
-                    if (originalMasses[0] < rangeOfSpectrum.Minimum)
+                    if (originalMasses[0].ToMassToChargeRatio(chargeToLookAt) < rangeOfSpectrum.Minimum)
                         break;
                     List<TrainingPoint> trainingPointsToAverage = new List<TrainingPoint>();
                     for (int isotopologueIndex = 0; isotopologueIndex < originalMasses.Count(); isotopologueIndex++)

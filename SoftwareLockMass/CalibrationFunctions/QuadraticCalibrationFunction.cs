@@ -15,7 +15,7 @@ namespace SoftwareLockMass
         private double f;
         private Action<OutputHandlerEventArgs> onOutput;
 
-        public QuadraticCalibrationFunction(Action<OutputHandlerEventArgs> onOutput, List<TrainingPoint> trainingList)
+        public QuadraticCalibrationFunction(Action<OutputHandlerEventArgs> onOutput, IEnumerable<TrainingPoint> trainingList)
         {
             this.onOutput = onOutput;
             Train(trainingList);
@@ -26,7 +26,7 @@ namespace SoftwareLockMass
             return a + b * t.mz + c * t.rt + d * Math.Pow(t.mz, 2) + e * Math.Pow(t.rt, 2) + f * t.mz * t.rt;
         }
 
-        public void Train(List<TrainingPoint> trainingList)
+        public void Train(IEnumerable<TrainingPoint> trainingList)
         {
 
             var M = Matrix<double>.Build;
@@ -42,7 +42,7 @@ namespace SoftwareLockMass
             }
             catch (ArgumentException)
             {
-                throw new ArgumentException("Not enough training points for Quadratic calibration function. Need at least 6, but have " + trainingList.Count);
+                throw new ArgumentException("Not enough training points for Quadratic calibration function. Need at least 6, but have " + trainingList.Count());
             }
             if (double.IsNaN(coeffs[0]))
                 throw new ArgumentException("Could not train QuadraticCalibrationFunction, data might be low rank");

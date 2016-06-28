@@ -24,7 +24,7 @@ namespace SoftwareLockMass
             var rnd = new Random();
             var shuffledTrainingPoints = trainingPoints.OrderBy(item => rnd.Next());
 
-            //var trainList = shuffledTrainingPoints.Take(trainingPoints.Count * 3 / 4);
+            var trainList = shuffledTrainingPoints.Take(trainingPoints.Count * 3 / 4);
             var testList = shuffledTrainingPoints.Skip(trainingPoints.Count * 3 / 4);
 
             p.OnOutput(new OutputHandlerEventArgs("Train the calibration model"));
@@ -32,15 +32,15 @@ namespace SoftwareLockMass
             p.OnOutput(new OutputHandlerEventArgs("MSE: " + cf.getMSE(testList)));
             try
             {
-                cf = new ConstantCalibrationFunction(p.OnOutput, trainingPoints);
+                cf = new ConstantCalibrationFunction(p.OnOutput, trainList);
                 p.OnOutput(new OutputHandlerEventArgs("MSE: " + cf.getMSE(testList)));
-                cf = new LinearCalibrationFunction(p.OnOutput, trainingPoints);
+                cf = new LinearCalibrationFunction(p.OnOutput, trainList);
                 p.OnOutput(new OutputHandlerEventArgs("MSE: " + cf.getMSE(testList)));
-                cf = new QuadraticCalibrationFunction(p.OnOutput, trainingPoints);
+                cf = new QuadraticCalibrationFunction(p.OnOutput, trainList);
                 p.OnOutput(new OutputHandlerEventArgs("MSE: " + cf.getMSE(testList)));
-                cf = new CubicCalibrationFunction(p.OnOutput, trainingPoints);
+                cf = new CubicCalibrationFunction(p.OnOutput, trainList);
                 p.OnOutput(new OutputHandlerEventArgs("MSE: " + cf.getMSE(testList)));
-                cf = new QuarticCalibrationFunction(p.OnOutput, trainingPoints);
+                cf = new QuarticCalibrationFunction(p.OnOutput, trainList);
                 p.OnOutput(new OutputHandlerEventArgs("MSE: " + cf.getMSE(testList)));
             }
             catch (ArgumentException)

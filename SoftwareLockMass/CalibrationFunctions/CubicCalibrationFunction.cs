@@ -21,7 +21,7 @@ namespace SoftwareLockMass
         private double j;
         private Action<OutputHandlerEventArgs> onOutput;
 
-        public CubicCalibrationFunction(Action<OutputHandlerEventArgs> onOutput, List<TrainingPoint> trainingList)
+        public CubicCalibrationFunction(Action<OutputHandlerEventArgs> onOutput, IEnumerable<TrainingPoint> trainingList)
         {
             this.onOutput = onOutput;
             Train(trainingList);
@@ -29,19 +29,19 @@ namespace SoftwareLockMass
 
         public override double Predict(DataPoint t)
         {
-            return a + b * t.mz + c * t.rt + d*Math.Pow(t.mz,2) +e * Math.Pow(t.rt, 2) + f * t.mz*t.rt +
-                g * Math.Pow(t.mz, 3)+
-                h * Math.Pow(t.mz, 2)* t.rt + 
-                i * t.mz*Math.Pow(t.rt, 2) + 
+            return a + b * t.mz + c * t.rt + d * Math.Pow(t.mz, 2) + e * Math.Pow(t.rt, 2) + f * t.mz * t.rt +
+                g * Math.Pow(t.mz, 3) +
+                h * Math.Pow(t.mz, 2) * t.rt +
+                i * t.mz * Math.Pow(t.rt, 2) +
                 j * Math.Pow(t.rt, 3);
         }
 
-        public void Train(List<TrainingPoint> trainingList)
+        public void Train(IEnumerable<TrainingPoint> trainingList)
         {
 
             var M = Matrix<double>.Build;
             var V = Vector<double>.Build;
-            
+
             var X = M.DenseOfRowArrays(trainingList.Select(b => b.dp.ToDoubleArrayWithInterceptAndSquaresAndCubes()));
             var y = V.DenseOfEnumerable(trainingList.Select(b => b.l));
 

@@ -12,7 +12,7 @@ namespace SoftwareLockMass
         private double c;
         private Action<OutputHandlerEventArgs> onOutput;
 
-        public LinearCalibrationFunction(Action<OutputHandlerEventArgs> onOutput, List<TrainingPoint> trainingList)
+        public LinearCalibrationFunction(Action<OutputHandlerEventArgs> onOutput, IEnumerable<TrainingPoint> trainingList)
         {
             this.onOutput = onOutput;
             Train(trainingList);

@@ -34,7 +34,7 @@ namespace SoftwareLockMass
 
         private static void P_progressHandler(object sender, ProgressHandlerEventArgs e)
         {
-            //Console.Write(e.progress + "% ");
+            Console.Write(e.progress + "% ");
         }
 
         private static void P_outputHandler(object sender, OutputHandlerEventArgs e)
