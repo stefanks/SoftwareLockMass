@@ -27,7 +27,7 @@ namespace Test
             trainingList.Add(new TrainingPoint(new DataPoint(500, 1), 0));
             trainingList.Add(new TrainingPoint(new DataPoint(400, 1), 0));
             trainingList.Add(new TrainingPoint(new DataPoint(300, 1), 0));
-            Assert.Throws<ArgumentException>(() => { new QuadraticCalibrationFunction(OnOutput,trainingList); }, "Not enough training points for Quadratic calibration function.Need at least 6, but have 5");
+            Assert.Throws<ArgumentException>(() => { new QuadraticCalibrationFunction(OnOutput, trainingList); }, "Not enough training points for Quadratic calibration function.Need at least 6, but have 5");
         }
 
         [Test]
@@ -46,12 +46,9 @@ namespace Test
         [Test]
         public void TestSoftwareLockMassRunner()
         {
-            double intensityCutoff = 0;
-            double toleranceInMZforSearch = 0.032;
-
             SoftwareLockMassIO.IO.Load();
 
-            SoftwareLockMassParams a = SoftwareLockMassIO.IO.GetReady(@"myFile.mzML", P_outputHandler, P_progressHandler, P_outputHandler, @"myIdentifications.mzid", intensityCutoff, toleranceInMZforSearch);
+            SoftwareLockMassParams a = SoftwareLockMassIO.IO.GetReady(@"myFile.mzML", P_outputHandler, P_progressHandler, P_outputHandler, @"myIdentifications.mzid");
 
             SoftwareLockMassRunner.Run(a);
         }

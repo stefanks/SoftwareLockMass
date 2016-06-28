@@ -46,7 +46,7 @@ namespace SoftwareLockMassGUI
         {
             Parallel.ForEach(myListOfEntries, (anEntry) =>
              {
-                 SoftwareLockMassParams a = SoftwareLockMassIO.IO.GetReady(anEntry.spectraFile, P_outputHandler, P_progressHandler, P_watchHandler, anEntry.mzidFile, intensityCutoff, toleranceInMZforSearch);
+                 SoftwareLockMassParams a = SoftwareLockMassIO.IO.GetReady(anEntry.spectraFile, P_outputHandler, P_progressHandler, P_watchHandler, anEntry.mzidFile);
 
                  if (checkBox1.Checked)
                      a.tsvFile = anEntry.tsvFile;

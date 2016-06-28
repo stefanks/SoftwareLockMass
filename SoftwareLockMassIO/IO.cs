@@ -27,7 +27,7 @@ namespace SoftwareLockMassIO
             return Convert.ToInt32(Regex.Match(s, @"\d+$").Value);
         }
 
-        public static SoftwareLockMassParams GetReady(string origDataFile, EventHandler<OutputHandlerEventArgs> p_outputHandler, EventHandler<ProgressHandlerEventArgs> p_progressHandler, EventHandler<OutputHandlerEventArgs> p_watchHandler, string mzidFile, double intensityCutoff, double toleranceInMZforSearch)
+        public static SoftwareLockMassParams GetReady(string origDataFile, EventHandler<OutputHandlerEventArgs> p_outputHandler, EventHandler<ProgressHandlerEventArgs> p_progressHandler, EventHandler<OutputHandlerEventArgs> p_watchHandler, string mzidFile)
         {
             IMsDataFile<IMzSpectrum<MzPeak, MzRange>> myMsDataFile;
             // Console.WriteLine(Path.GetExtension(origDataFile));
@@ -45,31 +45,34 @@ namespace SoftwareLockMassIO
 
             //a.MS1spectraToWatch.Add(1);
             a.mzRange = new DoubleRange(-2, -1);
-            a.MS2spectraToWatch.Add(11279);
-            a.MS2spectraToWatch.Add(2813);
-            a.MS2spectraToWatch.Add(11277);
-            a.MS2spectraToWatch.Add(11290);
-            a.MS2spectraToWatch.Add(2806);
-            a.MS2spectraToWatch.Add(11357);
-            a.MS2spectraToWatch.Add(11296);
-            a.MS2spectraToWatch.Add(11359);
-            a.MS2spectraToWatch.Add(11188);
-            a.MS2spectraToWatch.Add(5669);
-            a.MS2spectraToWatch.Add(11324);
-            a.MS2spectraToWatch.Add(11285);
-            a.MS2spectraToWatch.Add(11283);
-            a.MS2spectraToWatch.Add(3181);
-            a.MS2spectraToWatch.Add(4047);
-            a.MS2spectraToWatch.Add(4053);
-            a.MS2spectraToWatch.Add(5388);
-            a.MS2spectraToWatch.Add(3194);
-            a.MS2spectraToWatch.Add(3766);
-            a.MS2spectraToWatch.Add(3842);
-            a.MS2spectraToWatch.Add(3849);
-            a.MS2spectraToWatch.Add(11210);
-            a.MS2spectraToWatch.Add(5894);
 
 
+            a.MS2spectraToWatch.Add(2);
+
+
+            //a.MS2spectraToWatch.Add(11279);
+            //a.MS2spectraToWatch.Add(2813);
+            //a.MS2spectraToWatch.Add(11277);
+            //a.MS2spectraToWatch.Add(11290);
+            //a.MS2spectraToWatch.Add(2806);
+            //a.MS2spectraToWatch.Add(11357);
+            //a.MS2spectraToWatch.Add(11296);
+            //a.MS2spectraToWatch.Add(11359);
+            //a.MS2spectraToWatch.Add(11188);
+            //a.MS2spectraToWatch.Add(5669);
+            //a.MS2spectraToWatch.Add(11324);
+            //a.MS2spectraToWatch.Add(11285);
+            //a.MS2spectraToWatch.Add(11283);
+            //a.MS2spectraToWatch.Add(3181);
+            //a.MS2spectraToWatch.Add(4047);
+            //a.MS2spectraToWatch.Add(4053);
+            //a.MS2spectraToWatch.Add(5388);
+            //a.MS2spectraToWatch.Add(3194);
+            //a.MS2spectraToWatch.Add(3766);
+            //a.MS2spectraToWatch.Add(3842);
+            //a.MS2spectraToWatch.Add(3849);
+            //a.MS2spectraToWatch.Add(11210);
+            //a.MS2spectraToWatch.Add(5894);
 
             return a;
         }
