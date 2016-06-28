@@ -24,7 +24,7 @@ namespace SoftwareLockMass
             var rnd = new Random();
             var shuffledTrainingPoints = trainingPoints.OrderBy(item => rnd.Next());
 
-            var trainList = shuffledTrainingPoints.Take(trainingPoints.Count * 3 / 4);
+            //var trainList = shuffledTrainingPoints.Take(trainingPoints.Count * 3 / 4);
             var testList = shuffledTrainingPoints.Skip(trainingPoints.Count * 3 / 4);
 
             p.OnOutput(new OutputHandlerEventArgs("Train the calibration model"));
