@@ -9,12 +9,6 @@ namespace SoftwareLockMass
             //Console.Read();
             string origDataFile = args[0];
             string mzidFile = args[1];
-            double intensityCutoff = 1e3;
-            double toleranceInMZforSearch = 1e-2;
-            if (args.Length > 2)
-                intensityCutoff = Convert.ToDouble(args[2]);
-            if (args.Length > 3)
-                toleranceInMZforSearch = Convert.ToDouble(args[3]);
 
             SoftwareLockMassIO.IO.Load();
 

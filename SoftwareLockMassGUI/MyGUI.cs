@@ -14,9 +14,6 @@ namespace SoftwareLockMassGUI
     {
         private BindingList<AnEntry> myListOfEntries = new BindingList<AnEntry>(new List<AnEntry>());
 
-        readonly double intensityCutoff = 1e3;
-        readonly double toleranceInMZforSearch = 0.01;
-
         public MyGUI()
         {
             InitializeComponent();
