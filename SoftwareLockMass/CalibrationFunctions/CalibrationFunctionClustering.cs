@@ -16,23 +16,25 @@ namespace SoftwareLockMass
 
         private double dist(double v1, double v2, int j, double[] CentroidMZdist, double[] CentroidTimedist)
         {
-            return Math.Pow(v1 - CentroidMZdist[j],2) + Math.Pow(v2 - CentroidTimedist[j],2);
+            return Math.Pow(v1 - CentroidMZdist[j], 2) + Math.Pow(v2 - CentroidTimedist[j], 2);
         }
-        
 
-        public CalibrationFunctionClustering(Action<OutputHandlerEventArgs> onOutput, int numClusters)
+
+        public CalibrationFunctionClustering(Action<OutputHandlerEventArgs> onOutput, int numClusters, IEnumerable<TrainingPoint> trainingList)
         {
             this.onOutput = onOutput;
             this.numClusters = numClusters;
+            Train(trainingList);
         }
 
-        public void Train(List<TrainingPoint> trainingList)
+        private void Train(IEnumerable<TrainingPoint> trainingListEnumerable)
         {
-            int numTp = trainingList.Count;
+            TrainingPoint[] trainingList = trainingListEnumerable.ToArray();
+            int numTp = trainingList.Count();
             Random randNum = new Random();
             double totalError = double.MaxValue;
 
-            for (int numTries = 0; numTries < 3000; numTries++)
+            for (int numTries = 0; numTries < 1; numTries++)
             {
                 bool changeHappend = true;
                 var Cluster = Enumerable.Repeat(0, numTp).ToArray();
@@ -64,7 +66,7 @@ namespace SoftwareLockMass
                         var oldClusterI = Cluster[i];
                         for (int j = 0; j < numClusters; j++)
                         {
-                            if (dist(trainingList[i].dp.mz, trainingList[i].dp.rt, j, CentroidMZ, CentroidTime)  < bestDistance)
+                            if (dist(trainingList[i].dp.mz, trainingList[i].dp.rt, j, CentroidMZ, CentroidTime) < bestDistance)
                             {
                                 bestDistance = dist(trainingList[i].dp.mz, trainingList[i].dp.rt, j, CentroidMZ, CentroidTime);
                                 Cluster[i] = j;
@@ -93,10 +95,10 @@ namespace SoftwareLockMass
                         errorAtCluster[j] = errorAtCluster[j] / PointsInCluster[j];
                     }
                 }
-                
+
                 for (int i = 0; i < numTp; i++)
                 {
-                    mseInCluster[Cluster[i]] += Math.Pow(trainingList[i].l - errorAtCluster[Cluster[i]],2);
+                    mseInCluster[Cluster[i]] += Math.Pow(trainingList[i].l - errorAtCluster[Cluster[i]], 2);
                 }
                 if (totalError > mseInCluster.Sum())
                 {
@@ -105,12 +107,12 @@ namespace SoftwareLockMass
                     errorAtClusterfinal = (double[])errorAtCluster.Clone();
 
                     totalError = mseInCluster.Sum();
-                    onOutput(new OutputHandlerEventArgs("New total MSE: " + totalError));
-                    onOutput(new OutputHandlerEventArgs("New total MSE other calucation: " + getMSE(trainingList)));
-                    for (int j = 0; j < numClusters; j++)
-                    {
-                        onOutput(new OutputHandlerEventArgs(" " + CentroidMZ[j] + " " + CentroidTime[j] + " " + errorAtCluster[j]));
-                    }
+                    //onOutput(new OutputHandlerEventArgs("New total MSE: " + totalError));
+                    //onOutput(new OutputHandlerEventArgs("New total MSE other calucation: " + getMSE(trainingList)));
+                    //for (int j = 0; j < numClusters; j++)
+                    //{
+                    //    onOutput(new OutputHandlerEventArgs(" " + CentroidMZ[j] + " " + CentroidTime[j] + " " + errorAtCluster[j]));
+                    //}
                 }
             }
         }

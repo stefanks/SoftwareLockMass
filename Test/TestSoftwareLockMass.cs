@@ -68,6 +68,24 @@ namespace Test
 
         }
 
+
+        [Test]
+        public void TestMathNetLinear()
+        {
+            List<TrainingPoint> trainingList = new List<TrainingPoint>();
+            trainingList.Add(new TrainingPoint(new DataPoint(1, 2), 40));
+            trainingList.Add(new TrainingPoint(new DataPoint(11, 2), 10));
+            trainingList.Add(new TrainingPoint(new DataPoint(430, 11), 540));
+            trainingList.Add(new TrainingPoint(new DataPoint(3400, 151), 130));
+            trainingList.Add(new TrainingPoint(new DataPoint(23451, 342), 4013));
+            trainingList.Add(new TrainingPoint(new DataPoint(13411, 162), 410));
+            trainingList.Add(new TrainingPoint(new DataPoint(4614330, 1311), 5540));
+            trainingList.Add(new TrainingPoint(new DataPoint(3411300, 41151), 1630));
+            new LinearCalibrationFunctionMathNet(OnOutput, trainingList);
+            var a = new LinearCalibrationFunction(OnOutput, trainingList);
+            Console.WriteLine("My linear prediction: " + a.Predict(new DataPoint(3, 4)));
+        }
+
         event EventHandler<OutputHandlerEventArgs> outputHandler;
 
         public void OnOutput(OutputHandlerEventArgs e)

@@ -42,10 +42,13 @@ namespace SoftwareLockMass
                 p.OnOutput(new OutputHandlerEventArgs("MSE: " + cf.getMSE(testList)));
                 cf = new QuarticCalibrationFunction(p.OnOutput, trainList);
                 p.OnOutput(new OutputHandlerEventArgs("MSE: " + cf.getMSE(testList)));
+                //cf = new CalibrationFunctionClustering(p.OnOutput, 2, trainList);
+                //p.OnOutput(new OutputHandlerEventArgs("MSE: " + cf.getMSE(testList)));
             }
-            catch (ArgumentException)
+            catch (ArgumentException e)
             {
 
+                p.OnOutput(new OutputHandlerEventArgs("e: " + e.Message));
             }
 
             if (p.tsvFile != null)

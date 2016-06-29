@@ -83,6 +83,7 @@
     <Compile Include="CalibrationFunctions\IdentityCalibrationFunction.cs" />
     <Compile Include="CalibrationFunctions\KDTree.cs" />
     <Compile Include="CalibrationFunctions\KDTreeCalibrationFunction.cs" />
+    <Compile Include="CalibrationFunctions\LinearCalibrationFunctionMathNet.cs" />
     <Compile Include="CalibrationFunctions\LinearCalibrationFunction.cs" />
     <Compile Include="CalibrationFunctions\MedianCalibrationFunction.cs" />
     <Compile Include="CalibrationFunctions\QuadraticCalibrationFunction.cs" />

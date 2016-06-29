@@ -17,13 +17,9 @@ namespace SoftwareLockMassGUI
         public MyGUI()
         {
             InitializeComponent();
-
             SoftwareLockMassIO.IO.Load();
-
             dataGridView1.DataSource = myListOfEntries;
-
             dataGridView1.Columns[3].Visible = false;
-
         }
 
         private void buttonAddFiles_Click(object sender, EventArgs e)
@@ -106,6 +102,7 @@ namespace SoftwareLockMassGUI
                 var theExtension = Path.GetExtension(filepath);
                 var pathNoExtension = Path.GetFileNameWithoutExtension(filepath);
                 var foundOne = false;
+                AnEntry aa = null;
                 foreach (AnEntry a in myListOfEntries)
                 {
                     if (theExtension.Equals(".raw") || theExtension.Equals(".mzML"))
@@ -114,6 +111,7 @@ namespace SoftwareLockMassGUI
                         {
                             a.spectraFile = filepath;
                             foundOne = true;
+                            aa = a;
                             break;
                         }
                     }
@@ -123,6 +121,7 @@ namespace SoftwareLockMassGUI
                         {
                             a.mzidFile = filepath;
                             foundOne = true;
+                            aa = a;
                             break;
                         }
                     }
@@ -132,6 +131,7 @@ namespace SoftwareLockMassGUI
                         {
                             a.tsvFile = filepath;
                             foundOne = true;
+                            aa = a;
                             break;
                         }
                     }
@@ -150,6 +150,11 @@ namespace SoftwareLockMassGUI
                     {
                         myListOfEntries.Add(new AnEntry(null, null, filepath));
                     }
+                }
+                else
+                {
+                    myListOfEntries.Remove(aa);
+                    myListOfEntries.Add(aa);
                 }
             }
         }

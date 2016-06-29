@@ -43,12 +43,12 @@ namespace SoftwareLockMassIO
             a.getFormulaFromDictionary = getFormulaFromDictionary;
             a.identifications = new MzidIdentifications(mzidFile);
 
-            //a.MS1spectraToWatch.Add(1);
-            a.mzRange = new DoubleRange(-2, -1);
+            //a.MS1spectraToWatch.Add(11278);
+            //a.mzRange = new DoubleRange(1139, 1142);
 
             //a.MS2spectraToWatch.Add(2);
 
-            a.MS2spectraToWatch.Add(11279);
+            //a.MS2spectraToWatch.Add(11279);
             //a.MS2spectraToWatch.Add(2813);
             //a.MS2spectraToWatch.Add(11277);
             //a.MS2spectraToWatch.Add(11290);

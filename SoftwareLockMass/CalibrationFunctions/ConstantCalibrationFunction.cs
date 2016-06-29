@@ -24,7 +24,6 @@ namespace SoftwareLockMass
         {
             a = trainingList.Select(b => b.l).Average();
             onOutput(new OutputHandlerEventArgs("Sucessfully trained ConstantCalibrationFunction"));
-            onOutput(new OutputHandlerEventArgs("a = " + a));
         }
     }
 }
