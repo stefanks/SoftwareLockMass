@@ -1,5 +1,4 @@
-﻿using MathNet.Numerics.LinearAlgebra;
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.Linq;
 
@@ -12,7 +11,6 @@ namespace SoftwareLockMass
         private double[] CentroidTimefinal;
         private double[] errorAtClusterfinal;
         private Action<OutputHandlerEventArgs> onOutput;
-        //private int v;
 
         private double dist(double v1, double v2, int j, double[] CentroidMZdist, double[] CentroidTimedist)
         {
@@ -115,6 +113,7 @@ namespace SoftwareLockMass
                     //}
                 }
             }
+            onOutput(new OutputHandlerEventArgs("Sucessfully trained CalibrationFunctionClustering"));
         }
 
         public override double Predict(DataPoint t)

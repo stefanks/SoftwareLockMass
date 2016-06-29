@@ -1,5 +1,4 @@
 ﻿using MathNet.Numerics;
-using MathNet.Numerics.LinearAlgebra;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -73,6 +72,7 @@ namespace SoftwareLockMass
             Console.WriteLine(f(new double[] { 1, 3, 4 }));
 
 
+            onOutput(new OutputHandlerEventArgs("Sucessfully trained LinearCalibrationFunctionMathNet"));
         }
     }
 }
