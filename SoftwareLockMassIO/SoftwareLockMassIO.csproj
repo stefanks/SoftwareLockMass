@@ -39,8 +39,8 @@
     <StartupObject />
   </PropertyGroup>
   <ItemGroup>
-    <Reference Include="Chemistry, Version=1.0.111.0, Culture=neutral, processorArchitecture=AMD64">
-      <HintPath>..\packages\Chemistry.1.0.111\lib\net451\Chemistry.dll</HintPath>
+    <Reference Include="Chemistry, Version=1.0.113.0, Culture=neutral, processorArchitecture=AMD64">
+      <HintPath>..\packages\Chemistry.1.0.113\lib\net451\Chemistry.dll</HintPath>
       <Private>True</Private>
     </Reference>
     <Reference Include="MassSpectrometry, Version=1.0.88.0, Culture=neutral, processorArchitecture=AMD64">
@@ -59,8 +59,8 @@
       <HintPath>..\packages\MassSpecFiles.1.0.60\lib\MzML.dll</HintPath>
       <Private>True</Private>
     </Reference>
-    <Reference Include="Proteomics, Version=1.0.32.0, Culture=neutral, processorArchitecture=AMD64">
-      <HintPath>..\packages\Proteomics.1.0.32\lib\net451\Proteomics.dll</HintPath>
+    <Reference Include="Proteomics, Version=1.0.33.0, Culture=neutral, processorArchitecture=AMD64">
+      <HintPath>..\packages\Proteomics.1.0.33\lib\net451\Proteomics.dll</HintPath>
       <Private>True</Private>
     </Reference>
     <Reference Include="Spectra, Version=1.0.0.0, Culture=neutral, processorArchitecture=AMD64">
