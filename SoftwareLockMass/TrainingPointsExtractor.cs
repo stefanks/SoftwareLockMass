@@ -243,7 +243,7 @@ namespace SoftwareLockMass
                                 {
                                     p.OnWatch(new OutputHandlerEventArgs("      Found       " + closestPeakMZ + "   Error is    " + (closestPeakMZ - theMZ)));
                                 }
-                                trainingPointsToAverage.Add(new TrainingPoint(new DataPoint(closestPeakMZ, ms2DataScan.RetentionTime), closestPeakMZ - theMZ));
+                                trainingPointsToAverage.Add(new TrainingPoint(new DataPoint(closestPeakMZ, ms2DataScan.RetentionTime, 2), closestPeakMZ - theMZ));
                             }
                             else
                                 break;
@@ -269,7 +269,7 @@ namespace SoftwareLockMass
 
                             countForThisMS2 += trainingPointsToAverage.Count;
                             countForThisMS2a += 1;
-                            var a = new TrainingPoint(new DataPoint(trainingPointsToAverage.Select(b => b.dp.mz).Average(), trainingPointsToAverage.Select(b => b.dp.rt).Average()), trainingPointsToAverage.Select(b => b.l).Median());
+                            var a = new TrainingPoint(new DataPoint(trainingPointsToAverage.Select(b => b.dp.mz).Average(), trainingPointsToAverage.Select(b => b.dp.rt).Average(), 2), trainingPointsToAverage.Select(b => b.l).Median());
 
                             if (p.MS2spectraToWatch.Contains(ms2spectrumIndex))
                             {
@@ -396,7 +396,7 @@ namespace SoftwareLockMass
                             {
                                 p.OnWatch(new OutputHandlerEventArgs("      Found       " + closestPeakMZ + "   Error is    " + (closestPeakMZ - theMZ)));
                             }
-                            trainingPointsToAverage.Add(new TrainingPoint(new DataPoint(closestPeakMZ, fullMS1scan.RetentionTime), closestPeakMZ - theMZ));
+                            trainingPointsToAverage.Add(new TrainingPoint(new DataPoint(closestPeakMZ, fullMS1scan.RetentionTime, 1), closestPeakMZ - theMZ));
                         }
                         else
                             break;
@@ -416,7 +416,7 @@ namespace SoftwareLockMass
                         addedAscan = true;
                         startingToAddCharges = true;
                         countForThisScan += 1;
-                        var a = new TrainingPoint(new DataPoint(trainingPointsToAverage.Select(b => b.dp.mz).Average(), trainingPointsToAverage.Select(b => b.dp.rt).Average()), trainingPointsToAverage.Select(b => b.l).Median());
+                        var a = new TrainingPoint(new DataPoint(trainingPointsToAverage.Select(b => b.dp.mz).Average(), trainingPointsToAverage.Select(b => b.dp.rt).Average(), 1), trainingPointsToAverage.Select(b => b.l).Median());
 
                         if (p.MS2spectraToWatch.Contains(ms2spectrumIndex) || p.MS1spectraToWatch.Contains(theIndex))
                         {

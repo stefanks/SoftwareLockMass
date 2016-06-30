@@ -46,7 +46,7 @@ namespace SoftwareLockMass
                         double theoreticalMass = Convert.ToDouble(parts[17]);
 
 
-                        precursorMZ -= cf.Predict(new DataPoint(precursorMZ, precursorRT));
+                        precursorMZ -= cf.Predict(new DataPoint(precursorMZ, precursorRT, 1));
                         precursorMass = precursorMZ.ToMass(precursorCharge);
                         precursorMassErrorDA = precursorMass - theoreticalMass;
                         precursorMassErrorppm = precursorMassErrorDA / theoreticalMass * 1e6;
@@ -80,7 +80,7 @@ namespace SoftwareLockMass
                     var mzs = p.myMsDataFile.GetScan(i + 1).MassSpectrum.newSpectrumExtract(p.mzRange);
                     p.OnWatch(new OutputHandlerEventArgs(string.Join(", ", mzs)));
                 }
-                calibratedSpectra.Add(p.myMsDataFile.GetScan(i + 1).MassSpectrum.newSpectrumApplyFunctionToX(s => s - cf.Predict(new DataPoint(s, p.myMsDataFile.GetScan(i + 1).RetentionTime))));
+                calibratedSpectra.Add(p.myMsDataFile.GetScan(i + 1).MassSpectrum.newSpectrumApplyFunctionToX(s => s - cf.Predict(new DataPoint(s, p.myMsDataFile.GetScan(i + 1).RetentionTime, p.myMsDataFile.GetScan(i + 1).MsnOrder))));
                 if (p.MS1spectraToWatch.Contains(i + 1) || p.MS2spectraToWatch.Contains(i + 1))
                 {
                     p.OnWatch(new OutputHandlerEventArgs("After calibration of spectrum " + (i + 1)));
@@ -112,7 +112,7 @@ namespace SoftwareLockMass
                 {
                     double selectedIonGuessMZ;
                     p.myMsDataFile.GetScan(i + 1).TryGetSelectedIonGuessMZ(out selectedIonGuessMZ);
-                    newMZ = selectedIonGuessMZ - cf.Predict(new DataPoint(selectedIonGuessMZ, precursorTime));
+                    newMZ = selectedIonGuessMZ - cf.Predict(new DataPoint(selectedIonGuessMZ, precursorTime, 1));
                 }
                 calibratedPrecursorMZs.Add(newMZ);
             }

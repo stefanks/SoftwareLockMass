@@ -23,10 +23,10 @@ namespace Test
         public void TestQuadraticCalibration()
         {
             List<TrainingPoint> trainingList = new List<TrainingPoint>();
-            trainingList.Add(new TrainingPoint(new DataPoint(600, 1), 0));
-            trainingList.Add(new TrainingPoint(new DataPoint(500, 1), 0));
-            trainingList.Add(new TrainingPoint(new DataPoint(400, 1), 0));
-            trainingList.Add(new TrainingPoint(new DataPoint(300, 1), 0));
+            trainingList.Add(new TrainingPoint(new DataPoint(600, 1, 1), 0));
+            trainingList.Add(new TrainingPoint(new DataPoint(500, 1, 1), 0));
+            trainingList.Add(new TrainingPoint(new DataPoint(400, 1, 1), 0));
+            trainingList.Add(new TrainingPoint(new DataPoint(300, 1, 1), 0));
             Assert.Throws<ArgumentException>(() => { new QuadraticCalibrationFunction(OnOutput, trainingList); }, "Not enough training points for Quadratic calibration function.Need at least 6, but have 5");
         }
 
@@ -34,10 +34,10 @@ namespace Test
         public void TesLinearCalibrationOK()
         {
             List<TrainingPoint> trainingList = new List<TrainingPoint>();
-            trainingList.Add(new TrainingPoint(new DataPoint(134, 13251), 4130));
-            trainingList.Add(new TrainingPoint(new DataPoint(5132400, 43211), 12350));
-            trainingList.Add(new TrainingPoint(new DataPoint(4413200, 1314), 65430));
-            trainingList.Add(new TrainingPoint(new DataPoint(302450, 451), 26));
+            trainingList.Add(new TrainingPoint(new DataPoint(134, 13251, 1), 4130));
+            trainingList.Add(new TrainingPoint(new DataPoint(5132400, 43211, 1), 12350));
+            trainingList.Add(new TrainingPoint(new DataPoint(4413200, 1314, 1), 65430));
+            trainingList.Add(new TrainingPoint(new DataPoint(302450, 451, 1), 26));
             LinearCalibrationFunction cf = new LinearCalibrationFunction(OnOutput, trainingList);
         }
 
@@ -60,10 +60,10 @@ namespace Test
         {
 
             List<TrainingPoint> trainingList = new List<TrainingPoint>();
-            trainingList.Add(new TrainingPoint(new DataPoint(600, 1), 0));
-            trainingList.Add(new TrainingPoint(new DataPoint(500, 1), 0));
-            trainingList.Add(new TrainingPoint(new DataPoint(400, 1), 0));
-            trainingList.Add(new TrainingPoint(new DataPoint(300, 1), 0));
+            trainingList.Add(new TrainingPoint(new DataPoint(600, 1, 1), 0));
+            trainingList.Add(new TrainingPoint(new DataPoint(500, 1, 1), 0));
+            trainingList.Add(new TrainingPoint(new DataPoint(400, 1, 1), 0));
+            trainingList.Add(new TrainingPoint(new DataPoint(300, 1, 1), 0));
             Assert.Throws<ArgumentException>(() => { new LinearCalibrationFunction(OnOutput, trainingList); }, "Could not train LinearCalibrationFunction, data might be low rank");
 
         }
@@ -73,17 +73,17 @@ namespace Test
         public void TestMathNetLinear()
         {
             List<TrainingPoint> trainingList = new List<TrainingPoint>();
-            trainingList.Add(new TrainingPoint(new DataPoint(1, 2), 40));
-            trainingList.Add(new TrainingPoint(new DataPoint(11, 2), 10));
-            trainingList.Add(new TrainingPoint(new DataPoint(430, 11), 540));
-            trainingList.Add(new TrainingPoint(new DataPoint(3400, 151), 130));
-            trainingList.Add(new TrainingPoint(new DataPoint(23451, 342), 4013));
-            trainingList.Add(new TrainingPoint(new DataPoint(13411, 162), 410));
-            trainingList.Add(new TrainingPoint(new DataPoint(4614330, 1311), 5540));
-            trainingList.Add(new TrainingPoint(new DataPoint(3411300, 41151), 1630));
+            trainingList.Add(new TrainingPoint(new DataPoint(1, 2, 1), 40));
+            trainingList.Add(new TrainingPoint(new DataPoint(11, 2, 1), 10));
+            trainingList.Add(new TrainingPoint(new DataPoint(430, 11, 1), 540));
+            trainingList.Add(new TrainingPoint(new DataPoint(3400, 151, 1), 130));
+            trainingList.Add(new TrainingPoint(new DataPoint(23451, 342, 1), 4013));
+            trainingList.Add(new TrainingPoint(new DataPoint(13411, 162, 1), 410));
+            trainingList.Add(new TrainingPoint(new DataPoint(4614330, 1311, 1), 5540));
+            trainingList.Add(new TrainingPoint(new DataPoint(3411300, 41151, 1), 1630));
             new LinearCalibrationFunctionMathNet(OnOutput, trainingList);
             var a = new LinearCalibrationFunction(OnOutput, trainingList);
-            Console.WriteLine("My linear prediction: " + a.Predict(new DataPoint(3, 4)));
+            Console.WriteLine("My linear prediction: " + a.Predict(new DataPoint(3, 4, 1)));
         }
 
         event EventHandler<OutputHandlerEventArgs> outputHandler;
