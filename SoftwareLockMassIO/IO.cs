@@ -13,8 +13,8 @@ namespace SoftwareLockMassIO
 {
     public static class IO
     {
-        public static UsefulProteomicsDatabases.unimod unimodDeserialized;
-        public static UsefulProteomicsDatabases.obo psimodDeserialized;
+        public static UsefulProteomicsDatabases.Generated.unimod unimodDeserialized;
+        public static UsefulProteomicsDatabases.Generated.obo psimodDeserialized;
         public static Dictionary<int, ChemicalFormulaModification> uniprotDeseralized;
 
         public static string unimodLocation = @"unimod_tables.xml";
@@ -27,10 +27,9 @@ namespace SoftwareLockMassIO
             return Convert.ToInt32(Regex.Match(s, @"\d+$").Value);
         }
 
-        public static SoftwareLockMassParams GetReady(string origDataFile, EventHandler<OutputHandlerEventArgs> p_outputHandler, EventHandler<ProgressHandlerEventArgs> p_progressHandler, EventHandler<OutputHandlerEventArgs> p_watchHandler, string mzidFile, double intensityCutoff, double toleranceInMZforSearch)
+        public static SoftwareLockMassParams GetReady(string origDataFile, EventHandler<OutputHandlerEventArgs> p_outputHandler, EventHandler<ProgressHandlerEventArgs> p_progressHandler, EventHandler<OutputHandlerEventArgs> p_watchHandler, string mzidFile)
         {
-            IMsDataFile<IMzSpectrum<MzPeak, MzRange>> myMsDataFile;
-            // Console.WriteLine(Path.GetExtension(origDataFile));
+            IMsDataFile<IMzSpectrum<MzPeak>> myMsDataFile;
             if (Path.GetExtension(origDataFile).Equals(".mzML"))
                 myMsDataFile = new Mzml(origDataFile);
             else
@@ -43,33 +42,34 @@ namespace SoftwareLockMassIO
             a.getFormulaFromDictionary = getFormulaFromDictionary;
             a.identifications = new MzidIdentifications(mzidFile);
 
-            //a.MS1spectraToWatch.Add(1);
-            a.mzRange = new DoubleRange(-2, -1);
-            a.MS2spectraToWatch.Add(11279);
-            a.MS2spectraToWatch.Add(2813);
-            a.MS2spectraToWatch.Add(11277);
-            a.MS2spectraToWatch.Add(11290);
-            a.MS2spectraToWatch.Add(2806);
-            a.MS2spectraToWatch.Add(11357);
-            a.MS2spectraToWatch.Add(11296);
-            a.MS2spectraToWatch.Add(11359);
-            a.MS2spectraToWatch.Add(11188);
-            a.MS2spectraToWatch.Add(5669);
-            a.MS2spectraToWatch.Add(11324);
-            a.MS2spectraToWatch.Add(11285);
-            a.MS2spectraToWatch.Add(11283);
-            a.MS2spectraToWatch.Add(3181);
-            a.MS2spectraToWatch.Add(4047);
-            a.MS2spectraToWatch.Add(4053);
-            a.MS2spectraToWatch.Add(5388);
-            a.MS2spectraToWatch.Add(3194);
-            a.MS2spectraToWatch.Add(3766);
-            a.MS2spectraToWatch.Add(3842);
-            a.MS2spectraToWatch.Add(3849);
-            a.MS2spectraToWatch.Add(11210);
-            a.MS2spectraToWatch.Add(5894);
+            //a.MS1spectraToWatch.Add(11278);
+            //a.mzRange = new DoubleRange(1139, 1142);
 
+            //a.MS2spectraToWatch.Add(2);
 
+            //a.MS2spectraToWatch.Add(11279);
+            //a.MS2spectraToWatch.Add(2813);
+            //a.MS2spectraToWatch.Add(11277);
+            //a.MS2spectraToWatch.Add(11290);
+            //a.MS2spectraToWatch.Add(2806);
+            //a.MS2spectraToWatch.Add(11357);
+            //a.MS2spectraToWatch.Add(11296);
+            //a.MS2spectraToWatch.Add(11359);
+            //a.MS2spectraToWatch.Add(11188);
+            //a.MS2spectraToWatch.Add(5669);
+            //a.MS2spectraToWatch.Add(11324);
+            //a.MS2spectraToWatch.Add(11285);
+            //a.MS2spectraToWatch.Add(11283);
+            //a.MS2spectraToWatch.Add(3181);
+            //a.MS2spectraToWatch.Add(4047);
+            //a.MS2spectraToWatch.Add(4053);
+            //a.MS2spectraToWatch.Add(5388);
+            //a.MS2spectraToWatch.Add(3194);
+            //a.MS2spectraToWatch.Add(3766);
+            //a.MS2spectraToWatch.Add(3842);
+            //a.MS2spectraToWatch.Add(3849);
+            //a.MS2spectraToWatch.Add(11210);
+            //a.MS2spectraToWatch.Add(5894);
 
             return a;
         }
@@ -96,7 +96,7 @@ namespace SoftwareLockMassIO
             else if (dictionary == "PSI-MOD")
             {
                 string psimodAcession = acession;
-                UsefulProteomicsDatabases.oboTerm ksadklfj = (UsefulProteomicsDatabases.oboTerm)psimodDeserialized.Items[GetLastNumberFromString(psimodAcession) + 2];
+                UsefulProteomicsDatabases.Generated.oboTerm ksadklfj = (UsefulProteomicsDatabases.Generated.oboTerm)psimodDeserialized.Items[GetLastNumberFromString(psimodAcession) + 2];
 
                 if (GetLastNumberFromString(psimodAcession) != GetLastNumberFromString(ksadklfj.id))
                     throw new Exception("Error in reading psi-mod file, acession mismatch!");
@@ -116,7 +116,7 @@ namespace SoftwareLockMassIO
                 throw new Exception("Not familiar with modification dictionary " + dictionary);
         }
 
-        public static void MzmlOutput(SoftwareLockMassParams p, List<IMzSpectrum<MzPeak, MzRange>> calibratedSpectra, List<double> calibratedPrecursorMZs)
+        public static void MzmlOutput(SoftwareLockMassParams p, List<IMzSpectrum<MzPeak>> calibratedSpectra, List<double> calibratedPrecursorMZs)
         {
             p.OnOutput(new OutputHandlerEventArgs("Creating _indexedmzMLConnection, and putting data in it"));
             MzmlMethods.CreateAndWriteMyIndexedMZmlwithCalibratedSpectra(p.myMsDataFile, calibratedSpectra, calibratedPrecursorMZs, Path.Combine(Path.GetDirectoryName(p.myMsDataFile.FilePath), Path.GetFileNameWithoutExtension(p.myMsDataFile.FilePath) + "-Calibrated.mzML"));

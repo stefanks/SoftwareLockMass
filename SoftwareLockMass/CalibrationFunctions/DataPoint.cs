@@ -6,10 +6,12 @@ namespace SoftwareLockMass
     {
         public double mz;
         public double rt;
-        public DataPoint(double _mz, double _rt)
+        public int msnOrder;
+        public DataPoint(double mz, double rt, int msnOrder)
         {
-            mz = _mz;
-            rt = _rt;
+            this.mz = mz;
+            this.rt = rt;
+            this.msnOrder = msnOrder;
         }
 
         internal double[] ToDoubleArrayWithIntercept()

@@ -15,9 +15,6 @@ namespace SoftwareLockMass
         // Parameter for isotopolouge distribution searching
         public double fineResolution = 0.1;
 
-        // 10 is a good number. Lower would be faster!
-        public int numIsotopologuesToConsider = 10;
-        
         #endregion
 
         public event EventHandler<OutputHandlerEventArgs> outputHandler;
@@ -26,12 +23,12 @@ namespace SoftwareLockMass
 
         public HashSet<int> MS2spectraToWatch;
         public HashSet<int> MS1spectraToWatch;
-        public IRange<double> mzRange;
+        public DoubleRange mzRange;
 
-        public IMsDataFile<IMzSpectrum<MzPeak, MzRange>> myMsDataFile;
+        public IMsDataFile<IMzSpectrum<MzPeak>> myMsDataFile;
         public Identifications identifications;
 
-        public delegate void PostProcessing(SoftwareLockMassParams p, List<IMzSpectrum<MzPeak, MzRange>> calibratedSpectra, List<double> calibratedPrecursorMZs);
+        public delegate void PostProcessing(SoftwareLockMassParams p, List<IMzSpectrum<MzPeak>> calibratedSpectra, List<double> calibratedPrecursorMZs);
         public PostProcessing postProcessing;
 
         public delegate string GetFormulaFromDictionary(string dictionary, string acession);
@@ -41,7 +38,7 @@ namespace SoftwareLockMass
 
         #region Constructors
 
-        public SoftwareLockMassParams(IMsDataFile<IMzSpectrum<MzPeak, MzRange>> myMsDataFile)
+        public SoftwareLockMassParams(IMsDataFile<IMzSpectrum<MzPeak>> myMsDataFile)
         {
             this.myMsDataFile = myMsDataFile;
             MS1spectraToWatch = new HashSet<int>();

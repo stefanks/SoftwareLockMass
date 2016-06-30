@@ -14,19 +14,12 @@ namespace SoftwareLockMassGUI
     {
         private BindingList<AnEntry> myListOfEntries = new BindingList<AnEntry>(new List<AnEntry>());
 
-        readonly double intensityCutoff = 1e3;
-        readonly double toleranceInMZforSearch = 0.01;
-
         public MyGUI()
         {
             InitializeComponent();
-
             SoftwareLockMassIO.IO.Load();
-
             dataGridView1.DataSource = myListOfEntries;
-
             dataGridView1.Columns[3].Visible = false;
-
         }
 
         private void buttonAddFiles_Click(object sender, EventArgs e)
@@ -46,13 +39,12 @@ namespace SoftwareLockMassGUI
         {
             Parallel.ForEach(myListOfEntries, (anEntry) =>
              {
-                 SoftwareLockMassParams a = SoftwareLockMassIO.IO.GetReady(anEntry.spectraFile, P_outputHandler, P_progressHandler, P_watchHandler, anEntry.mzidFile, intensityCutoff, toleranceInMZforSearch);
+                 SoftwareLockMassParams a = SoftwareLockMassIO.IO.GetReady(anEntry.spectraFile, P_outputHandler, P_progressHandler, P_watchHandler, anEntry.mzidFile);
 
                  if (checkBox1.Checked)
                      a.tsvFile = anEntry.tsvFile;
                  if (!checkBox2.Checked)
                      a.calibrateSpectra = false;
-
                  var t = new Thread(() => SoftwareLockMassRunner.Run(a));
                  t.IsBackground = true;
                  t.Start();
@@ -109,6 +101,7 @@ namespace SoftwareLockMassGUI
                 var theExtension = Path.GetExtension(filepath);
                 var pathNoExtension = Path.GetFileNameWithoutExtension(filepath);
                 var foundOne = false;
+                AnEntry aa = null;
                 foreach (AnEntry a in myListOfEntries)
                 {
                     if (theExtension.Equals(".raw") || theExtension.Equals(".mzML"))
@@ -117,6 +110,7 @@ namespace SoftwareLockMassGUI
                         {
                             a.spectraFile = filepath;
                             foundOne = true;
+                            aa = a;
                             break;
                         }
                     }
@@ -126,6 +120,7 @@ namespace SoftwareLockMassGUI
                         {
                             a.mzidFile = filepath;
                             foundOne = true;
+                            aa = a;
                             break;
                         }
                     }
@@ -135,6 +130,7 @@ namespace SoftwareLockMassGUI
                         {
                             a.tsvFile = filepath;
                             foundOne = true;
+                            aa = a;
                             break;
                         }
                     }
@@ -153,6 +149,11 @@ namespace SoftwareLockMassGUI
                     {
                         myListOfEntries.Add(new AnEntry(null, null, filepath));
                     }
+                }
+                else
+                {
+                    myListOfEntries.Remove(aa);
+                    myListOfEntries.Add(aa);
                 }
             }
         }

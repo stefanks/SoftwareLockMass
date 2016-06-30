@@ -13,6 +13,7 @@ namespace SoftwareLockMass
             p.OnOutput(new OutputHandlerEventArgs("Welcome to my software lock mass implementation"));
             p.OnOutput(new OutputHandlerEventArgs("Calibrating " + Path.GetFileName(p.myMsDataFile.FilePath)));
 
+            p.OnOutput(new OutputHandlerEventArgs("Opening file:"));
             p.myMsDataFile.Open();
 
             p.OnOutput(new OutputHandlerEventArgs("Getting Training Points"));
@@ -24,7 +25,7 @@ namespace SoftwareLockMass
             var rnd = new Random();
             var shuffledTrainingPoints = trainingPoints.OrderBy(item => rnd.Next());
 
-            //var trainList = shuffledTrainingPoints.Take(trainingPoints.Count * 3 / 4);
+            var trainList = shuffledTrainingPoints.Take(trainingPoints.Count * 3 / 4);
             var testList = shuffledTrainingPoints.Skip(trainingPoints.Count * 3 / 4);
 
             p.OnOutput(new OutputHandlerEventArgs("Train the calibration model"));
@@ -32,20 +33,23 @@ namespace SoftwareLockMass
             p.OnOutput(new OutputHandlerEventArgs("MSE: " + cf.getMSE(testList)));
             try
             {
-                cf = new ConstantCalibrationFunction(p.OnOutput, trainingPoints);
+                cf = new ConstantCalibrationFunction(p.OnOutput, trainList);
                 p.OnOutput(new OutputHandlerEventArgs("MSE: " + cf.getMSE(testList)));
-                cf = new LinearCalibrationFunction(p.OnOutput, trainingPoints);
+                cf = new LinearCalibrationFunction(p.OnOutput, trainList);
                 p.OnOutput(new OutputHandlerEventArgs("MSE: " + cf.getMSE(testList)));
-                cf = new QuadraticCalibrationFunction(p.OnOutput, trainingPoints);
+                cf = new QuadraticCalibrationFunction(p.OnOutput, trainList);
                 p.OnOutput(new OutputHandlerEventArgs("MSE: " + cf.getMSE(testList)));
-                cf = new CubicCalibrationFunction(p.OnOutput, trainingPoints);
+                cf = new CubicCalibrationFunction(p.OnOutput, trainList);
                 p.OnOutput(new OutputHandlerEventArgs("MSE: " + cf.getMSE(testList)));
-                cf = new QuarticCalibrationFunction(p.OnOutput, trainingPoints);
+                cf = new QuarticCalibrationFunction(p.OnOutput, trainList);
                 p.OnOutput(new OutputHandlerEventArgs("MSE: " + cf.getMSE(testList)));
+                //cf = new CalibrationFunctionClustering(p.OnOutput, 2, trainList);
+                //p.OnOutput(new OutputHandlerEventArgs("MSE: " + cf.getMSE(testList)));
             }
-            catch (ArgumentException)
+            catch (ArgumentException e)
             {
 
+                p.OnOutput(new OutputHandlerEventArgs("e: " + e.Message));
             }
 
             if (p.tsvFile != null)
@@ -54,7 +58,7 @@ namespace SoftwareLockMass
                 Calibrators.CalibrateTSV(cf, p);
             }
             p.OnOutput(new OutputHandlerEventArgs("Calibrating Spectra"));
-            List<IMzSpectrum<MzPeak, MzRange>> calibratedSpectra = Calibrators.CalibrateSpectra(cf, p);
+            List<IMzSpectrum<MzPeak>> calibratedSpectra = Calibrators.CalibrateSpectra(cf, p);
             p.OnOutput(new OutputHandlerEventArgs("Calibrating Precursor MZs"));
             List<double> calibratedPrecursorMZs = Calibrators.CalibratePrecursorMZs(cf, p);
 
