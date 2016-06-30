@@ -13,6 +13,7 @@ namespace SoftwareLockMass
             p.OnOutput(new OutputHandlerEventArgs("Welcome to my software lock mass implementation"));
             p.OnOutput(new OutputHandlerEventArgs("Calibrating " + Path.GetFileName(p.myMsDataFile.FilePath)));
 
+            p.OnOutput(new OutputHandlerEventArgs("Opening file:"));
             p.myMsDataFile.Open();
 
             p.OnOutput(new OutputHandlerEventArgs("Getting Training Points"));
@@ -57,7 +58,7 @@ namespace SoftwareLockMass
                 Calibrators.CalibrateTSV(cf, p);
             }
             p.OnOutput(new OutputHandlerEventArgs("Calibrating Spectra"));
-            List<IMzSpectrum<MzPeak, MzRange>> calibratedSpectra = Calibrators.CalibrateSpectra(cf, p);
+            List<IMzSpectrum<MzPeak>> calibratedSpectra = Calibrators.CalibrateSpectra(cf, p);
             p.OnOutput(new OutputHandlerEventArgs("Calibrating Precursor MZs"));
             List<double> calibratedPrecursorMZs = Calibrators.CalibratePrecursorMZs(cf, p);
 

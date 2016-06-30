@@ -12,7 +12,7 @@ namespace SoftwareLockMass
     class TrainingPointsExtractor
     {
         private static double toleranceInMZforSearch = 0;
-        public static List<TrainingPoint> GetTrainingPoints(IMsDataFile<IMzSpectrum<MzPeak, MzRange>> myMsDataFile, Identifications identifications, SoftwareLockMassParams p)
+        public static List<TrainingPoint> GetTrainingPoints(IMsDataFile<IMzSpectrum<MzPeak>> myMsDataFile, Identifications identifications, SoftwareLockMassParams p)
         {
             // The final training point list
             List<TrainingPoint> trainingPointsToReturn = new List<TrainingPoint>();
@@ -97,9 +97,9 @@ namespace SoftwareLockMass
             return false;
         }
 
-        private static int SearchMS2Spectrum(IMsDataScan<IMzSpectrum<MzPeak, MzRange>> ms2DataScan, Peptide peptide, int peptideCharge, List<TrainingPoint> myCandidatePoints, SoftwareLockMassParams p)
+        private static int SearchMS2Spectrum(IMsDataScan<IMzSpectrum<MzPeak>> ms2DataScan, Peptide peptide, int peptideCharge, List<TrainingPoint> myCandidatePoints, SoftwareLockMassParams p)
         {
-            int ms2spectrumIndex = ms2DataScan.SpectrumNumber;
+            int ms2spectrumIndex = ms2DataScan.ScanNumber;
 
             var countForThisMS2 = 0;
             var countForThisMS2a = 0;
@@ -335,7 +335,7 @@ namespace SoftwareLockMass
             return tolerance * 2;
         }
 
-        private static List<int> SearchMS1Spectra(IMsDataFile<IMzSpectrum<MzPeak, MzRange>> myMsDataFile, double[] originalMasses, double[] originalIntensities, List<TrainingPoint> myCandidatePoints, int ms2spectrumIndex, int direction, HashSet<Tuple<double, double>> peaksAddedHashSet, SoftwareLockMassParams p, int peptideCharge)
+        private static List<int> SearchMS1Spectra(IMsDataFile<IMzSpectrum<MzPeak>> myMsDataFile, double[] originalMasses, double[] originalIntensities, List<TrainingPoint> myCandidatePoints, int ms2spectrumIndex, int direction, HashSet<Tuple<double, double>> peaksAddedHashSet, SoftwareLockMassParams p, int peptideCharge)
         {
             List<int> scores = new List<int>();
             var theIndex = -1;

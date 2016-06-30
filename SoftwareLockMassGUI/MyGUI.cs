@@ -45,7 +45,6 @@ namespace SoftwareLockMassGUI
                      a.tsvFile = anEntry.tsvFile;
                  if (!checkBox2.Checked)
                      a.calibrateSpectra = false;
-
                  var t = new Thread(() => SoftwareLockMassRunner.Run(a));
                  t.IsBackground = true;
                  t.Start();

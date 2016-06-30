@@ -9,13 +9,13 @@ namespace SoftwareLockMassIO
 {
     public class MzidIdentifications : Identifications
     {
-        private mzIdentML.MzIdentMLType dd;
+        private mzIdentML.Generated.MzIdentMLType dd;
         public MzidIdentifications(string mzidFile)
         {
-            XmlSerializer _indexedSerializer = new XmlSerializer(typeof(mzIdentML.MzIdentMLType));
+            XmlSerializer _indexedSerializer = new XmlSerializer(typeof(mzIdentML.Generated.MzIdentMLType));
             Stream stream = new FileStream(mzidFile, FileMode.Open);
             // Read the XML file into the variable
-            dd = _indexedSerializer.Deserialize(stream) as mzIdentML.MzIdentMLType;
+            dd = _indexedSerializer.Deserialize(stream) as mzIdentML.Generated.MzIdentMLType;
         }
 
         public double calculatedMassToCharge(int matchIndex)
