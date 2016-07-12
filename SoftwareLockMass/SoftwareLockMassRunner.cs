@@ -158,6 +158,25 @@ namespace SoftwareLockMass
                     bestCf = cf;
                 }
 
+                cf = new SixthCalibrationFunction(p.OnOutput, trainList);
+                mse = cf.getMSE(testList);
+                p.OnOutput(new OutputHandlerEventArgs("MSE Sixth: " + mse));
+                if (mse < bestMSE)
+                {
+                    bestMSE = mse;
+                    bestCf = cf;
+                }
+
+                cf = new SeparateCalibrationFunction(new SixthCalibrationFunction(p.OnOutput, trainList1), new SixthCalibrationFunction(p.OnOutput, trainList2));
+
+                mse = cf.getMSE(testList);
+                p.OnOutput(new OutputHandlerEventArgs("MSE Sixth separate: " + mse));
+                if (mse < bestMSE)
+                {
+                    bestMSE = mse;
+                    bestCf = cf;
+                }
+
                 cf = new KDTreeCalibrationFunction(p.OnOutput, trainList);
                 mse = cf.getMSE(testList);
                 p.OnOutput(new OutputHandlerEventArgs("MSE KD Tree: " + mse));

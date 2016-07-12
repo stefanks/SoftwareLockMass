@@ -80,6 +80,7 @@
     <Compile Include="CalibrationFunctions\ConstantCalibrationFunction.cs" />
     <Compile Include="CalibrationFunctions\CubicCalibrationFunction.cs" />
     <Compile Include="CalibrationFunctions\DataPoint.cs" />
+    <Compile Include="CalibrationFunctions\SixthCalibrationFunction.cs" />
     <Compile Include="CalibrationFunctions\IdentityCalibrationFunction.cs" />
     <Compile Include="CalibrationFunctions\KDTree.cs" />
     <Compile Include="CalibrationFunctions\KDTreeCalibrationFunction.cs" />
