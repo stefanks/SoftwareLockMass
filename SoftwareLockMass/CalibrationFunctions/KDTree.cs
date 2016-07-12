@@ -9,7 +9,7 @@ namespace SoftwareLockMass.CalibrationFunctions
 {
     class KDTree
     {
-        private List<TrainingPoint> trainingList;
+        private IEnumerable<TrainingPoint> trainingList;
         private double splitValue;
         private KDTree leftChild = null;
         private KDTree rightChild = null;
@@ -17,7 +17,7 @@ namespace SoftwareLockMass.CalibrationFunctions
         private Func<DataPoint, bool> functionToSeparateLeft;
         private Func<DataPoint, bool> functionToSeparateRight;
 
-        public KDTree(Action<OutputHandlerEventArgs> onOutput, List<TrainingPoint> trainingList, int depth = 0, bool parentHadOneChild = false)
+        public KDTree(Action<OutputHandlerEventArgs> onOutput, IEnumerable<TrainingPoint> trainingList, int depth = 0, bool parentHadOneChild = false)
         {
             this.trainingList = trainingList;
 
@@ -32,7 +32,7 @@ namespace SoftwareLockMass.CalibrationFunctions
 
             functionToSeparateLeft = b => separatingFunction(b) < splitValue;
             functionToSeparateRight = b => separatingFunction(b) >= splitValue;
-            
+
             List<TrainingPoint> left = trainingList.Where(c => functionToSeparateLeft(c.dp)).ToList();
             List<TrainingPoint> right = trainingList.Where(c => functionToSeparateRight(c.dp)).ToList();
 
@@ -44,8 +44,8 @@ namespace SoftwareLockMass.CalibrationFunctions
                     rightChild = new KDTree(onOutput, right, depth + 1, left.Count() == 0);
             }
 
-            if (depth  <5)
-                onOutput(new OutputHandlerEventArgs("depth = " + depth + " left.Count()  " + left.Count() + " right.Count() " + right.Count() + " median " + splitValue));
+            //if (depth < 5)
+            //    onOutput(new OutputHandlerEventArgs("depth = " + depth + " left.Count()  " + left.Count() + " right.Count() " + right.Count() + " median " + splitValue));
         }
 
         internal double GetFirstLabel()

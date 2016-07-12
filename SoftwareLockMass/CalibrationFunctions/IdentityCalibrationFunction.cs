@@ -5,7 +5,7 @@ using System.Linq;
 
 namespace SoftwareLockMass
 {
-    internal class IdentityCalibrationFunction : CalibrationFunction
+    public class IdentityCalibrationFunction : CalibrationFunction
     {
         private Action<OutputHandlerEventArgs> onOutput;
 

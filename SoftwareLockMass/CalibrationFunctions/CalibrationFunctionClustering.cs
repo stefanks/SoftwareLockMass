@@ -18,7 +18,7 @@ namespace SoftwareLockMass
         }
 
 
-        public CalibrationFunctionClustering(Action<OutputHandlerEventArgs> onOutput, int numClusters, IEnumerable<TrainingPoint> trainingList)
+        public CalibrationFunctionClustering(Action<OutputHandlerEventArgs> onOutput, IEnumerable<TrainingPoint> trainingList,int numClusters )
         {
             this.onOutput = onOutput;
             this.numClusters = numClusters;

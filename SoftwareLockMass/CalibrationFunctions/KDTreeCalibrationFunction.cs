@@ -11,20 +11,11 @@ namespace SoftwareLockMass
     {
         KDTree kdTree;
         private Action<OutputHandlerEventArgs> onOutput;
-
-        public KDTreeCalibrationFunction()
-        {
-        }
-
-        public KDTreeCalibrationFunction(Action<OutputHandlerEventArgs> onOutput)
-        {
-            this.onOutput = onOutput;
-        }
-
-        public void Train(List<TrainingPoint> trainingList)
+        
+        public KDTreeCalibrationFunction(Action<OutputHandlerEventArgs> onOutput, IEnumerable<TrainingPoint> trainingList)
         {
             kdTree = new KDTree(onOutput, trainingList);
-            onOutput(new OutputHandlerEventArgs("Finished Generating Tree"));
+            this.onOutput = onOutput;
         }
         
         public override double Predict(DataPoint t)

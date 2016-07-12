@@ -61,7 +61,6 @@ namespace SoftwareLockMass
         {
             watchHandler?.Invoke(this, e);
         }
-
     }
 
     public class OutputHandlerEventArgs : EventArgs

@@ -11,6 +11,7 @@ namespace SoftwareLockMass
         private double b;
         private double c;
         private Action<OutputHandlerEventArgs> onOutput;
+        
 
         public LinearCalibrationFunction(Action<OutputHandlerEventArgs> onOutput, IEnumerable<TrainingPoint> trainingList)
         {
@@ -23,7 +24,7 @@ namespace SoftwareLockMass
             return a + b * t.mz + c * t.rt;
         }
 
-        public void Train(IEnumerable<TrainingPoint> trainingList)
+        private void Train(IEnumerable<TrainingPoint> trainingList)
         {
 
             var M = Matrix<double>.Build;

@@ -37,5 +37,10 @@ namespace SoftwareLockMass
         {
             return "(" + mz + "," + rt + ")";
         }
+
+        internal double[] ToDoubleArrayWithInterceptAndSquaresAndCubesAndQuartsAndFifths()
+        {
+            return new double[21] { 1, mz, rt, Math.Pow(mz, 2), Math.Pow(rt, 2), mz * rt, Math.Pow(mz, 3), Math.Pow(mz, 2) * rt, mz * Math.Pow(rt, 2), Math.Pow(rt, 3), Math.Pow(mz, 4), Math.Pow(mz, 3) * rt, Math.Pow(mz, 2) * Math.Pow(rt, 2), mz * Math.Pow(rt, 3), Math.Pow(rt, 4), Math.Pow(mz, 5), Math.Pow(mz, 4) * rt, Math.Pow(mz, 3) * Math.Pow(rt, 2), Math.Pow(mz, 2) * Math.Pow(rt, 3), mz * Math.Pow(rt, 4), Math.Pow(rt, 5) };
+        }
     }
 }
