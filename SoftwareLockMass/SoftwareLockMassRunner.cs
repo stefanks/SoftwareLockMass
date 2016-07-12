@@ -176,52 +176,6 @@ namespace SoftwareLockMass
                     bestCf = cf;
                 }
 
-                //for (int i = 5; i < 100; i += 5)
-                //{
-                //    for (int j = 5; j < 100; j += 5)
-                //    {
-                //        cf = new MedianCalibrationFunction(p.OnOutput, trainList, i, j);
-                //        mse = cf.getMSE(testList);
-                //        p.OnOutput(new OutputHandlerEventArgs("MSE Median" + i + " " + j + ": " + mse));
-                //        if (mse < bestMSE)
-                //        {
-                //            bestMSE = mse;
-                //            bestCf = cf;
-                //        }
-
-                //        cf = new SeparateCalibrationFunction(new MedianCalibrationFunction(p.OnOutput, trainList1, i, j), new MedianCalibrationFunction(p.OnOutput, trainList2, i, j));
-                //        mse = cf.getMSE(testList);
-                //        p.OnOutput(new OutputHandlerEventArgs("MSE Median" + i + " " + j + " separate: " + mse));
-                //        if (mse < bestMSE)
-                //        {
-                //            bestMSE = mse;
-                //            bestCf = cf;
-                //        }
-                //    }
-                //}
-
-                //for (int i = 1; i < 100; i++)
-                //{
-                //    cf = new CalibrationFunctionClustering(p.OnOutput, trainList, i);
-                //    mse = cf.getMSE(testList);
-                //    p.OnOutput(new OutputHandlerEventArgs("MSE Clustering " + i + " : " + mse));
-                //    if (mse < bestMSE)
-                //    {
-                //        bestMSE = mse;
-                //        bestCf = cf;
-                //    }
-
-                //    cf = new SeparateCalibrationFunction(new CalibrationFunctionClustering(p.OnOutput, trainList1, i), new CalibrationFunctionClustering(p.OnOutput, trainList2, i));
-                //    mse = cf.getMSE(testList);
-                //    p.OnOutput(new OutputHandlerEventArgs("MSE Clustering " + i + " separate: " + mse));
-                //    if (mse < bestMSE)
-                //    {
-                //        bestMSE = mse;
-                //        bestCf = cf;
-
-                //    }
-                //}
-
             }
             catch (ArgumentException e)
             {

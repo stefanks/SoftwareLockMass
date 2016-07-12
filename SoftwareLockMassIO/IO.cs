@@ -70,7 +70,7 @@ namespace SoftwareLockMassIO
             //a.MS2spectraToWatch.Add(3849);
             //a.MS2spectraToWatch.Add(11210);
             //a.MS2spectraToWatch.Add(17144);
-            //a.MS2spectraToWatch.Add(17406); 
+            //a.MS2spectraToWatch.Add(17406);
 
             return a;
         }
