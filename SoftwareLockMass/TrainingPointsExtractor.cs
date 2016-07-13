@@ -18,7 +18,7 @@ namespace SoftwareLockMass
             List<TrainingPoint> trainingPointsToReturn = new List<TrainingPoint>();
 
             // Set of peaks, identified by m/z and retention time. If a peak is in here, it means it has been a part of an accepted identification, and should be rejected
-            HashSet<Tuple<double, double>> peaksAddedHashSet = new HashSet<Tuple<double, double>>();
+            HashSet<Tuple<double, double>> peaksAddedFromMS1HashSet = new HashSet<Tuple<double, double>>();
 
             int numIdentifications = identifications.Count();
             // Loop over all identifications
@@ -34,7 +34,7 @@ namespace SoftwareLockMass
 
                 // Each identification has an MS2 spectrum attached to it. 
                 int ms2spectrumIndex = identifications.ms2spectrumIndex(matchIndex);
-
+                
                 // Get the peptide, don't forget to add the modifications!!!!
                 Peptide peptideBuilder = new Peptide(identifications.PeptideSequenceWithoutModifications(matchIndex));
                 for (int i = 0; i < identifications.NumModifications(matchIndex); i++)
@@ -74,8 +74,8 @@ namespace SoftwareLockMass
                 }
                 Array.Sort(intensities, masses, Comparer<double>.Create((x, y) => y.CompareTo(x)));
 
-                List<int> myMS1downScores = SearchMS1Spectra(myMsDataFile, masses, intensities, candidateTrainingPointsForPeptide, ms2spectrumIndex, -1, peaksAddedHashSet, p, peptideCharge);
-                List<int> myMS1upScores = SearchMS1Spectra(myMsDataFile, masses, intensities, candidateTrainingPointsForPeptide, ms2spectrumIndex, 1, peaksAddedHashSet, p, peptideCharge);
+                List<int> myMS1downScores = SearchMS1Spectra(myMsDataFile, masses, intensities, candidateTrainingPointsForPeptide, ms2spectrumIndex, -1, peaksAddedFromMS1HashSet, p, peptideCharge);
+                List<int> myMS1upScores = SearchMS1Spectra(myMsDataFile, masses, intensities, candidateTrainingPointsForPeptide, ms2spectrumIndex, 1, peaksAddedFromMS1HashSet, p, peptideCharge);
 
                 if (scoresPassed(numFragmentsIdentified, myMS1downScores, myMS1upScores))
                 {

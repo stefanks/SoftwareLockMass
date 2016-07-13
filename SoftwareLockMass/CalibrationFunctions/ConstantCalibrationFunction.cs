@@ -4,7 +4,7 @@ using System.Linq;
 
 namespace SoftwareLockMass
 {
-    internal class ConstantCalibrationFunction : CalibrationFunction
+    public class ConstantCalibrationFunction : CalibrationFunction
     {
         private double a;
         private Action<OutputHandlerEventArgs> onOutput;
