@@ -15,7 +15,7 @@ namespace SoftwareLockMass
             SoftwareLockMassParams a = SoftwareLockMassIO.IO.GetReady(origDataFile, P_outputHandler, P_progressHandler, P_watchHandler, mzidFile);
 
             SoftwareLockMassRunner.Run(a);
-            Console.Read();
+            //Console.Read();
         }
 
         private static void P_progressHandler(object sender, ProgressHandlerEventArgs e)
