@@ -13,18 +13,9 @@ The two required parameters are the paths to spectra and identifications files:
 SoftwareLockMassCommandLine.exe spectra.mzML identifications.mzid
 ```
 
-The third (optional) parameter is the intensity cutoff, which limits the considered peaks to having a certain minimum threshold. Higher values speed up the calibration process, but may impact the calibration quality by discarding useful information. Lower values do not necessarily help calibration quality, since low intensity peaks may not be meaningful. The default value is 1e3.
-
-The fourth (optional) parameter is the tolerance in [thomsons](https://en.wikipedia.org/wiki/Thomson_(unit)) for determining if a predicted peak is present in the provided spectra file. The default value is 1e-2.
-
-Specifying all four parameters can be done in the following way:
-```shell
-SoftwareLockMassCommandLine.exe spectra.mzML identifications.mzid 0 0.032
-```
-
 ### GUI Version Usage
 
-Drag and drop is supported for both spectra and identified peptide files. Calibrations on multiple files are done in parallel.
+Drag and drop is supported for both spectra and identified peptide files. The spectra and identifications files must have identical names (but not extensions). Calibrations on multiple files are done in parallel.
 
 ## Requirements
 

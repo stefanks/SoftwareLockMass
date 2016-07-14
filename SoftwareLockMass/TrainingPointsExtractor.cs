@@ -144,7 +144,6 @@ namespace SoftwareLockMass
                 {
                     Console.WriteLine(" Final tolerance: " + toleranceInMZforSearch);
                 }
-                // double tolerance = getToleranceFromMixtureData(myList);
             }
             #endregion
 
