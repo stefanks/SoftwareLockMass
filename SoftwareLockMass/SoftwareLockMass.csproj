@@ -42,8 +42,8 @@
       <HintPath>..\packages\Chemistry.1.0.113\lib\net451\Chemistry.dll</HintPath>
       <Private>True</Private>
     </Reference>
-    <Reference Include="MassSpectrometry, Version=1.0.95.0, Culture=neutral, processorArchitecture=AMD64">
-      <HintPath>..\packages\MassSpectrometry.1.0.95\lib\net451\MassSpectrometry.dll</HintPath>
+    <Reference Include="MassSpectrometry, Version=1.0.98.0, Culture=neutral, processorArchitecture=AMD64">
+      <HintPath>..\packages\MassSpectrometry.1.0.98\lib\net451\MassSpectrometry.dll</HintPath>
       <Private>True</Private>
     </Reference>
     <Reference Include="MathNet.Numerics, Version=3.12.0.0, Culture=neutral, processorArchitecture=MSIL">
@@ -55,7 +55,7 @@
       <Private>True</Private>
     </Reference>
     <Reference Include="Spectra, Version=1.0.0.0, Culture=neutral, processorArchitecture=AMD64">
-      <HintPath>..\packages\MassSpectrometry.1.0.95\lib\net451\Spectra.dll</HintPath>
+      <HintPath>..\packages\MassSpectrometry.1.0.98\lib\net451\Spectra.dll</HintPath>
       <Private>True</Private>
     </Reference>
     <Reference Include="System" />
@@ -92,7 +92,7 @@
     <Compile Include="CalibrationFunctions\QuarticCalibrationFunction.cs" />
     <Compile Include="CalibrationFunctions\TrainingPoint.cs" />
     <Compile Include="Calibrators.cs" />
-    <Compile Include="SeparateCalibrationFunction.cs" />
+    <Compile Include="CalibrationFunctions\SeparateCalibrationFunction.cs" />
     <Compile Include="TrainingPointsExtractor.cs" />
     <Compile Include="SoftwareLockMassParams.cs" />
     <Compile Include="SoftwareLockMassRunner.cs" />
