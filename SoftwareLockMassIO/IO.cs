@@ -1,6 +1,7 @@
 ﻿using IO.MzML;
 using IO.Thermo;
 using MassSpectrometry;
+using MzIdentML;
 using Proteomics;
 using SoftwareLockMass;
 using Spectra;
@@ -121,10 +122,10 @@ namespace SoftwareLockMassIO
                 throw new Exception("Not familiar with modification dictionary " + dictionary);
         }
 
-        public static void MzmlOutput(SoftwareLockMassParams p, List<IMzSpectrum<MzPeak>> calibratedSpectra, List<double> calibratedPrecursorMZs)
+        public static void MzmlOutput(SoftwareLockMassParams p, string additionalInfo)
         {
             p.OnOutput(new OutputHandlerEventArgs("Creating _indexedmzMLConnection, and putting data in it"));
-            MzmlMethods.CreateAndWriteMyIndexedMZmlwithCalibratedSpectra(p.myMsDataFile, calibratedSpectra, calibratedPrecursorMZs, Path.Combine(Path.GetDirectoryName(p.myMsDataFile.FilePath), Path.GetFileNameWithoutExtension(p.myMsDataFile.FilePath) + "-Calibrated.mzML"));
+            MzmlMethods.CreateAndWriteMyIndexedMZmlwithCalibratedSpectra(p.myMsDataFile, Path.Combine(Path.GetDirectoryName(p.myMsDataFile.FilePath), Path.GetFileNameWithoutExtension(p.myMsDataFile.FilePath) + "-Calibrated" + additionalInfo + ".mzML"));
         }
 
     }

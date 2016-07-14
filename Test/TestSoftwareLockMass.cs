@@ -90,7 +90,9 @@ namespace Test
 
         public void OnOutput(OutputHandlerEventArgs e)
         {
-            outputHandler?.Invoke(this, e);
+            var handler = this.outputHandler;
+            if (handler != null)
+                handler(this, e);
         }
 
         private static void P_outputHandler(object sender, OutputHandlerEventArgs e)

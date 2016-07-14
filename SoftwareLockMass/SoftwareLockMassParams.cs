@@ -28,7 +28,7 @@ namespace SoftwareLockMass
         public IMsDataFile<IMzSpectrum<MzPeak>> myMsDataFile;
         public Identifications identifications;
 
-        public delegate void PostProcessing(SoftwareLockMassParams p, List<IMzSpectrum<MzPeak>> calibratedSpectra, List<double> calibratedPrecursorMZs);
+        public delegate void PostProcessing(SoftwareLockMassParams p, string additionalInfo);
         public PostProcessing postProcessing;
 
         public delegate string GetFormulaFromDictionary(string dictionary, string acession);
@@ -49,17 +49,23 @@ namespace SoftwareLockMass
 
         public virtual void OnOutput(OutputHandlerEventArgs e)
         {
-            outputHandler?.Invoke(this, e);
+            var handler = this.outputHandler;
+            if (handler != null)
+                handler(this, e);
         }
 
         public virtual void OnProgress(ProgressHandlerEventArgs e)
         {
-            progressHandler?.Invoke(this, e);
+            var handler = this.progressHandler;
+            if (handler != null)
+                handler(this, e);
         }
 
         public virtual void OnWatch(OutputHandlerEventArgs e)
         {
-            watchHandler?.Invoke(this, e);
+            var handler = this.watchHandler;
+            if (handler != null)
+                handler(this, e);
         }
     }
 
