@@ -23,7 +23,7 @@ namespace SoftwareLockMass
                 List<TrainingPoint> trainingPoints = TrainingPointsExtractor.GetTrainingPoints(p.myMsDataFile, p.identifications, p);
 
                 p.OnOutput(new OutputHandlerEventArgs("Writing training points to file"));
-                WriteDataToFiles(trainingPoints, "all", outerLoopIndex);
+                //WriteDataToFiles(trainingPoints, "all", outerLoopIndex);
 
                 var rnd = new Random();
                 var shuffledTrainingPoints = trainingPoints.OrderBy(item => rnd.Next()).ToArray();
@@ -32,9 +32,9 @@ namespace SoftwareLockMass
                 var testList = shuffledTrainingPoints.Skip(trainingPoints.Count * 3 / 4).ToArray();
 
                 var trainList1 = trainList.Where((b) => b.dp.msnOrder == 1).ToArray();
-                WriteDataToFiles(trainList1, "train1", outerLoopIndex);
+                //WriteDataToFiles(trainList1, "train1", outerLoopIndex);
                 var trainList2 = trainList.Where((b) => b.dp.msnOrder == 2).ToArray();
-                WriteDataToFiles(trainList2, "train2", outerLoopIndex);
+                //WriteDataToFiles(trainList2, "train2", outerLoopIndex);
 
                 CalibrationFunction bestCf = new IdentityCalibrationFunction(p.OnOutput);
                 double bestMSE = bestCf.getMSE(testList);
@@ -130,152 +130,152 @@ namespace SoftwareLockMass
                     }
 
 
-                    cf = new CubicCalibrationFunction(p.OnOutput, trainList);
-                    mse = cf.getMSE(testList);
-                    p.OnOutput(new OutputHandlerEventArgs("MSE Cubic: " + mse));
-                    if (mse < bestMSE)
-                    {
-                        bestMSE = mse;
-                        bestCf = cf;
-                        //p.OnOutput(new OutputHandlerEventArgs("Calibrating Spectra"));
-                        //List<IMzSpectrum<MzPeak>> calibratedSpectra = Calibrators.CalibrateSpectra(bestCf, p);
-                        //p.OnOutput(new OutputHandlerEventArgs("Calibrating Precursor MZs"));
-                        //List<double> calibratedPrecursorMZs = Calibrators.CalibratePrecursorMZs(bestCf, p);
-                        //p.postProcessing(p, calibratedSpectra, calibratedPrecursorMZs, "third");
-                    }
+                    //cf = new CubicCalibrationFunction(p.OnOutput, trainList);
+                    //mse = cf.getMSE(testList);
+                    //p.OnOutput(new OutputHandlerEventArgs("MSE Cubic: " + mse));
+                    //if (mse < bestMSE)
+                    //{
+                    //    bestMSE = mse;
+                    //    bestCf = cf;
+                    //    //p.OnOutput(new OutputHandlerEventArgs("Calibrating Spectra"));
+                    //    //List<IMzSpectrum<MzPeak>> calibratedSpectra = Calibrators.CalibrateSpectra(bestCf, p);
+                    //    //p.OnOutput(new OutputHandlerEventArgs("Calibrating Precursor MZs"));
+                    //    //List<double> calibratedPrecursorMZs = Calibrators.CalibratePrecursorMZs(bestCf, p);
+                    //    //p.postProcessing(p, calibratedSpectra, calibratedPrecursorMZs, "third");
+                    //}
 
 
-                    cf = new SeparateCalibrationFunction(new CubicCalibrationFunction(p.OnOutput, trainList1), new CubicCalibrationFunction(p.OnOutput, trainList2));
+                    //cf = new SeparateCalibrationFunction(new CubicCalibrationFunction(p.OnOutput, trainList1), new CubicCalibrationFunction(p.OnOutput, trainList2));
 
-                    mse = cf.getMSE(testList);
-                    p.OnOutput(new OutputHandlerEventArgs("MSE Cubic separate: " + mse));
-                    if (mse < bestMSE)
-                    {
-                        bestMSE = mse;
-                        bestCf = cf;
-                        //p.OnOutput(new OutputHandlerEventArgs("Calibrating Spectra"));
-                        //List<IMzSpectrum<MzPeak>> calibratedSpectra = Calibrators.CalibrateSpectra(bestCf, p);
-                        //p.OnOutput(new OutputHandlerEventArgs("Calibrating Precursor MZs"));
-                        //List<double> calibratedPrecursorMZs = Calibrators.CalibratePrecursorMZs(bestCf, p);
-                        //p.postProcessing(p, calibratedSpectra, calibratedPrecursorMZs, "thirdsep");
-                    }
-
-
-                    cf = new QuarticCalibrationFunction(p.OnOutput, trainList);
-                    mse = cf.getMSE(testList);
-                    p.OnOutput(new OutputHandlerEventArgs("MSE Quartic: " + mse));
-                    if (mse < bestMSE)
-                    {
-                        bestMSE = mse;
-                        bestCf = cf;
-                        //p.OnOutput(new OutputHandlerEventArgs("Calibrating Spectra"));
-                        //List<IMzSpectrum<MzPeak>> calibratedSpectra = Calibrators.CalibrateSpectra(bestCf, p);
-                        //p.OnOutput(new OutputHandlerEventArgs("Calibrating Precursor MZs"));
-                        //List<double> calibratedPrecursorMZs = Calibrators.CalibratePrecursorMZs(bestCf, p);
-                        //p.postProcessing(p, calibratedSpectra, calibratedPrecursorMZs, "fourth");
-                    }
-
-                    cf = new SeparateCalibrationFunction(new QuarticCalibrationFunction(p.OnOutput, trainList1), new QuarticCalibrationFunction(p.OnOutput, trainList2));
-
-                    mse = cf.getMSE(testList);
-                    p.OnOutput(new OutputHandlerEventArgs("MSE Quartic separate: " + mse));
-                    if (mse < bestMSE)
-                    {
-                        bestMSE = mse;
-                        bestCf = cf;
-                        //p.OnOutput(new OutputHandlerEventArgs("Calibrating Spectra"));
-                        //List<IMzSpectrum<MzPeak>> calibratedSpectra = Calibrators.CalibrateSpectra(bestCf, p);
-                        //p.OnOutput(new OutputHandlerEventArgs("Calibrating Precursor MZs"));
-                        //List<double> calibratedPrecursorMZs = Calibrators.CalibratePrecursorMZs(bestCf, p);
-                        //p.postProcessing(p, calibratedSpectra, calibratedPrecursorMZs, "fourthsep");
-                    }
+                    //mse = cf.getMSE(testList);
+                    //p.OnOutput(new OutputHandlerEventArgs("MSE Cubic separate: " + mse));
+                    //if (mse < bestMSE)
+                    //{
+                    //    bestMSE = mse;
+                    //    bestCf = cf;
+                    //    //p.OnOutput(new OutputHandlerEventArgs("Calibrating Spectra"));
+                    //    //List<IMzSpectrum<MzPeak>> calibratedSpectra = Calibrators.CalibrateSpectra(bestCf, p);
+                    //    //p.OnOutput(new OutputHandlerEventArgs("Calibrating Precursor MZs"));
+                    //    //List<double> calibratedPrecursorMZs = Calibrators.CalibratePrecursorMZs(bestCf, p);
+                    //    //p.postProcessing(p, calibratedSpectra, calibratedPrecursorMZs, "thirdsep");
+                    //}
 
 
-                    cf = new FifthCalibrationFunction(p.OnOutput, trainList);
-                    mse = cf.getMSE(testList);
-                    p.OnOutput(new OutputHandlerEventArgs("MSE Fifth: " + mse));
-                    if (mse < bestMSE)
-                    {
-                        bestMSE = mse;
-                        bestCf = cf;
-                        //p.OnOutput(new OutputHandlerEventArgs("Calibrating Spectra"));
-                        //List<IMzSpectrum<MzPeak>> calibratedSpectra = Calibrators.CalibrateSpectra(bestCf, p);
-                        //p.OnOutput(new OutputHandlerEventArgs("Calibrating Precursor MZs"));
-                        //List<double> calibratedPrecursorMZs = Calibrators.CalibratePrecursorMZs(bestCf, p);
-                        //p.postProcessing(p, calibratedSpectra, calibratedPrecursorMZs, "fifth");
-                    }
+                    //cf = new QuarticCalibrationFunction(p.OnOutput, trainList);
+                    //mse = cf.getMSE(testList);
+                    //p.OnOutput(new OutputHandlerEventArgs("MSE Quartic: " + mse));
+                    //if (mse < bestMSE)
+                    //{
+                    //    bestMSE = mse;
+                    //    bestCf = cf;
+                    //    //p.OnOutput(new OutputHandlerEventArgs("Calibrating Spectra"));
+                    //    //List<IMzSpectrum<MzPeak>> calibratedSpectra = Calibrators.CalibrateSpectra(bestCf, p);
+                    //    //p.OnOutput(new OutputHandlerEventArgs("Calibrating Precursor MZs"));
+                    //    //List<double> calibratedPrecursorMZs = Calibrators.CalibratePrecursorMZs(bestCf, p);
+                    //    //p.postProcessing(p, calibratedSpectra, calibratedPrecursorMZs, "fourth");
+                    //}
 
-                    cf = new SeparateCalibrationFunction(new FifthCalibrationFunction(p.OnOutput, trainList1), new FifthCalibrationFunction(p.OnOutput, trainList2));
+                    //cf = new SeparateCalibrationFunction(new QuarticCalibrationFunction(p.OnOutput, trainList1), new QuarticCalibrationFunction(p.OnOutput, trainList2));
 
-                    mse = cf.getMSE(testList);
-                    p.OnOutput(new OutputHandlerEventArgs("MSE Fifth separate: " + mse));
-                    if (mse < bestMSE)
-                    {
-                        bestMSE = mse;
-                        bestCf = cf;
-                        //p.OnOutput(new OutputHandlerEventArgs("Calibrating Spectra"));
-                        //List<IMzSpectrum<MzPeak>> calibratedSpectra = Calibrators.CalibrateSpectra(bestCf, p);
-                        //p.OnOutput(new OutputHandlerEventArgs("Calibrating Precursor MZs"));
-                        //List<double> calibratedPrecursorMZs = Calibrators.CalibratePrecursorMZs(bestCf, p);
-                        //p.postProcessing(p, calibratedSpectra, calibratedPrecursorMZs, "fifthsep");
-                    }
+                    //mse = cf.getMSE(testList);
+                    //p.OnOutput(new OutputHandlerEventArgs("MSE Quartic separate: " + mse));
+                    //if (mse < bestMSE)
+                    //{
+                    //    bestMSE = mse;
+                    //    bestCf = cf;
+                    //    //p.OnOutput(new OutputHandlerEventArgs("Calibrating Spectra"));
+                    //    //List<IMzSpectrum<MzPeak>> calibratedSpectra = Calibrators.CalibrateSpectra(bestCf, p);
+                    //    //p.OnOutput(new OutputHandlerEventArgs("Calibrating Precursor MZs"));
+                    //    //List<double> calibratedPrecursorMZs = Calibrators.CalibratePrecursorMZs(bestCf, p);
+                    //    //p.postProcessing(p, calibratedSpectra, calibratedPrecursorMZs, "fourthsep");
+                    //}
 
-                    cf = new SixthCalibrationFunction(p.OnOutput, trainList);
-                    mse = cf.getMSE(testList);
-                    p.OnOutput(new OutputHandlerEventArgs("MSE Sixth: " + mse));
-                    if (mse < bestMSE)
-                    {
-                        bestMSE = mse;
-                        bestCf = cf;
-                        //p.OnOutput(new OutputHandlerEventArgs("Calibrating Spectra"));
-                        //List<IMzSpectrum<MzPeak>> calibratedSpectra = Calibrators.CalibrateSpectra(bestCf, p);
-                        //p.OnOutput(new OutputHandlerEventArgs("Calibrating Precursor MZs"));
-                        //List<double> calibratedPrecursorMZs = Calibrators.CalibratePrecursorMZs(bestCf, p);
-                        //p.postProcessing(p, calibratedSpectra, calibratedPrecursorMZs, "sixth");
-                    }
 
-                    cf = new SeparateCalibrationFunction(new SixthCalibrationFunction(p.OnOutput, trainList1), new SixthCalibrationFunction(p.OnOutput, trainList2));
+                    //cf = new FifthCalibrationFunction(p.OnOutput, trainList);
+                    //mse = cf.getMSE(testList);
+                    //p.OnOutput(new OutputHandlerEventArgs("MSE Fifth: " + mse));
+                    //if (mse < bestMSE)
+                    //{
+                    //    bestMSE = mse;
+                    //    bestCf = cf;
+                    //    //p.OnOutput(new OutputHandlerEventArgs("Calibrating Spectra"));
+                    //    //List<IMzSpectrum<MzPeak>> calibratedSpectra = Calibrators.CalibrateSpectra(bestCf, p);
+                    //    //p.OnOutput(new OutputHandlerEventArgs("Calibrating Precursor MZs"));
+                    //    //List<double> calibratedPrecursorMZs = Calibrators.CalibratePrecursorMZs(bestCf, p);
+                    //    //p.postProcessing(p, calibratedSpectra, calibratedPrecursorMZs, "fifth");
+                    //}
 
-                    mse = cf.getMSE(testList);
-                    p.OnOutput(new OutputHandlerEventArgs("MSE Sixth separate: " + mse));
-                    if (mse < bestMSE)
-                    {
-                        bestMSE = mse;
-                        bestCf = cf;
-                        //p.OnOutput(new OutputHandlerEventArgs("Calibrating Spectra"));
-                        //List<IMzSpectrum<MzPeak>> calibratedSpectra = Calibrators.CalibrateSpectra(bestCf, p);
-                        //p.OnOutput(new OutputHandlerEventArgs("Calibrating Precursor MZs"));
-                        //List<double> calibratedPrecursorMZs = Calibrators.CalibratePrecursorMZs(bestCf, p);
-                        //p.postProcessing(p, calibratedSpectra, calibratedPrecursorMZs, "sixthsep");
-                    }
+                    //cf = new SeparateCalibrationFunction(new FifthCalibrationFunction(p.OnOutput, trainList1), new FifthCalibrationFunction(p.OnOutput, trainList2));
 
-                    cf = new KDTreeCalibrationFunction(p.OnOutput, trainList);
-                    mse = cf.getMSE(testList);
-                    p.OnOutput(new OutputHandlerEventArgs("MSE KD Tree: " + mse));
-                    if (mse < bestMSE)
-                    {
-                        bestMSE = mse;
-                        bestCf = cf;
-                        //p.OnOutput(new OutputHandlerEventArgs("Calibrating Spectra"));
-                        //List<IMzSpectrum<MzPeak>> calibratedSpectra = Calibrators.CalibrateSpectra(bestCf, p);
-                        //p.OnOutput(new OutputHandlerEventArgs("Calibrating Precursor MZs"));
-                        //List<double> calibratedPrecursorMZs = Calibrators.CalibratePrecursorMZs(bestCf, p);
-                        //p.postProcessing(p, calibratedSpectra, calibratedPrecursorMZs, "kdtree");
-                    }
+                    //mse = cf.getMSE(testList);
+                    //p.OnOutput(new OutputHandlerEventArgs("MSE Fifth separate: " + mse));
+                    //if (mse < bestMSE)
+                    //{
+                    //    bestMSE = mse;
+                    //    bestCf = cf;
+                    //    //p.OnOutput(new OutputHandlerEventArgs("Calibrating Spectra"));
+                    //    //List<IMzSpectrum<MzPeak>> calibratedSpectra = Calibrators.CalibrateSpectra(bestCf, p);
+                    //    //p.OnOutput(new OutputHandlerEventArgs("Calibrating Precursor MZs"));
+                    //    //List<double> calibratedPrecursorMZs = Calibrators.CalibratePrecursorMZs(bestCf, p);
+                    //    //p.postProcessing(p, calibratedSpectra, calibratedPrecursorMZs, "fifthsep");
+                    //}
 
-                    cf = new SeparateCalibrationFunction(new KDTreeCalibrationFunction(p.OnOutput, trainList1), new KDTreeCalibrationFunction(p.OnOutput, trainList2));
-                    mse = cf.getMSE(testList);
-                    p.OnOutput(new OutputHandlerEventArgs("MSE KD Tree separate: " + mse));
-                    if (mse < bestMSE)
-                    {
-                        bestMSE = mse;
-                        bestCf = cf;
-                        //p.OnOutput(new OutputHandlerEventArgs("Calibrating Spectra"));
-                        //List<IMzSpectrum<MzPeak>> calibratedSpectra = Calibrators.CalibrateSpectra(bestCf, p);
-                        //p.OnOutput(new OutputHandlerEventArgs("Calibrating Precursor MZs"));
-                        //List<double> calibratedPrecursorMZs = Calibrators.CalibratePrecursorMZs(bestCf, p);
-                        //p.postProcessing(p, calibratedSpectra, calibratedPrecursorMZs, "kdtreesep");
-                    }
+                    //cf = new SixthCalibrationFunction(p.OnOutput, trainList);
+                    //mse = cf.getMSE(testList);
+                    //p.OnOutput(new OutputHandlerEventArgs("MSE Sixth: " + mse));
+                    //if (mse < bestMSE)
+                    //{
+                    //    bestMSE = mse;
+                    //    bestCf = cf;
+                    //    //p.OnOutput(new OutputHandlerEventArgs("Calibrating Spectra"));
+                    //    //List<IMzSpectrum<MzPeak>> calibratedSpectra = Calibrators.CalibrateSpectra(bestCf, p);
+                    //    //p.OnOutput(new OutputHandlerEventArgs("Calibrating Precursor MZs"));
+                    //    //List<double> calibratedPrecursorMZs = Calibrators.CalibratePrecursorMZs(bestCf, p);
+                    //    //p.postProcessing(p, calibratedSpectra, calibratedPrecursorMZs, "sixth");
+                    //}
+
+                    //cf = new SeparateCalibrationFunction(new SixthCalibrationFunction(p.OnOutput, trainList1), new SixthCalibrationFunction(p.OnOutput, trainList2));
+
+                    //mse = cf.getMSE(testList);
+                    //p.OnOutput(new OutputHandlerEventArgs("MSE Sixth separate: " + mse));
+                    //if (mse < bestMSE)
+                    //{
+                    //    bestMSE = mse;
+                    //    bestCf = cf;
+                    //    //p.OnOutput(new OutputHandlerEventArgs("Calibrating Spectra"));
+                    //    //List<IMzSpectrum<MzPeak>> calibratedSpectra = Calibrators.CalibrateSpectra(bestCf, p);
+                    //    //p.OnOutput(new OutputHandlerEventArgs("Calibrating Precursor MZs"));
+                    //    //List<double> calibratedPrecursorMZs = Calibrators.CalibratePrecursorMZs(bestCf, p);
+                    //    //p.postProcessing(p, calibratedSpectra, calibratedPrecursorMZs, "sixthsep");
+                    //}
+
+                    //cf = new KDTreeCalibrationFunction(p.OnOutput, trainList);
+                    //mse = cf.getMSE(testList);
+                    //p.OnOutput(new OutputHandlerEventArgs("MSE KD Tree: " + mse));
+                    //if (mse < bestMSE)
+                    //{
+                    //    bestMSE = mse;
+                    //    bestCf = cf;
+                    //    //p.OnOutput(new OutputHandlerEventArgs("Calibrating Spectra"));
+                    //    //List<IMzSpectrum<MzPeak>> calibratedSpectra = Calibrators.CalibrateSpectra(bestCf, p);
+                    //    //p.OnOutput(new OutputHandlerEventArgs("Calibrating Precursor MZs"));
+                    //    //List<double> calibratedPrecursorMZs = Calibrators.CalibratePrecursorMZs(bestCf, p);
+                    //    //p.postProcessing(p, calibratedSpectra, calibratedPrecursorMZs, "kdtree");
+                    //}
+
+                    //cf = new SeparateCalibrationFunction(new KDTreeCalibrationFunction(p.OnOutput, trainList1), new KDTreeCalibrationFunction(p.OnOutput, trainList2));
+                    //mse = cf.getMSE(testList);
+                    //p.OnOutput(new OutputHandlerEventArgs("MSE KD Tree separate: " + mse));
+                    //if (mse < bestMSE)
+                    //{
+                    //    bestMSE = mse;
+                    //    bestCf = cf;
+                    //    //p.OnOutput(new OutputHandlerEventArgs("Calibrating Spectra"));
+                    //    //List<IMzSpectrum<MzPeak>> calibratedSpectra = Calibrators.CalibrateSpectra(bestCf, p);
+                    //    //p.OnOutput(new OutputHandlerEventArgs("Calibrating Precursor MZs"));
+                    //    //List<double> calibratedPrecursorMZs = Calibrators.CalibratePrecursorMZs(bestCf, p);
+                    //    //p.postProcessing(p, calibratedSpectra, calibratedPrecursorMZs, "kdtreesep");
+                    //}
                 }
                 catch (ArgumentException e)
                 {

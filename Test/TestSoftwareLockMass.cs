@@ -31,6 +31,13 @@ namespace Test
         }
 
         [Test]
+        public void FailTest()
+        {
+            Assert.IsFalse(true);
+        }
+
+
+        [Test]
         public void TesLinearCalibrationOK()
         {
             List<TrainingPoint> trainingList = new List<TrainingPoint>();
@@ -115,7 +122,7 @@ namespace Test
             trainingList.Add(new TrainingPoint(new DataPoint(2, 1, 1), 0.5));
             trainingList.Add(new TrainingPoint(new DataPoint(2, 2, 1), 0.5));
             IdentityCalibrationFunction cf = new IdentityCalibrationFunction(OnOutput);
-            Assert.AreEqual(4*Math.Pow(0.5,2)/4, cf.getMSE(trainingList));
+            Assert.AreEqual(4 * Math.Pow(0.5, 2) / 4, cf.getMSE(trainingList));
             ConstantCalibrationFunction cfconst = new ConstantCalibrationFunction(OnOutput, trainingList);
             Assert.AreEqual(0, cfconst.getMSE(trainingList));
         }
