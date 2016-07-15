@@ -31,13 +31,6 @@ namespace Test
         }
 
         [Test]
-        public void FailTest()
-        {
-            Assert.IsFalse(true);
-        }
-
-
-        [Test]
         public void TesLinearCalibrationOK()
         {
             List<TrainingPoint> trainingList = new List<TrainingPoint>();
