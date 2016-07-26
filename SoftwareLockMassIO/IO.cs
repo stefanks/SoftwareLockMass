@@ -44,9 +44,9 @@ namespace SoftwareLockMassIO
             a.identifications = new MzidIdentifications(mzidFile);
 
             //a.MS1spectraToWatch.Add(11278);
-            a.mzRange = new DoubleRange(0, 0);
+            //a.mzRange = new DoubleRange(0, 0);
 
-            a.MS2spectraToWatch.Add(16778);
+            //a.MS2spectraToWatch.Add(16778);
 
             return a;
         }
