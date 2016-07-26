@@ -28,7 +28,7 @@ namespace SoftwareLockMass
         public IMsDataFile<IMzSpectrum<MzPeak>> myMsDataFile;
         public Identifications identifications;
 
-        public delegate void PostProcessing(SoftwareLockMassParams p, string additionalInfo);
+        public delegate void PostProcessing(SoftwareLockMassParams p);
         public PostProcessing postProcessing;
 
         public delegate string GetFormulaFromDictionary(string dictionary, string acession);

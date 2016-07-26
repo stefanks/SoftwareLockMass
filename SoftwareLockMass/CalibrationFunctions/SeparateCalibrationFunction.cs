@@ -13,12 +13,12 @@ namespace SoftwareLockMass
             this.calibrationFunction2 = calibrationFunction2;
         }
 
-        public override double Predict(DataPoint t)
+        public override double Predict(double[] inputs)
         {
-            if (t.msnOrder == 1)
-                return calibrationFunction1.Predict(t);
+            if (inputs[0] == 1)
+                return calibrationFunction1.Predict(inputs);
             else
-                return calibrationFunction2.Predict(t);
+                return calibrationFunction2.Predict(inputs);
         }
     }
 }

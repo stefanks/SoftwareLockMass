@@ -44,38 +44,9 @@ namespace SoftwareLockMassIO
             a.identifications = new MzidIdentifications(mzidFile);
 
             //a.MS1spectraToWatch.Add(11278);
-            //a.mzRange = new DoubleRange(0, 100000);
+            a.mzRange = new DoubleRange(0, 0);
 
-            //a.MS2spectraToWatch.Add(2);
-
-            //a.MS2spectraToWatch.Add(11279);
-            //a.MS2spectraToWatch.Add(2813);
-            //a.MS2spectraToWatch.Add(11277);
-            //a.MS2spectraToWatch.Add(11290);
-            //a.MS2spectraToWatch.Add(2806);
-            //a.MS2spectraToWatch.Add(11357);
-            //a.MS2spectraToWatch.Add(11296);
-            //a.MS2spectraToWatch.Add(11359);
-            //a.MS2spectraToWatch.Add(11188);
-            //a.MS2spectraToWatch.Add(5669);
-            //a.MS2spectraToWatch.Add(11324);
-            //a.MS2spectraToWatch.Add(11285);
-            //a.MS2spectraToWatch.Add(11283);
-            //a.MS2spectraToWatch.Add(3181);
-            //a.MS2spectraToWatch.Add(4047);
-            //a.MS2spectraToWatch.Add(4053);
-            //a.MS2spectraToWatch.Add(5388);
-            //a.MS2spectraToWatch.Add(3194);
-            //a.MS2spectraToWatch.Add(3766);
-            //a.MS2spectraToWatch.Add(3842);
-            //a.MS2spectraToWatch.Add(3849);
-            //a.MS2spectraToWatch.Add(11210);
-            //a.MS2spectraToWatch.Add(17144);
-            //a.MS2spectraToWatch.Add(17406);
-            //a.MS2spectraToWatch.Add(1);
-            //a.MS2spectraToWatch.Add(2);
-            //a.MS1spectraToWatch.Add(1);
-            //a.MS1spectraToWatch.Add(2);
+            a.MS2spectraToWatch.Add(16778);
 
             return a;
         }
@@ -122,10 +93,10 @@ namespace SoftwareLockMassIO
                 throw new Exception("Not familiar with modification dictionary " + dictionary);
         }
 
-        public static void MzmlOutput(SoftwareLockMassParams p, string additionalInfo)
+        public static void MzmlOutput(SoftwareLockMassParams p)
         {
             p.OnOutput(new OutputHandlerEventArgs("Creating _indexedmzMLConnection, and putting data in it"));
-            MzmlMethods.CreateAndWriteMyIndexedMZmlwithCalibratedSpectra(p.myMsDataFile, Path.Combine(Path.GetDirectoryName(p.myMsDataFile.FilePath), Path.GetFileNameWithoutExtension(p.myMsDataFile.FilePath) + "-Calibrated" + additionalInfo + ".mzML"));
+            MzmlMethods.CreateAndWriteMyIndexedMZmlwithCalibratedSpectra(p.myMsDataFile, Path.Combine(Path.GetDirectoryName(p.myMsDataFile.FilePath), Path.GetFileNameWithoutExtension(p.myMsDataFile.FilePath) + "-Calibrated.mzML"));
         }
 
     }

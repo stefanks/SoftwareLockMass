@@ -44,9 +44,11 @@ namespace SoftwareLockMass
                         // Other needed info
                         int precursorCharge = Convert.ToInt32(parts[7]);
                         double theoreticalMass = Convert.ToDouble(parts[17]);
+                        double precursorIntensity = Convert.ToDouble(parts[6]);
+                        double TotalIonCurrent = p.myMsDataFile.GetScan(MS1spectrumNumber).TotalIonCurrent;
+                        double InjectionTime = p.myMsDataFile.GetScan(MS1spectrumNumber).InjectionTime;
 
-
-                        precursorMZ -= cf.Predict(new DataPoint(precursorMZ, precursorRT, 1));
+                        precursorMZ -= cf.Predict(new double[6] { 1, precursorMZ, precursorRT, precursorIntensity, TotalIonCurrent, InjectionTime });
                         precursorMass = precursorMZ.ToMass(precursorCharge);
                         precursorMassErrorDA = precursorMass - theoreticalMass;
                         precursorMassErrorppm = precursorMassErrorDA / theoreticalMass * 1e6;
