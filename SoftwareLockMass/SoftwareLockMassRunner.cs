@@ -254,13 +254,15 @@ namespace SoftwareLockMass
                     a.TryGetSelectedIonGuessIntensity(out precursorIntensity);
                     double newSelectedMZ = precursorMZ - bestCf.Predict(new double[6] { 1, precursorMZ, precursorScan.RetentionTime, precursorIntensity, precursorScan.TotalIonCurrent, precursorScan.InjectionTime });
 
-
+                    
                     double monoisotopicMZ;
                     a.TryGetSelectedIonGuessMonoisotopicMZ(out monoisotopicMZ);
                     double monoisotopicIntensity;
                     a.TryGetSelectedIonGuessMonoisotopicIntensity(out monoisotopicIntensity);
-                    double newMonoisotopicMZ = precursorMZ - bestCf.Predict(new double[6] { 1, monoisotopicMZ, precursorScan.RetentionTime, monoisotopicIntensity, precursorScan.TotalIonCurrent, precursorScan.InjectionTime });
+                    double newMonoisotopicMZ = monoisotopicMZ - bestCf.Predict(new double[6] { 1, monoisotopicMZ, precursorScan.RetentionTime, monoisotopicIntensity, precursorScan.TotalIonCurrent, precursorScan.InjectionTime });
+
                     
+
                     int SelectedIonGuessChargeStateGuess;
                     a.TryGetSelectedIonGuessChargeStateGuess(out SelectedIonGuessChargeStateGuess);
                     double IsolationMZ;
