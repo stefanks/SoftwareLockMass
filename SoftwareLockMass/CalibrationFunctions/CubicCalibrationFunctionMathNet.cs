@@ -13,11 +13,13 @@ namespace SoftwareLockMass
         private bool[] useFeature;
         private int numFeatures;
         private int numFeaturesExpanded;
+        private bool[] logVars;
 
-        public CubicCalibrationFunctionMathNet(Action<OutputHandlerEventArgs> onOutput, List<LabeledDataPoint> trainList2, bool[] varsBool)
+        public CubicCalibrationFunctionMathNet(Action<OutputHandlerEventArgs> onOutput, List<LabeledDataPoint> trainList2, bool[] varsBool, bool[] logVars)
         {
             this.onOutput = onOutput;
             this.trainList2 = trainList2;
+            this.logVars = logVars;
             useFeature = varsBool;
             numFeatures = useFeature.Where(b => b == true).Count();
             numFeaturesExpanded = (int)Combinatorics.Combinations(numFeatures + 1 - 1, 1) +
@@ -39,7 +41,10 @@ namespace SoftwareLockMass
             for (int k = 0; k < useFeature.Length; k++)
                 if (useFeature[k])
                 {
-                    output[featInd] = input[k];
+                    if (logVars[k])
+                        output[featInd] = Math.Log(input[k]);
+                    else
+                        output[featInd] = input[k];
                     featInd++;
                 }
 
