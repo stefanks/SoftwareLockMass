@@ -50,7 +50,7 @@ namespace Test
 
             SoftwareLockMassParams a = SoftwareLockMassIO.IO.GetReady(@"myFakeFile.mzML", P_outputHandler, P_progressHandler, P_outputHandler, @"myIdentifications.mzid");
 
-            //SoftwareLockMassRunner.Run(a);
+            SoftwareLockMassRunner.Run(a);
         }
 
 
