@@ -229,33 +229,33 @@ namespace SoftwareLockMass
                 }
             }
 
-            foreach (var logVars in logArray)
-            {
-                foreach (var ok in featuresArray)
-                {
-                    ms1regressor = new CubicCalibrationFunctionMathNet(p.OnOutput, trainList1, ok, logVars);
-                    ms2regressor = new CubicCalibrationFunctionMathNet(p.OnOutput, trainList2, ok, logVars);
-                    combinedCalibration = new SeparateCalibrationFunction(ms1regressor, ms2regressor);
-                    combinedCalibration.writeNewLabels(trainList1, "trainList1Cubic" + string.Join("", ok) + string.Join("", logVars) + p.myMsDataFile.Name);
-                    combinedCalibration.writeNewLabels(trainList2, "trainList2Cubic" + string.Join("", ok) + string.Join("", logVars) + p.myMsDataFile.Name);
-                    combinedCalibration.writeNewLabels(testList1, "testList1Cubic" + string.Join("", ok) + string.Join("", logVars) + p.myMsDataFile.Name);
-                    combinedCalibration.writeNewLabels(testList2, "testList2Cubic" + string.Join("", ok) + string.Join("", logVars) + p.myMsDataFile.Name);
-                    MS1mse = ms1regressor.getMSE(testList1);
-                    MS2mse = ms2regressor.getMSE(testList2);
-                    combinedMSE = combinedCalibration.getMSE(testList);
-                    p.OnOutput(new OutputHandlerEventArgs("Cubic calibration " + string.Join("", ok) + string.Join("", logVars) + " MSE, " + MS1mse + "," + MS2mse + "," + combinedMSE));
-                    if (MS1mse < bestMS1MSE)
-                    {
-                        bestMS1MSE = MS1mse;
-                        bestMS1predictor = ms1regressor;
-                    }
-                    if (MS2mse < bestMS2MSE)
-                    {
-                        bestMS2MSE = MS2mse;
-                        bestMS2predictor = ms2regressor;
-                    }
-                }
-            }
+            //foreach (var logVars in logArray)
+            //{
+            //    foreach (var ok in featuresArray)
+            //    {
+            //        ms1regressor = new CubicCalibrationFunctionMathNet(p.OnOutput, trainList1, ok, logVars);
+            //        ms2regressor = new CubicCalibrationFunctionMathNet(p.OnOutput, trainList2, ok, logVars);
+            //        combinedCalibration = new SeparateCalibrationFunction(ms1regressor, ms2regressor);
+            //        combinedCalibration.writeNewLabels(trainList1, "trainList1Cubic" + string.Join("", ok) + string.Join("", logVars) + p.myMsDataFile.Name);
+            //        combinedCalibration.writeNewLabels(trainList2, "trainList2Cubic" + string.Join("", ok) + string.Join("", logVars) + p.myMsDataFile.Name);
+            //        combinedCalibration.writeNewLabels(testList1, "testList1Cubic" + string.Join("", ok) + string.Join("", logVars) + p.myMsDataFile.Name);
+            //        combinedCalibration.writeNewLabels(testList2, "testList2Cubic" + string.Join("", ok) + string.Join("", logVars) + p.myMsDataFile.Name);
+            //        MS1mse = ms1regressor.getMSE(testList1);
+            //        MS2mse = ms2regressor.getMSE(testList2);
+            //        combinedMSE = combinedCalibration.getMSE(testList);
+            //        p.OnOutput(new OutputHandlerEventArgs("Cubic calibration " + string.Join("", ok) + string.Join("", logVars) + " MSE, " + MS1mse + "," + MS2mse + "," + combinedMSE));
+            //        if (MS1mse < bestMS1MSE)
+            //        {
+            //            bestMS1MSE = MS1mse;
+            //            bestMS1predictor = ms1regressor;
+            //        }
+            //        if (MS2mse < bestMS2MSE)
+            //        {
+            //            bestMS2MSE = MS2mse;
+            //            bestMS2predictor = ms2regressor;
+            //        }
+            //    }
+            //}
 
             CalibrationFunction bestCf = new SeparateCalibrationFunction(bestMS1predictor, bestMS2predictor);
 
