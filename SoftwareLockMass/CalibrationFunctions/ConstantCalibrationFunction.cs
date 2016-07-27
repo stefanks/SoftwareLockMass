@@ -22,9 +22,8 @@ namespace SoftwareLockMass
 
         public void Train(IEnumerable<LabeledDataPoint> trainingList)
         {
-
             a = trainingList.Select(b => b.output).Average();
-            Console.WriteLine("a = " + a);
+            onOutput(new OutputHandlerEventArgs("a = " + a));
         }
     }
 }

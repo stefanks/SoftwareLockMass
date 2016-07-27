@@ -9,7 +9,6 @@ namespace SoftwareLockMass
     {
         Func<double[], double> f;
         private Action<OutputHandlerEventArgs> onOutput;
-        private List<LabeledDataPoint> trainList2;
         private bool[] useFeature;
         private int numFeatures;
         private int numFeaturesExpanded;
@@ -18,7 +17,6 @@ namespace SoftwareLockMass
         public QuadraticCalibrationFunctionMathNet(Action<OutputHandlerEventArgs> onOutput, List<LabeledDataPoint> trainList2, bool[] varsBool, bool[] logVars)
         {
             this.onOutput = onOutput;
-            this.trainList2 = trainList2;
             this.logVars = logVars;
             useFeature = varsBool;
             numFeatures = useFeature.Where(b => b == true).Count();
@@ -80,6 +78,7 @@ namespace SoftwareLockMass
                 ye[j + 1] = a => a[j];
             }
             f = Fit.LinearMultiDimFunc(ok, ok2, ye);
+            onOutput(new OutputHandlerEventArgs("Finished fitting a quadratic"));
         }
     }
 }
