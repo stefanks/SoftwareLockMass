@@ -6,7 +6,6 @@ namespace SoftwareLockMass
     {
         static void Main(string[] args)
         {
-            //Console.Read();
             string origDataFile = args[0];
             string mzidFile = args[1];
 

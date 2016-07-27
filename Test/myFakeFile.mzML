@@ -29,10 +29,17 @@
           <cvParam accession="MS:1000796" value="spectrum 1" name="spectrum title" />
           <cvParam accession="MS:1000528" value="310.076761148815" name="lowest observed m/z" />
           <cvParam accession="MS:1000527" value="1702.89440729691" name="highest observed m/z" />
+          <cvParam accession="MS:1000285" value="9.2882010100817" name="total ion current" />
           <scanList count="1">
             <scan>
               <cvParam accession="MS:1000016" value="1" name="scan start time" unitAccession="UO:0000031" unitName="minute" unitCvRef="UO" />
               <cvParam accession="MS:1000512" value="FTMS first spectrum" name="filter string" />
+              <scanWindowList count="1">
+                <scanWindow>
+                  <cvParam accession="MS:1000501" value="300" name="scan window lower limit" />
+                  <cvParam accession="MS:1000500" value="2000" name="scan window upper limit" />
+                </scanWindow>
+              </scanWindowList>
             </scan>
           </scanList>
           <binaryDataArrayList count="2">
@@ -56,10 +63,17 @@
           <cvParam accession="MS:1000796" value="spectrum 2" name="spectrum title" />
           <cvParam accession="MS:1000528" value="100.059407196741" name="lowest observed m/z" />
           <cvParam accession="MS:1000527" value="1477.30396661536" name="highest observed m/z" />
+          <cvParam accession="MS:1000285" value="997.780627871727" name="total ion current" />
           <scanList count="1">
             <scan>
               <cvParam accession="MS:1000016" value="2" name="scan start time" unitAccession="UO:0000031" unitName="minute" unitCvRef="UO" />
               <cvParam accession="MS:1000512" value="FTMS second spectrum" name="filter string" />
+              <scanWindowList count="1">
+                <scanWindow>
+                  <cvParam accession="MS:1000501" value="100" name="scan window lower limit" />
+                  <cvParam accession="MS:1000500" value="1500" name="scan window upper limit" />
+                </scanWindow>
+              </scanWindowList>
             </scan>
           </scanList>
           <precursorList count="1">

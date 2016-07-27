@@ -5,20 +5,22 @@ using System.Linq;
 
 namespace SoftwareLockMass
 {
-    public class LinearCalibrationFunctionMathNet : CalibrationFunction
+    public class QuadraticCalibrationFunctionMathNet : CalibrationFunction
     {
         Func<double[], double> f;
         private Action<OutputHandlerEventArgs> onOutput;
         private bool[] useFeature;
-        private bool[] logVars;
         private int numFeatures;
-        
-        public LinearCalibrationFunctionMathNet(Action<OutputHandlerEventArgs> onOutput, List<LabeledDataPoint> trainList2, bool[] varsBool, bool[] logVars)
+        private int numFeaturesExpanded;
+        private bool[] logVars;
+
+        public QuadraticCalibrationFunctionMathNet(Action<OutputHandlerEventArgs> onOutput, List<LabeledDataPoint> trainList2, bool[] varsBool, bool[] logVars)
         {
             this.onOutput = onOutput;
             this.logVars = logVars;
             useFeature = varsBool;
             numFeatures = useFeature.Where(b => b == true).Count();
+            numFeaturesExpanded = numFeatures + numFeatures * (numFeatures + 1) / 2;
             Train(trainList2);
         }
 
@@ -35,13 +37,26 @@ namespace SoftwareLockMass
             for (int k = 0; k < useFeature.Length; k++)
                 if (useFeature[k])
                 {
-                    if(logVars[k])
+                    if (logVars[k])
                         output[featInd] = Math.Log(input[k]);
                     else
                         output[featInd] = input[k];
                     featInd++;
                 }
-            return output;
+
+            double[] outputExpanded = new double[numFeaturesExpanded];
+            for (int i = 0; i < numFeatures; i++)
+                outputExpanded[i] = output[i];
+            int index = numFeatures;
+            for (int i = 0; i < numFeatures; i++)
+            {
+                for (int j = i; j < numFeatures; j++)
+                {
+                    outputExpanded[index] = output[i] * output[j];
+                    index++;
+                }
+            }
+            return outputExpanded;
         }
 
         public void Train(IEnumerable<LabeledDataPoint> trainingList)
@@ -54,15 +69,16 @@ namespace SoftwareLockMass
                 k++;
             }
             var ok2 = trainingList.Select(b => b.output).ToArray();
-            
-            var ye = new Func<double[], double>[numFeatures+1];
+
+            var ye = new Func<double[], double>[numFeaturesExpanded + 1];
             ye[0] = a => 1;
-            for (int i = 0; i< numFeatures; i++) {
+            for (int i = 0; i < numFeaturesExpanded; i++)
+            {
                 int j = i;
                 ye[j + 1] = a => a[j];
             }
             f = Fit.LinearMultiDimFunc(ok, ok2, ye);
-            onOutput(new OutputHandlerEventArgs("Finished fitting a linear"));
+            onOutput(new OutputHandlerEventArgs("Finished fitting a quadratic"));
         }
     }
 }

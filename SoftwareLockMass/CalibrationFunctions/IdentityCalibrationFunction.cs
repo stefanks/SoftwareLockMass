@@ -14,7 +14,7 @@ namespace SoftwareLockMass
             this.onOutput = onOutput;
         }
 
-        public override double Predict(DataPoint t)
+        public override double Predict(double[] inputs)
         {
             return 0;
         }

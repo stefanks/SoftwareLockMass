@@ -1,48 +1,48 @@
-﻿using MathNet.Numerics.LinearAlgebra;
-using System;
-using System.Collections.Generic;
-using System.Linq;
+﻿//using MathNet.Numerics.LinearAlgebra;
+//using System;
+//using System.Collections.Generic;
+//using System.Linq;
 
-namespace SoftwareLockMass
-{
-    public class LinearCalibrationFunction : CalibrationFunction
-    {
-        private double a;
-        private double b;
-        private double c;
-        private Action<OutputHandlerEventArgs> onOutput;
-        
+//namespace SoftwareLockMass
+//{
+//    public class LinearCalibrationFunction : CalibrationFunction
+//    {
+//        private double a;
+//        private double b;
+//        private double c;
+//        private Action<OutputHandlerEventArgs> onOutput;
 
-        public LinearCalibrationFunction(Action<OutputHandlerEventArgs> onOutput, IEnumerable<TrainingPoint> trainingList)
-        {
-            this.onOutput = onOutput;
-            Train(trainingList);
-        }
 
-        public override double Predict(DataPoint t)
-        {
-            return a + b * t.mz + c * t.rt;
-        }
+//        public LinearCalibrationFunction(Action<OutputHandlerEventArgs> onOutput, IEnumerable<LabeledDataPoint> trainingList)
+//        {
+//            this.onOutput = onOutput;
+//            Train(trainingList);
+//        }
 
-        private void Train(IEnumerable<TrainingPoint> trainingList)
-        {
+//        public override double Predict(double[] t)
+//        {
+//            return a + b *t[1]  + c * t[2];
+//        }
 
-            var M = Matrix<double>.Build;
-            var V = Vector<double>.Build;
+//        private void Train(IEnumerable<LabeledDataPoint> trainingList)
+//        {
 
-            var X = M.DenseOfRowArrays(trainingList.Select(b => b.dp.ToDoubleArrayWithIntercept()));
-            var y = V.DenseOfEnumerable(trainingList.Select(b => b.l));
+//            //var M = Matrix<double>.Build;
+//            //var V = Vector<double>.Build;
 
-            var coeffs = X.Solve(y);
+//            //var X = M.DenseOfRowArrays(trainingList.Select(b => b.dp.ToDoubleArrayWithIntercept()));
+//            //var y = V.DenseOfEnumerable(trainingList.Select(b => b.l));
 
-            if (double.IsNaN(coeffs[0]))
-                throw new ArgumentException("Could not train LinearCalibrationFunction, data might be low rank");
+//            //var coeffs = X.Solve(y);
 
-            a = coeffs[0];
-            b = coeffs[1];
-            c = coeffs[2];
-            onOutput(new OutputHandlerEventArgs("Sucessfully trained LinearCalibrationFunction:"));
+//            //if (double.IsNaN(coeffs[0]))
+//            //    throw new ArgumentException("Could not train LinearCalibrationFunction, data might be low rank");
 
-        }
-    }
-}
+//            //a = coeffs[0];
+//            //b = coeffs[1];
+//            //c = coeffs[2];
+//            onOutput(new OutputHandlerEventArgs("Sucessfully trained LinearCalibrationFunction:"));
+
+//        }
+//    }
+//}

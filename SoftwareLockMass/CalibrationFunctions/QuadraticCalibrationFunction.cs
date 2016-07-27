@@ -21,9 +21,9 @@ namespace SoftwareLockMass
             Train(trainingList);
         }
 
-        public override double Predict(DataPoint t)
+        public override double Predict(double[] t)
         {
-            return a + b * t.mz + c * t.rt + d * Math.Pow(t.mz, 2) + e * Math.Pow(t.rt, 2) + f * t.mz * t.rt;
+            return a + b * t[1] + c * t[2] + d * Math.Pow(t[1], 2) + e * Math.Pow(t[2], 2) + f * t[1] * t[2];
         }
 
         public void Train(IEnumerable<TrainingPoint> trainingList)

@@ -5,7 +5,6 @@ using System.ComponentModel;
 using System.IO;
 using System.Runtime.CompilerServices;
 using System.Threading;
-using System.Threading.Tasks;
 using System.Windows.Forms;
 
 namespace SoftwareLockMassGUI
@@ -35,20 +34,20 @@ namespace SoftwareLockMassGUI
                 addFilePaths(openFileDialog1.FileNames);
         }
 
-        private void buttonClear_Click(object sender, EventArgs e)
+        private void buttonCalibrate_Click(object sender, EventArgs e)
         {
-            Parallel.ForEach(myListOfEntries, (anEntry) =>
-             {
-                 SoftwareLockMassParams a = SoftwareLockMassIO.IO.GetReady(anEntry.spectraFile, P_outputHandler, P_progressHandler, P_watchHandler, anEntry.mzidFile);
+            foreach (var anEntry in myListOfEntries)
+            {
+                SoftwareLockMassParams a = SoftwareLockMassIO.IO.GetReady(anEntry.spectraFile, P_outputHandler, P_progressHandler, P_watchHandler, anEntry.mzidFile);
 
-                 if (checkBox1.Checked)
-                     a.tsvFile = anEntry.tsvFile;
-                 if (!checkBox2.Checked)
-                     a.calibrateSpectra = false;
-                 var t = new Thread(() => SoftwareLockMassRunner.Run(a));
-                 t.IsBackground = true;
-                 t.Start();
-             });
+                if (checkBox1.Checked)
+                    a.tsvFile = anEntry.tsvFile;
+                if (!checkBox2.Checked)
+                    a.calibrateSpectra = false;
+                var t = new Thread(() => SoftwareLockMassRunner.Run(a));
+                t.IsBackground = true;
+                t.Start();
+            }
         }
 
         private void P_watchHandler(object sender, OutputHandlerEventArgs e)
