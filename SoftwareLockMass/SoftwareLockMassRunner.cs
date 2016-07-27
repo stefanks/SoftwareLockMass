@@ -19,7 +19,6 @@ namespace SoftwareLockMass
             p.OnOutput(new OutputHandlerEventArgs("Pre-calibration (Software Lock Mass):"));
 
             List<int> trainingPointCounts = new List<int>();
-            List<int> calibrationValues = new List<int>();
             List<LabeledDataPoint> pointList;
             for (int preCalibraionRound = 0; ; preCalibraionRound++)
             {
