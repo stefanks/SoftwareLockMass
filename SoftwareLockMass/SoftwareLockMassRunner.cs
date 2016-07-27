@@ -72,6 +72,7 @@ namespace SoftwareLockMass
             }
 
             p.OnOutput(new OutputHandlerEventArgs("Finished running my software lock mass implementation"));
+            p.OnProgress(new ProgressHandlerEventArgs(0));
         }
 
         private static CalibrationFunction Calibrate(List<LabeledDataPoint> trainingPoints, SoftwareLockMassParams p)
