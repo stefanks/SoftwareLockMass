@@ -26,7 +26,7 @@ namespace SoftwareLockMass
                 return;
             }
             var bestSumSquaredErrors = trainingPoints.Select(b => Math.Pow(averageOutputs - b.output, 2)).Sum();
-            int bestCount = int.MaxValue;
+            //int bestCount = int.MaxValue;
 
 
             //Random rand = new Random();
@@ -60,7 +60,7 @@ namespace SoftwareLockMass
                         bestSumSquaredErrors = sumSquaredErrors;
                         bestValue = quantile;
                         bestI = i;
-                        bestCount = prunedTrainingPoints.TakeWhile(b => b.inputs[i] < quantile).Count();
+                        //bestCount = prunedTrainingPoints.TakeWhile(b => b.inputs[i] < quantile).Count();
                     }
                 }
             }
