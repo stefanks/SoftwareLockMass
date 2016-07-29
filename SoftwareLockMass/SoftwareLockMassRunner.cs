@@ -317,7 +317,12 @@ namespace SoftwareLockMass
 
         private static void WriteDataToFiles(IEnumerable<LabeledDataPoint> trainingPoints, string prefix)
         {
-            using (StreamWriter file = new StreamWriter(prefix + ".dat"))
+
+            string fullFileName = @"DataPoints\"+prefix + ".dat";
+
+            Directory.CreateDirectory(Path.GetDirectoryName(fullFileName));
+
+            using (StreamWriter file = new StreamWriter(fullFileName))
             {
                 if (trainingPoints.First().inputs.Count() == 9)
                     file.WriteLine("MS, MZ, RetentionTime, Intensity, TotalIonCurrent, InjectionTime, SelectedIonGuessChargeStateGuess, IsolationMZ, relativeMZ, label");

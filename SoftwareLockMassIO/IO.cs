@@ -34,7 +34,7 @@ namespace SoftwareLockMassIO
             if (Path.GetExtension(origDataFile).Equals(".mzML"))
                 myMsDataFile = new Mzml(origDataFile);
             else
-                myMsDataFile = new ThermoRawFile(origDataFile, true);
+                myMsDataFile = new ThermoRawFile(origDataFile, false);
             var a = new SoftwareLockMassParams(myMsDataFile);
             a.outputHandler += p_outputHandler;
             a.progressHandler += p_progressHandler;
