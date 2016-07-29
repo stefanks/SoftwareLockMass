@@ -8,14 +8,14 @@ Software for calibrating mass spectra files based on identified peptides. The sp
 
 ### Command Line Version Usage
 
-The two required parameters are the paths to spectra and identifications files:
+The only required parameters are the paths to spectra and identifications files:
 ```shell
 SoftwareLockMassCommandLine.exe spectra.mzML identifications.mzid
 ```
 
 ### GUI Version Usage
 
-Drag and drop is supported for both spectra and identified peptide files. The spectra and identifications files must have identical names (but not extensions). Calibrations on multiple files are done in parallel.
+Drag and drop is supported for both spectra and identified peptide files. The spectra and identifications files must have identical names (but not extensions). Calibrations on multiple files are done in parallel. Optional TSV file calibration is available.
 
 ## Requirements
 
