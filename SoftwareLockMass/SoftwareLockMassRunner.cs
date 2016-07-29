@@ -317,9 +317,7 @@ namespace SoftwareLockMass
 
         private static void WriteDataToFiles(IEnumerable<LabeledDataPoint> trainingPoints, string prefix)
         {
-
-            string fullFileName = @"DataPoints\"+prefix + ".dat";
-
+            var fullFileName = Path.Combine(@"DataPoints", prefix + ".dat");
             Directory.CreateDirectory(Path.GetDirectoryName(fullFileName));
 
             using (StreamWriter file = new StreamWriter(fullFileName))
