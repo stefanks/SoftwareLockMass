@@ -62,6 +62,16 @@ namespace SoftwareLockMass
 
             CalibrationFunction cfForTSVcalibration = Calibrate(pointList, p);
 
+            foreach (var ok in p.myMsDataFile)
+            {
+                if (ok.MsnOrder == 2)
+                {
+                    int precursorScanNumber;
+                    ok.TryGetPrecursorScanNumber(out precursorScanNumber);
+                    ok.attemptToRefinePrecursorMonoisotopicPeak(p.myMsDataFile.GetScan(precursorScanNumber).MassSpectrum);
+                }
+            }
+
             p.postProcessing(p);
 
             if (p.tsvFile != null)
