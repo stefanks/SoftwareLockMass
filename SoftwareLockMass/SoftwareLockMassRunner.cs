@@ -62,6 +62,16 @@ namespace SoftwareLockMass
 
             CalibrationFunction cfForTSVcalibration = Calibrate(pointList, p);
 
+            foreach (var ok in p.myMsDataFile)
+            {
+                if (ok.MsnOrder == 2)
+                {
+                    int precursorScanNumber;
+                    ok.TryGetPrecursorScanNumber(out precursorScanNumber);
+                    ok.attemptToRefinePrecursorMonoisotopicPeak(p.myMsDataFile.GetScan(precursorScanNumber).MassSpectrum);
+                }
+            }
+
             p.postProcessing(p);
 
             if (p.tsvFile != null)
@@ -317,7 +327,10 @@ namespace SoftwareLockMass
 
         private static void WriteDataToFiles(IEnumerable<LabeledDataPoint> trainingPoints, string prefix)
         {
-            using (StreamWriter file = new StreamWriter(prefix + ".dat"))
+            var fullFileName = Path.Combine(@"DataPoints", prefix + ".dat");
+            Directory.CreateDirectory(Path.GetDirectoryName(fullFileName));
+
+            using (StreamWriter file = new StreamWriter(fullFileName))
             {
                 if (trainingPoints.First().inputs.Count() == 9)
                     file.WriteLine("MS, MZ, RetentionTime, Intensity, TotalIonCurrent, InjectionTime, SelectedIonGuessChargeStateGuess, IsolationMZ, relativeMZ, label");
