@@ -11,7 +11,7 @@ namespace SoftwareLockMass
         {
             double mse = 0;
             int count = 0;
-            foreach(LabeledDataPoint p in pointList)
+            foreach (LabeledDataPoint p in pointList)
             {
                 mse += Math.Pow(Predict(p.inputs) - p.output, 2);
                 count++;
@@ -21,7 +21,9 @@ namespace SoftwareLockMass
 
         internal void writeNewLabels(List<LabeledDataPoint> trainList1, string v)
         {
-            using (StreamWriter file = new StreamWriter(v+"newLabels" + ".dat"))
+            var fullFileName = Path.Combine(@"NewLabels", v + "newLabels" + ".dat");
+            Directory.CreateDirectory(Path.GetDirectoryName(fullFileName));
+            using (StreamWriter file = new StreamWriter(fullFileName))
             {
                 file.WriteLine("NewLabel");
                 foreach (LabeledDataPoint d in trainList1)

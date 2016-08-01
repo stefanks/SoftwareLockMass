@@ -38,8 +38,7 @@ namespace SoftwareLockMassGUI
             this.textBox2 = new System.Windows.Forms.TextBox();
             this.dataGridView1 = new System.Windows.Forms.DataGridView();
             this.button2 = new System.Windows.Forms.Button();
-            this.checkBox1 = new System.Windows.Forms.CheckBox();
-            this.checkBox2 = new System.Windows.Forms.CheckBox();
+            this.deconvoluteCheckBox = new System.Windows.Forms.CheckBox();
             ((System.ComponentModel.ISupportInitialize)(this.dataGridView1)).BeginInit();
             this.SuspendLayout();
             // 
@@ -112,28 +111,15 @@ namespace SoftwareLockMassGUI
             this.button2.UseVisualStyleBackColor = true;
             this.button2.Click += new System.EventHandler(this.button2_Click);
             // 
-            // checkBox1
+            // deconvoluteCheckBox
             // 
-            this.checkBox1.AutoSize = true;
-            this.checkBox1.Location = new System.Drawing.Point(429, 248);
-            this.checkBox1.Name = "checkBox1";
-            this.checkBox1.Size = new System.Drawing.Size(91, 17);
-            this.checkBox1.TabIndex = 9;
-            this.checkBox1.Text = "Calibrate TSV";
-            this.checkBox1.UseVisualStyleBackColor = true;
-            this.checkBox1.CheckedChanged += new System.EventHandler(this.checkBox1_CheckedChanged);
-            // 
-            // checkBox2
-            // 
-            this.checkBox2.AutoSize = true;
-            this.checkBox2.Checked = true;
-            this.checkBox2.CheckState = System.Windows.Forms.CheckState.Checked;
-            this.checkBox2.Location = new System.Drawing.Point(429, 225);
-            this.checkBox2.Name = "checkBox2";
-            this.checkBox2.Size = new System.Drawing.Size(105, 17);
-            this.checkBox2.TabIndex = 10;
-            this.checkBox2.Text = "Calibrate spectra";
-            this.checkBox2.UseVisualStyleBackColor = true;
+            this.deconvoluteCheckBox.AutoSize = true;
+            this.deconvoluteCheckBox.Location = new System.Drawing.Point(174, 257);
+            this.deconvoluteCheckBox.Name = "deconvoluteCheckBox";
+            this.deconvoluteCheckBox.Size = new System.Drawing.Size(87, 17);
+            this.deconvoluteCheckBox.TabIndex = 9;
+            this.deconvoluteCheckBox.Text = "Deconvolute";
+            this.deconvoluteCheckBox.UseVisualStyleBackColor = true;
             // 
             // MyGUI
             // 
@@ -141,8 +127,7 @@ namespace SoftwareLockMassGUI
             this.AutoScaleDimensions = new System.Drawing.SizeF(96F, 96F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Dpi;
             this.ClientSize = new System.Drawing.Size(723, 582);
-            this.Controls.Add(this.checkBox2);
-            this.Controls.Add(this.checkBox1);
+            this.Controls.Add(this.deconvoluteCheckBox);
             this.Controls.Add(this.button2);
             this.Controls.Add(this.dataGridView1);
             this.Controls.Add(this.textBox2);
@@ -169,8 +154,7 @@ namespace SoftwareLockMassGUI
         private System.Windows.Forms.TextBox textBox2;
         private System.Windows.Forms.DataGridView dataGridView1;
         private Button button2;
-        private CheckBox checkBox1;
-        private CheckBox checkBox2;
+        private CheckBox deconvoluteCheckBox;
     }
 }
 

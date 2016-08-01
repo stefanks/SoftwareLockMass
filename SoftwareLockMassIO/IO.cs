@@ -28,14 +28,15 @@ namespace SoftwareLockMassIO
             return Convert.ToInt32(Regex.Match(s, @"\d+$").Value);
         }
 
-        public static SoftwareLockMassParams GetReady(string origDataFile, EventHandler<OutputHandlerEventArgs> p_outputHandler, EventHandler<ProgressHandlerEventArgs> p_progressHandler, EventHandler<OutputHandlerEventArgs> p_watchHandler, string mzidFile)
+        public static SoftwareLockMassParams GetReady(string origDataFile, EventHandler<OutputHandlerEventArgs> p_outputHandler, EventHandler<ProgressHandlerEventArgs> p_progressHandler, EventHandler<OutputHandlerEventArgs> p_watchHandler, string mzidFile, bool deconvolute)
         {
             IMsDataFile<IMzSpectrum<MzPeak>> myMsDataFile;
             if (Path.GetExtension(origDataFile).Equals(".mzML"))
                 myMsDataFile = new Mzml(origDataFile);
             else
                 myMsDataFile = new ThermoRawFile(origDataFile);
-            var a = new SoftwareLockMassParams(myMsDataFile);
+            int randomSeed = 1;
+            var a = new SoftwareLockMassParams(myMsDataFile, randomSeed, deconvolute);
             a.outputHandler += p_outputHandler;
             a.progressHandler += p_progressHandler;
             a.watchHandler += p_watchHandler;

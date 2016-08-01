@@ -62,13 +62,16 @@ namespace SoftwareLockMass
 
             CalibrationFunction cfForTSVcalibration = Calibrate(pointList, p);
 
-            foreach (var ok in p.myMsDataFile)
+            if (p.deconvolute)
             {
-                if (ok.MsnOrder == 2)
+                foreach (var ok in p.myMsDataFile)
                 {
-                    int precursorScanNumber;
-                    ok.TryGetPrecursorScanNumber(out precursorScanNumber);
-                    ok.attemptToRefinePrecursorMonoisotopicPeak(p.myMsDataFile.GetScan(precursorScanNumber).MassSpectrum);
+                    if (ok.MsnOrder == 2)
+                    {
+                        int precursorScanNumber;
+                        ok.TryGetPrecursorScanNumber(out precursorScanNumber);
+                        ok.attemptToRefinePrecursorMonoisotopicPeak(p.myMsDataFile.GetScan(precursorScanNumber).MassSpectrum);
+                    }
                 }
             }
 
@@ -86,7 +89,7 @@ namespace SoftwareLockMass
 
         private static CalibrationFunction Calibrate(List<LabeledDataPoint> trainingPoints, SoftwareLockMassParams p)
         {
-            var rnd = new Random();
+            var rnd = new Random(p.randomSeed);
             var shuffledTrainingPoints = trainingPoints.OrderBy(item => rnd.Next()).ToArray();
 
             var trainList = shuffledTrainingPoints.Take(trainingPoints.Count * 3 / 4).ToList();
