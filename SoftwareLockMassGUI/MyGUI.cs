@@ -38,12 +38,8 @@ namespace SoftwareLockMassGUI
         {
             foreach (var anEntry in myListOfEntries)
             {
-                SoftwareLockMassParams a = SoftwareLockMassIO.IO.GetReady(anEntry.spectraFile, P_outputHandler, P_progressHandler, P_watchHandler, anEntry.mzidFile);
+                SoftwareLockMassParams a = SoftwareLockMassIO.IO.GetReady(anEntry.spectraFile, P_outputHandler, P_progressHandler, P_watchHandler, anEntry.mzidFile, deconvoluteCheckBox.Checked);
 
-                if (checkBox1.Checked)
-                    a.tsvFile = anEntry.tsvFile;
-                if (!checkBox2.Checked)
-                    a.calibrateSpectra = false;
                 var t = new Thread(() => SoftwareLockMassRunner.Run(a));
                 t.IsBackground = true;
                 t.Start();
@@ -175,7 +171,7 @@ namespace SoftwareLockMassGUI
 
         private void checkBox1_CheckedChanged(object sender, EventArgs e)
         {
-            if (checkBox1.Checked)
+            if (deconvoluteCheckBox.Checked)
                 dataGridView1.Columns[3].Visible = true;
             else
                 dataGridView1.Columns[3].Visible = false;

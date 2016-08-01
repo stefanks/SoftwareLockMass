@@ -11,7 +11,8 @@ namespace SoftwareLockMass
 
             SoftwareLockMassIO.IO.Load();
 
-            SoftwareLockMassParams a = SoftwareLockMassIO.IO.GetReady(origDataFile, P_outputHandler, P_progressHandler, P_watchHandler, mzidFile);
+            bool deconvolute = true;
+            SoftwareLockMassParams a = SoftwareLockMassIO.IO.GetReady(origDataFile, P_outputHandler, P_progressHandler, P_watchHandler, mzidFile, deconvolute);
 
             SoftwareLockMassRunner.Run(a);
             //Console.Read();

@@ -35,14 +35,18 @@ namespace SoftwareLockMass
         public GetFormulaFromDictionary getFormulaFromDictionary;
         public string tsvFile = null;
         public bool calibrateSpectra = true;
+        internal int randomSeed;
+        internal bool deconvolute;
 
         #region Constructors
 
-        public SoftwareLockMassParams(IMsDataFile<IMzSpectrum<MzPeak>> myMsDataFile)
+        public SoftwareLockMassParams(IMsDataFile<IMzSpectrum<MzPeak>> myMsDataFile, int randomSeed, bool deconvolute)
         {
             this.myMsDataFile = myMsDataFile;
             MS1spectraToWatch = new HashSet<int>();
             MS2spectraToWatch = new HashSet<int>();
+            this.randomSeed = randomSeed;
+            this.deconvolute = deconvolute;
         }
 
         #endregion
