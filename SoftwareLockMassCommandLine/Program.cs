@@ -8,10 +8,12 @@ namespace SoftwareLockMass
         {
             string origDataFile = args[0];
             string mzidFile = args[1];
+            bool deconvolute = false;
+            if(args.Length>2)
+                deconvolute = args[2].Equals("deconvolute");
 
             SoftwareLockMassIO.IO.Load();
 
-            bool deconvolute = true;
             SoftwareLockMassParams a = SoftwareLockMassIO.IO.GetReady(origDataFile, P_outputHandler, P_progressHandler, P_watchHandler, mzidFile, deconvolute);
 
             SoftwareLockMassRunner.Run(a);
