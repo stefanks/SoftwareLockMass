@@ -168,14 +168,6 @@ namespace SoftwareLockMassGUI
         {
             myListOfEntries.Clear();
         }
-
-        private void checkBox1_CheckedChanged(object sender, EventArgs e)
-        {
-            if (deconvoluteCheckBox.Checked)
-                dataGridView1.Columns[3].Visible = true;
-            else
-                dataGridView1.Columns[3].Visible = false;
-        }
     }
 
 

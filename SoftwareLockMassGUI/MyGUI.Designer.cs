@@ -120,7 +120,6 @@ namespace SoftwareLockMassGUI
             this.deconvoluteCheckBox.TabIndex = 9;
             this.deconvoluteCheckBox.Text = "Deconvolute";
             this.deconvoluteCheckBox.UseVisualStyleBackColor = true;
-            this.deconvoluteCheckBox.CheckedChanged += new System.EventHandler(this.checkBox1_CheckedChanged);
             // 
             // MyGUI
             // 
