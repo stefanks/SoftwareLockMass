@@ -16,9 +16,9 @@ namespace mzCalCommandLine
             if (args.Length > 2)
                 deconvolute = args[2].Equals("deconvolute");
 
-            mzCalIO.IO.Load();
+            mzCalIO.mzCalIO.Load();
 
-            SoftwareLockMassParams a = mzCalIO.IO.GetReady(origDataFile, P_outputHandler, P_progressHandler, P_watchHandler, mzidFile, deconvolute);
+            SoftwareLockMassParams a = mzCalIO.mzCalIO.GetReady(origDataFile, P_outputHandler, P_progressHandler, P_watchHandler, mzidFile, deconvolute);
 
             SoftwareLockMassRunner.Run(a);
             //Console.Read();

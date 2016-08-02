@@ -1,6 +1,4 @@
-﻿using System;
-
-namespace mzCal
+﻿namespace mzCal
 {
     internal class OppositeCalibrationFunction : CalibrationFunction
     {

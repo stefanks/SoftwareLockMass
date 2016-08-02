@@ -17,7 +17,7 @@ namespace mzCalGUI
         public MyGUI()
         {
             InitializeComponent();
-            mzCalIO.IO.Load();
+            mzCalIO.mzCalIO.Load();
             dataGridView1.DataSource = myListOfEntries;
             dataGridView1.Columns[3].Visible = false;
             this.Text = Assembly.GetExecutingAssembly().GetName().Version.ToString();
@@ -40,7 +40,7 @@ namespace mzCalGUI
         {
             foreach (var anEntry in myListOfEntries)
             {
-                SoftwareLockMassParams a = mzCalIO.IO.GetReady(anEntry.spectraFile, P_outputHandler, P_progressHandler, P_watchHandler, anEntry.mzidFile, deconvoluteCheckBox.Checked);
+                SoftwareLockMassParams a = mzCalIO.mzCalIO.GetReady(anEntry.spectraFile, P_outputHandler, P_progressHandler, P_watchHandler, anEntry.mzidFile, deconvoluteCheckBox.Checked);
 
                 var t = new Thread(() => SoftwareLockMassRunner.Run(a));
                 t.IsBackground = true;

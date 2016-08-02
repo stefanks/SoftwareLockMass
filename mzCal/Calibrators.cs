@@ -1,13 +1,10 @@
 ﻿using Chemistry;
-using Spectra;
 using System;
-using System.Collections.Generic;
 using System.IO;
-using System.Linq;
 
 namespace mzCal
 {
-    class Calibrators
+    static class Calibrators
     {
         public static void CalibrateTSV(CalibrationFunction cf, SoftwareLockMassParams p)
         {

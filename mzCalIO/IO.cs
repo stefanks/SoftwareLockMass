@@ -1,9 +1,9 @@
 ﻿using IO.MzML;
 using IO.Thermo;
 using MassSpectrometry;
+using mzCal;
 using MzIdentML;
 using Proteomics;
-using mzCal;
 using Spectra;
 using System;
 using System.Collections.Generic;
@@ -12,7 +12,7 @@ using System.Text.RegularExpressions;
 
 namespace mzCalIO
 {
-    public static class IO
+    public static class mzCalIO
     {
         public static UsefulProteomicsDatabases.Generated.unimod unimodDeserialized;
         public static UsefulProteomicsDatabases.Generated.obo psimodDeserialized;

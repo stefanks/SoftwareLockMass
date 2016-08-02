@@ -105,9 +105,6 @@ namespace mzCal
             ms2DataScan.TryGetSelectedIonGuessChargeStateGuess(out SelectedIonGuessChargeStateGuess);
             double IsolationMZ;
             ms2DataScan.TryGetIsolationMZ(out IsolationMZ);
-            var TotalIonCurrent = ms2DataScan.TotalIonCurrent;
-            var InjectionTime = ms2DataScan.InjectionTime;
-            var ScanWindowRange = ms2DataScan.ScanWindowRange;
 
             int ms2spectrumIndex = ms2DataScan.ScanNumber;
 
@@ -116,8 +113,6 @@ namespace mzCal
             var numFragmentsIdentified = 0;
 
             var scanWindowRange = ms2DataScan.ScanWindowRange;
-
-            var ms2mzArray = ms2DataScan.MassSpectrum.xArray;
 
             Fragment[] fragmentList = peptide.Fragment(FragmentTypes.b | FragmentTypes.y, true).ToArray();
 
@@ -423,7 +418,7 @@ namespace mzCal
                         addedAscan = true;
                         startingToAddCharges = true;
                         countForThisScan += 1;
-                        double[] inputs = new double[6] { 1, trainingPointsToAverage.Select(b => b.dp.mz).Average(), fullMS1scan.RetentionTime,trainingPointsToAverage.Select(b => b.dp.intensity).Average(), fullMS1scan.TotalIonCurrent, fullMS1scan.InjectionTime };
+                        double[] inputs = new double[6] { 1, trainingPointsToAverage.Select(b => b.dp.mz).Average(), fullMS1scan.RetentionTime, trainingPointsToAverage.Select(b => b.dp.intensity).Average(), fullMS1scan.TotalIonCurrent, fullMS1scan.InjectionTime };
                         var a = new LabeledDataPoint(inputs, trainingPointsToAverage.Select(b => b.l).Median());
                         if (p.MS2spectraToWatch.Contains(ms2spectrumIndex) || p.MS1spectraToWatch.Contains(theIndex))
                         {

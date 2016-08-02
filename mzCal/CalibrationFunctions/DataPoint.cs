@@ -1,6 +1,4 @@
-﻿using System;
-
-namespace mzCal
+﻿namespace mzCal
 {
     public class DataPoint
     {
@@ -22,43 +20,14 @@ namespace mzCal
             this.intensity = intensity;
             this.SelectedIonGuessChargeStateGuess = SelectedIonGuessChargeStateGuess;
             this.IsolationMZ = IsolationMZ;
-            this.TotalIonCurrent= TotalIonCurrent;
-            this.InjectionTime= InjectionTime;
-            this.relativeMZ= relativeMZ;
-    }
-
-        internal double[] ToDoubleArrayWithIntercept()
-        {
-            return new double[3] { 1, mz, rt };
+            this.TotalIonCurrent = TotalIonCurrent;
+            this.InjectionTime = InjectionTime;
+            this.relativeMZ = relativeMZ;
         }
 
-        internal double[] ToDoubleArrayWithInterceptAndSquares()
-        {
-            return new double[6] { 1, mz, rt, Math.Pow(mz, 2), Math.Pow(rt, 2), mz * rt };
-        }
-
-        internal double[] ToDoubleArrayWithInterceptAndSquaresAndCubes()
-        {
-            return new double[10] { 1, mz, rt, Math.Pow(mz, 2), Math.Pow(rt, 2), mz * rt, Math.Pow(mz, 3), Math.Pow(mz, 2) * rt, mz * Math.Pow(rt, 2), Math.Pow(rt, 3) };
-        }
-
-        internal double[] ToDoubleArrayWithInterceptAndSquaresAndCubesAndQuarts()
-        {
-            return new double[15] { 1, mz, rt, Math.Pow(mz, 2), Math.Pow(rt, 2), mz * rt, Math.Pow(mz, 3), Math.Pow(mz, 2) * rt, mz * Math.Pow(rt, 2), Math.Pow(rt, 3), Math.Pow(mz, 4), Math.Pow(mz, 3) * rt, Math.Pow(mz, 2) * Math.Pow(rt, 2), mz * Math.Pow(rt, 3), Math.Pow(rt, 4) };
-        }
         public override string ToString()
         {
             return "(" + mz + "," + rt + ")";
-        }
-
-        internal double[] ToDoubleArrayWithInterceptAndSquaresAndCubesAndQuartsAndFifths()
-        {
-            return new double[21] { 1, mz, rt, Math.Pow(mz, 2), Math.Pow(rt, 2), mz * rt, Math.Pow(mz, 3), Math.Pow(mz, 2) * rt, mz * Math.Pow(rt, 2), Math.Pow(rt, 3), Math.Pow(mz, 4), Math.Pow(mz, 3) * rt, Math.Pow(mz, 2) * Math.Pow(rt, 2), mz * Math.Pow(rt, 3), Math.Pow(rt, 4), Math.Pow(mz, 5), Math.Pow(mz, 4) * rt, Math.Pow(mz, 3) * Math.Pow(rt, 2), Math.Pow(mz, 2) * Math.Pow(rt, 3), mz * Math.Pow(rt, 4), Math.Pow(rt, 5) };
-        }
-
-        internal double[] ToDoubleArrayWithInterceptAndSquaresAndCubesAndQuartsAndFifthsAndSixths()
-        {
-            return new double[28] { 1, mz, rt, Math.Pow(mz, 2), Math.Pow(rt, 2), mz * rt, Math.Pow(mz, 3), Math.Pow(mz, 2) * rt, mz * Math.Pow(rt, 2), Math.Pow(rt, 3), Math.Pow(mz, 4), Math.Pow(mz, 3) * rt, Math.Pow(mz, 2) * Math.Pow(rt, 2), mz * Math.Pow(rt, 3), Math.Pow(rt, 4), Math.Pow(mz, 5), Math.Pow(mz, 4) * rt, Math.Pow(mz, 3) * Math.Pow(rt, 2), Math.Pow(mz, 2) * Math.Pow(rt, 3), mz * Math.Pow(rt, 4), Math.Pow(rt, 5), Math.Pow(mz, 6), Math.Pow(mz, 5) * rt, Math.Pow(mz, 4) * Math.Pow(rt, 2), Math.Pow(mz, 3) * Math.Pow(rt, 3), Math.Pow(mz, 2) * Math.Pow(rt, 4), mz * Math.Pow(rt, 5), Math.Pow(rt, 6) };
         }
     }
 }
