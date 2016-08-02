@@ -64,6 +64,7 @@ namespace SoftwareLockMass
 
             if (p.deconvolute)
             {
+                p.OnOutput(new OutputHandlerEventArgs("Deconvolution"));
                 foreach (var ok in p.myMsDataFile)
                 {
                     if (ok.MsnOrder == 2)

@@ -3,6 +3,7 @@ using System;
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.IO;
+using System.Reflection;
 using System.Runtime.CompilerServices;
 using System.Threading;
 using System.Windows.Forms;
@@ -19,6 +20,7 @@ namespace SoftwareLockMassGUI
             SoftwareLockMassIO.IO.Load();
             dataGridView1.DataSource = myListOfEntries;
             dataGridView1.Columns[3].Visible = false;
+            this.Text = Assembly.GetExecutingAssembly().GetName().Version.ToString();
         }
 
         private void buttonAddFiles_Click(object sender, EventArgs e)
