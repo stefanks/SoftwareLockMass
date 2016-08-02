@@ -70,16 +70,6 @@
     <None Include="App.config" />
   </ItemGroup>
   <ItemGroup>
-    <ProjectReference Include="..\mzCalIO\mzCalIO.csproj">
-      <Project>{06ad5939-8437-4f2a-bf3c-2b181d6f0308}</Project>
-      <Name>mzCalIO</Name>
-    </ProjectReference>
-    <ProjectReference Include="..\mzCal\mzCal.csproj">
-      <Project>{475C3B7B-4367-4BC8-8192-2A850C72812B}</Project>
-      <Name>mzCal</Name>
-    </ProjectReference>
-  </ItemGroup>
-  <ItemGroup>
     <BootstrapperPackage Include=".NETFramework,Version=v4.5.2">
       <Visible>False</Visible>
       <ProductName>Microsoft .NET Framework 4.5.2 %28x86 and x64%29</ProductName>
@@ -90,6 +80,16 @@
       <ProductName>.NET Framework 3.5 SP1</ProductName>
       <Install>false</Install>
     </BootstrapperPackage>
+  </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\mzCalIO\mzCalIO.csproj">
+      <Project>{06ad5939-8437-4f2a-bf3c-2b181d6f0308}</Project>
+      <Name>mzCalIO</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\mzCal\mzCal.csproj">
+      <Project>{475c3b7b-4367-4bc8-8192-2a850c72812b}</Project>
+      <Name>mzCal</Name>
+    </ProjectReference>
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 

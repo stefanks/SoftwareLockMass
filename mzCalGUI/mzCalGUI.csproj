@@ -75,7 +75,7 @@
       <Name>mzCalIO</Name>
     </ProjectReference>
     <ProjectReference Include="..\mzCal\mzCal.csproj">
-      <Project>{475C3B7B-4367-4BC8-8192-2A850C72812B}</Project>
+      <Project>{475c3b7b-4367-4bc8-8192-2a850c72812b}</Project>
       <Name>mzCal</Name>
     </ProjectReference>
   </ItemGroup>
