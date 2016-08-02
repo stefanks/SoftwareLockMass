@@ -1,5 +1,5 @@
 ﻿using NUnit.Framework;
-using SoftwareLockMass;
+using mzCal;
 using System;
 using System.Collections.Generic;
 
@@ -46,9 +46,9 @@ namespace Test
         [Test]
         public void TestSoftwareLockMassRunner()
         {
-            SoftwareLockMassIO.IO.Load();
+            mzCalIO.IO.Load();
 
-            SoftwareLockMassParams a = SoftwareLockMassIO.IO.GetReady(@"myFakeFile.mzML", P_outputHandler, P_progressHandler, P_outputHandler, @"myIdentifications.mzid", true);
+            SoftwareLockMassParams a = mzCalIO.IO.GetReady(@"myFakeFile.mzML", P_outputHandler, P_progressHandler, P_outputHandler, @"myIdentifications.mzid", true);
 
             SoftwareLockMassRunner.Run(a);
         }
