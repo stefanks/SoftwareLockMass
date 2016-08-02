@@ -50,14 +50,14 @@ namespace mzCalGUI
 
         private void P_watchHandler(object sender, OutputHandlerEventArgs e)
         {
-            if (textBox2.InvokeRequired)
+            if (textBox1.InvokeRequired)
             {
                 SetTextCallback d = new SetTextCallback(P_watchHandler);
                 Invoke(d, new object[] { sender, e });
             }
             else
             {
-                textBox2.AppendText(e.output + "\n");
+                textBox1.AppendText(e.output + "\n");
             }
         }
 

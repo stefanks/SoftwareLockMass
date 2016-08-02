@@ -35,7 +35,6 @@ namespace mzCalGUI
             this.button3 = new System.Windows.Forms.Button();
             this.textBox1 = new System.Windows.Forms.TextBox();
             this.progressBar1 = new System.Windows.Forms.ProgressBar();
-            this.textBox2 = new System.Windows.Forms.TextBox();
             this.dataGridView1 = new System.Windows.Forms.DataGridView();
             this.button2 = new System.Windows.Forms.Button();
             this.deconvoluteCheckBox = new System.Windows.Forms.CheckBox();
@@ -69,25 +68,15 @@ namespace mzCalGUI
             this.textBox1.Name = "textBox1";
             this.textBox1.ReadOnly = true;
             this.textBox1.ScrollBars = System.Windows.Forms.ScrollBars.Vertical;
-            this.textBox1.Size = new System.Drawing.Size(275, 234);
+            this.textBox1.Size = new System.Drawing.Size(699, 234);
             this.textBox1.TabIndex = 4;
             // 
             // progressBar1
             // 
             this.progressBar1.Location = new System.Drawing.Point(12, 543);
             this.progressBar1.Name = "progressBar1";
-            this.progressBar1.Size = new System.Drawing.Size(275, 27);
+            this.progressBar1.Size = new System.Drawing.Size(699, 27);
             this.progressBar1.TabIndex = 5;
-            // 
-            // textBox2
-            // 
-            this.textBox2.Location = new System.Drawing.Point(293, 303);
-            this.textBox2.Multiline = true;
-            this.textBox2.Name = "textBox2";
-            this.textBox2.ReadOnly = true;
-            this.textBox2.ScrollBars = System.Windows.Forms.ScrollBars.Vertical;
-            this.textBox2.Size = new System.Drawing.Size(415, 267);
-            this.textBox2.TabIndex = 6;
             // 
             // dataGridView1
             // 
@@ -130,7 +119,6 @@ namespace mzCalGUI
             this.Controls.Add(this.deconvoluteCheckBox);
             this.Controls.Add(this.button2);
             this.Controls.Add(this.dataGridView1);
-            this.Controls.Add(this.textBox2);
             this.Controls.Add(this.progressBar1);
             this.Controls.Add(this.textBox1);
             this.Controls.Add(this.button3);
@@ -151,7 +139,6 @@ namespace mzCalGUI
         private System.Windows.Forms.Button button3;
         private System.Windows.Forms.TextBox textBox1;
         private System.Windows.Forms.ProgressBar progressBar1;
-        private System.Windows.Forms.TextBox textBox2;
         private System.Windows.Forms.DataGridView dataGridView1;
         private Button button2;
         private CheckBox deconvoluteCheckBox;
